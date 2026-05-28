@@ -16,10 +16,10 @@
     },
     {
       "nome": "PAGAMENTOS",
-      "valor": -13386.1,
-      "valor_abs": 13386.1,
-      "percentual": 17.903244293467104,
-      "quantidade": 101
+      "valor": -14954.9,
+      "valor_abs": 14954.9,
+      "percentual": 20.001436421689004,
+      "quantidade": 126
     },
     {
       "nome": "PRÓ-LABORE / SOCIETÁRIO",
@@ -69,20 +69,6 @@
       "valor_abs": 1200.0,
       "percentual": 1.6049404346419438,
       "quantidade": 11
-    },
-    {
-      "nome": "COMPRAS / CARTÃO",
-      "valor": -843.5,
-      "valor_abs": 843.5,
-      "percentual": 1.1281393805170663,
-      "quantidade": 11
-    },
-    {
-      "nome": "ALIMENTAÇÃO",
-      "valor": -725.3,
-      "valor_abs": 725.3,
-      "percentual": 0.9700527477048347,
-      "quantidade": 14
     }
   ],
   "diario": [
@@ -301,7 +287,7 @@
     "PAGAMENTOS": [
       {
         "data": "27/04",
-        "valor": -20.0
+        "valor": -107.0
       },
       {
         "data": "28/04",
@@ -321,7 +307,7 @@
       },
       {
         "data": "05/05",
-        "valor": -293.5
+        "valor": -634.49
       },
       {
         "data": "06/05",
@@ -337,15 +323,15 @@
       },
       {
         "data": "11/05",
-        "valor": -485.88
+        "valor": -554.87
       },
       {
         "data": "12/05",
-        "valor": -84.0
+        "valor": -134.0
       },
       {
         "data": "13/05",
-        "valor": -1277.26
+        "valor": -1300.7
       },
       {
         "data": "14/05",
@@ -353,11 +339,11 @@
       },
       {
         "data": "15/05",
-        "valor": -226.2
+        "valor": -274.2
       },
       {
         "data": "18/05",
-        "valor": -223.41
+        "valor": -731.51
       },
       {
         "data": "19/05",
@@ -365,19 +351,19 @@
       },
       {
         "data": "20/05",
-        "valor": -153.0
+        "valor": -268.9
       },
       {
         "data": "21/05",
-        "valor": -296.9
+        "valor": -453.75
       },
       {
         "data": "22/05",
-        "valor": -1664.69
+        "valor": -1720.36
       },
       {
         "data": "25/05",
-        "valor": -143.44
+        "valor": -172.44
       },
       {
         "data": "26/05",
@@ -385,7 +371,7 @@
       },
       {
         "data": "27/05",
-        "valor": -543.26
+        "valor": -628.12
       }
     ],
     "COMBUSTÍVEL / POSTO": [
@@ -472,48 +458,6 @@
       {
         "data": "27/05",
         "valor": -953.33
-      }
-    ],
-    "ALIMENTAÇÃO": [
-      {
-        "data": "27/04",
-        "valor": -87.0
-      },
-      {
-        "data": "05/05",
-        "valor": -96.0
-      },
-      {
-        "data": "11/05",
-        "valor": -43.97
-      },
-      {
-        "data": "15/05",
-        "valor": -48.0
-      },
-      {
-        "data": "18/05",
-        "valor": -42.6
-      },
-      {
-        "data": "20/05",
-        "valor": -115.9
-      },
-      {
-        "data": "21/05",
-        "valor": -122.3
-      },
-      {
-        "data": "22/05",
-        "valor": -55.67
-      },
-      {
-        "data": "25/05",
-        "valor": -29.0
-      },
-      {
-        "data": "27/05",
-        "valor": -84.86
       }
     ],
     "CHAPA / OPERACIONAL PF": [
@@ -730,32 +674,6 @@
       {
         "data": "20/05",
         "valor": -389.39
-      }
-    ],
-    "COMPRAS / CARTÃO": [
-      {
-        "data": "05/05",
-        "valor": -244.99
-      },
-      {
-        "data": "11/05",
-        "valor": -25.02
-      },
-      {
-        "data": "12/05",
-        "valor": -50.0
-      },
-      {
-        "data": "13/05",
-        "valor": -23.44
-      },
-      {
-        "data": "18/05",
-        "valor": -465.5
-      },
-      {
-        "data": "21/05",
-        "valor": -34.55
       }
     ]
   }
