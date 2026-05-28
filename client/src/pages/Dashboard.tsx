@@ -261,7 +261,7 @@ export default function Dashboard() {
                             {detalhes[cat.nome]?.registros.map((reg: any, ridx: number) => (
                               <tr key={ridx} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="py-2 px-4 text-slate-900 font-medium">{reg.data}</td>
-                                <td className="py-2 px-4 text-slate-700 max-w-xs truncate">{reg.descricao}</td>
+                                <td className="py-2 px-4 text-slate-700 break-words" style={{ maxWidth: '400px' }}>{reg.descricao}</td>
                                 <td className="py-2 px-4 text-slate-600 text-xs">{reg.documento}</td>
                                 <td className="py-2 px-4 text-right font-semibold text-slate-900">
                                   {formatMoney(reg.valor)}
