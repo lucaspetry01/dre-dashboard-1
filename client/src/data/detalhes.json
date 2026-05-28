@@ -594,8 +594,8 @@
     ]
   },
   "PAGAMENTOS": {
-    "total": -14003.560000000001,
-    "quantidade": 107,
+    "total": -13663.560000000001,
+    "quantidade": 104,
     "registros": [
       {
         "data": "27/04/2026",
@@ -655,13 +655,6 @@
       },
       {
         "data": "30/04/2026",
-        "descricao": "PAGAMENTO PIX 46096825087 OLADIR DA SILVA GUEDES",
-        "documento": "PIX_DEB",
-        "valor": -100.0,
-        "saldo": 9700.44
-      },
-      {
-        "data": "30/04/2026",
         "descricao": "PAGAMENTO PIX 00862499089 FRANCIELE CRUZ DE SIQU",
         "documento": "PIX_DEB",
         "valor": -66.0,
@@ -683,17 +676,17 @@
       },
       {
         "data": "30/04/2026",
-        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
-        "documento": "PIX_DEB",
-        "valor": -15.0,
-        "saldo": 10060.95
-      },
-      {
-        "data": "30/04/2026",
         "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
         "documento": "PIX_DEB",
         "valor": -20.0,
         "saldo": 10075.95
+      },
+      {
+        "data": "30/04/2026",
+        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
+        "documento": "PIX_DEB",
+        "valor": -15.0,
+        "saldo": 10060.95
       },
       {
         "data": "30/04/2026",
@@ -865,24 +858,17 @@
       },
       {
         "data": "11/05/2026",
-        "descricao": "PAGAMENTO PIX 04373487090 Lucas de Oliveira Leal",
+        "descricao": "PAGAMENTO PIX 40740785000153 NEW BURGER LTDA",
         "documento": "PIX_DEB",
-        "valor": -100.0,
-        "saldo": 3750.92
+        "valor": -165.88,
+        "saldo": 2439.5
       },
       {
         "data": "11/05/2026",
-        "descricao": "PAGAMENTO PIX 40432544000147 CLARO",
+        "descricao": "PAGAMENTO PIX 89296586000197 CAPOTAS BRASIL",
         "documento": "PIX_DEB",
-        "valor": -46.9,
-        "saldo": 3975.94
-      },
-      {
-        "data": "11/05/2026",
-        "descricao": "PAGAMENTO PIX 40432544000147 CLARO",
-        "documento": "PIX_DEB",
-        "valor": -47.39,
-        "saldo": 4022.84
+        "valor": -200.0,
+        "saldo": 640.08
       },
       {
         "data": "11/05/2026",
@@ -893,24 +879,24 @@
       },
       {
         "data": "11/05/2026",
-        "descricao": "PAGAMENTO PIX 40740785000153 NEW BURGER LTDA",
+        "descricao": "PAGAMENTO PIX 40432544000147 CLARO",
         "documento": "PIX_DEB",
-        "valor": -165.88,
-        "saldo": 2439.5
+        "valor": -47.39,
+        "saldo": 4022.84
       },
       {
         "data": "11/05/2026",
-        "descricao": "PAGAMENTO PIX 51032570091 VALMOR GODOI MACHADO",
+        "descricao": "PAGAMENTO PIX 40432544000147 CLARO",
         "documento": "PIX_DEB",
-        "valor": -140.0,
-        "saldo": 2687.48
+        "valor": -46.9,
+        "saldo": 3975.94
       },
       {
         "data": "11/05/2026",
-        "descricao": "PAGAMENTO PIX 89296586000197 CAPOTAS BRASIL",
+        "descricao": "PAGAMENTO PIX 04373487090 Lucas de Oliveira Leal",
         "documento": "PIX_DEB",
-        "valor": -200.0,
-        "saldo": 640.08
+        "valor": -100.0,
+        "saldo": 3750.92
       },
       {
         "data": "12/05/2026",
@@ -963,17 +949,17 @@
       },
       {
         "data": "13/05/2026",
-        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
-        "documento": "PIX_DEB",
-        "valor": -15.0,
-        "saldo": 2693.5
-      },
-      {
-        "data": "13/05/2026",
         "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
         "documento": "PIX_DEB",
         "valor": -125.0,
         "saldo": 1955.3
+      },
+      {
+        "data": "13/05/2026",
+        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
+        "documento": "PIX_DEB",
+        "valor": -15.0,
+        "saldo": 2693.5
       },
       {
         "data": "14/05/2026",
@@ -1047,13 +1033,6 @@
       },
       {
         "data": "18/05/2026",
-        "descricao": "PAGAMENTO PIX 47964524000166 STORE 116",
-        "documento": "PIX_DEB",
-        "valor": -35.0,
-        "saldo": 10264.56
-      },
-      {
-        "data": "18/05/2026",
         "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
         "documento": "PIX_DEB",
         "valor": -20.0,
@@ -1061,10 +1040,10 @@
       },
       {
         "data": "18/05/2026",
-        "descricao": "PAGAMENTO PIX 46096825087 OLADIR DA SILVA GUEDES",
+        "descricao": "PAGAMENTO PIX 47964524000166 STORE 116",
         "documento": "PIX_DEB",
-        "valor": -100.0,
-        "saldo": 9330.56
+        "valor": -35.0,
+        "saldo": 10264.56
       },
       {
         "data": "19/05/2026",
@@ -1145,13 +1124,6 @@
       },
       {
         "data": "20/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -20.0,
-        "saldo": 15923.68
-      },
-      {
-        "data": "20/05/2026",
         "descricao": "PAGAMENTO PIX 03277705030 TAILA CATIELE HERZER T",
         "documento": "CX215175",
         "valor": -13.0,
@@ -1159,10 +1131,10 @@
       },
       {
         "data": "20/05/2026",
-        "descricao": "PAGAMENTO PIX 03147631044 KELVIN RAFAEL LEMES DE",
-        "documento": "CX960928",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
         "valor": -20.0,
-        "saldo": 10778.52
+        "saldo": 15923.68
       },
       {
         "data": "20/05/2026",
@@ -1170,6 +1142,13 @@
         "documento": "PIX_DEB",
         "valor": -100.0,
         "saldo": 16605.96
+      },
+      {
+        "data": "20/05/2026",
+        "descricao": "PAGAMENTO PIX 03147631044 KELVIN RAFAEL LEMES DE",
+        "documento": "CX960928",
+        "valor": -20.0,
+        "saldo": 10778.52
       },
       {
         "data": "21/05/2026",
@@ -2102,8 +2081,8 @@
     ]
   },
   "IMPOSTOS / TRIBUTOS": {
-    "total": -2872.35,
-    "quantidade": 4,
+    "total": -3127.35,
+    "quantidade": 5,
     "registros": [
       {
         "data": "28/04/2026",
@@ -2132,12 +2111,19 @@
         "documento": "PIX_DEB",
         "valor": -356.62,
         "saldo": 14949.36
+      },
+      {
+        "data": "20/05/2026",
+        "descricao": "LIQUIDACAO BOLETO SICREDI 24362010000135 OPCAO A",
+        "documento": "261004471",
+        "valor": -255.0,
+        "saldo": 13774.36
       }
     ]
   },
   "CUSTO OPERACIONAL ESPECÍFICO": {
-    "total": -1000.0,
-    "quantidade": 9,
+    "total": -1200.0,
+    "quantidade": 11,
     "registros": [
       {
         "data": "29/04/2026",
@@ -2152,6 +2138,13 @@
         "documento": "PIX_DEB",
         "valor": -100.0,
         "saldo": 9207.35
+      },
+      {
+        "data": "30/04/2026",
+        "descricao": "PAGAMENTO PIX 46096825087 OLADIR DA SILVA GUEDES",
+        "documento": "PIX_DEB",
+        "valor": -100.0,
+        "saldo": 9700.44
       },
       {
         "data": "07/05/2026",
@@ -2173,6 +2166,13 @@
         "documento": "PIX_DEB",
         "valor": -200.0,
         "saldo": 9430.56
+      },
+      {
+        "data": "18/05/2026",
+        "descricao": "PAGAMENTO PIX 46096825087 OLADIR DA SILVA GUEDES",
+        "documento": "PIX_DEB",
+        "valor": -100.0,
+        "saldo": 9330.56
       },
       {
         "data": "19/05/2026",
@@ -2205,8 +2205,8 @@
     ]
   },
   "MECÂNICA / MANUTENÇÃO": {
-    "total": -6968.38,
-    "quantidade": 7,
+    "total": -7108.38,
+    "quantidade": 8,
     "registros": [
       {
         "data": "30/04/2026",
@@ -2235,6 +2235,13 @@
         "documento": " ",
         "valor": -1321.76,
         "saldo": 5610.25
+      },
+      {
+        "data": "11/05/2026",
+        "descricao": "PAGAMENTO PIX 51032570091 VALMOR GODOI MACHADO",
+        "documento": "PIX_DEB",
+        "valor": -140.0,
+        "saldo": 2687.48
       },
       {
         "data": "11/05/2026",
@@ -2350,8 +2357,8 @@
     ]
   },
   "CONTA / BOLETO": {
-    "total": -8521.83,
-    "quantidade": 8,
+    "total": -8266.83,
+    "quantidade": 7,
     "registros": [
       {
         "data": "30/04/2026",
@@ -2401,13 +2408,6 @@
         "documento": " ",
         "valor": -389.39,
         "saldo": 15484.29
-      },
-      {
-        "data": "20/05/2026",
-        "descricao": "LIQUIDACAO BOLETO SICREDI 24362010000135 OPCAO A",
-        "documento": "261004471",
-        "valor": -255.0,
-        "saldo": 13774.36
       }
     ]
   },
