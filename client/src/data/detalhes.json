@@ -594,8 +594,8 @@
     ]
   },
   "PAGAMENTOS": {
-    "total": -14954.9,
-    "quantidade": 126,
+    "total": -9586.900000000001,
+    "quantidade": 109,
     "registros": [
       {
         "data": "27/04/2026",
@@ -627,27 +627,6 @@
       },
       {
         "data": "29/04/2026",
-        "descricao": "PAGAMENTO PIX 48707524000143 ERADY DA ROSA PIRES",
-        "documento": "CX734168",
-        "valor": -99.0,
-        "saldo": 7852.99
-      },
-      {
-        "data": "29/04/2026",
-        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
-        "documento": "PIX_DEB",
-        "valor": -24.0,
-        "saldo": 7951.99
-      },
-      {
-        "data": "29/04/2026",
-        "descricao": "PAGAMENTO PIX 27360993000401 VPS COMERCIO DE COM",
-        "documento": "PIX_DEB",
-        "valor": -100.0,
-        "saldo": 10150.16
-      },
-      {
-        "data": "29/04/2026",
         "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
         "documento": "PIX_DEB",
         "valor": -7.5,
@@ -661,6 +640,27 @@
         "saldo": 8661.87
       },
       {
+        "data": "29/04/2026",
+        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
+        "documento": "PIX_DEB",
+        "valor": -24.0,
+        "saldo": 7951.99
+      },
+      {
+        "data": "29/04/2026",
+        "descricao": "PAGAMENTO PIX 48707524000143 ERADY DA ROSA PIRES",
+        "documento": "CX734168",
+        "valor": -99.0,
+        "saldo": 7852.99
+      },
+      {
+        "data": "29/04/2026",
+        "descricao": "PAGAMENTO PIX 27360993000401 VPS COMERCIO DE COM",
+        "documento": "PIX_DEB",
+        "valor": -100.0,
+        "saldo": 10150.16
+      },
+      {
         "data": "30/04/2026",
         "descricao": "PAGAMENTO PIX 00862499089 FRANCIELE CRUZ DE SIQU",
         "documento": "PIX_DEB",
@@ -669,31 +669,10 @@
       },
       {
         "data": "30/04/2026",
-        "descricao": "PAGAMENTO PIX 02897054018 Marcelo de Carvalho He",
+        "descricao": "PAGAMENTO PIX 01324814055 Deivid Wilson Vitali T",
         "documento": "PIX_DEB",
-        "valor": -23.44,
-        "saldo": 10095.95
-      },
-      {
-        "data": "30/04/2026",
-        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
-        "documento": "PIX_DEB",
-        "valor": -20.0,
-        "saldo": 10075.95
-      },
-      {
-        "data": "30/04/2026",
-        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
-        "documento": "PIX_DEB",
-        "valor": -15.0,
-        "saldo": 10060.95
-      },
-      {
-        "data": "30/04/2026",
-        "descricao": "PAGAMENTO PIX 93321701000103 DARCILO PAULUS",
-        "documento": "PIX_DEB",
-        "valor": -16.0,
-        "saldo": 9191.35
+        "valor": -350.0,
+        "saldo": 7021.35
       },
       {
         "data": "30/04/2026",
@@ -704,24 +683,31 @@
       },
       {
         "data": "30/04/2026",
-        "descricao": "PAGAMENTO PIX 01324814055 Deivid Wilson Vitali T",
+        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
         "documento": "PIX_DEB",
-        "valor": -350.0,
-        "saldo": 7021.35
+        "valor": -15.0,
+        "saldo": 10060.95
       },
       {
-        "data": "04/05/2026",
-        "descricao": "PAGAMENTO PIX 92605125068 Olisandro Antonio Zanq",
+        "data": "30/04/2026",
+        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
         "documento": "PIX_DEB",
-        "valor": -102.0,
-        "saldo": 1845.2
+        "valor": -20.0,
+        "saldo": 10075.95
       },
       {
-        "data": "04/05/2026",
-        "descricao": "PAGAMENTO PIX 00942339002 MARILIA MORAES PETRY",
-        "documento": "CX394881",
-        "valor": -463.0,
-        "saldo": 3598.72
+        "data": "30/04/2026",
+        "descricao": "PAGAMENTO PIX 02897054018 Marcelo de Carvalho He",
+        "documento": "PIX_DEB",
+        "valor": -23.44,
+        "saldo": 10095.95
+      },
+      {
+        "data": "30/04/2026",
+        "descricao": "PAGAMENTO PIX 93321701000103 DARCILO PAULUS",
+        "documento": "PIX_DEB",
+        "valor": -16.0,
+        "saldo": 9191.35
       },
       {
         "data": "04/05/2026",
@@ -731,32 +717,53 @@
         "saldo": 1947.2
       },
       {
-        "data": "05/05/2026",
-        "descricao": "COMPRAS NACIONAIS COMERCIAL NUNES LTDA SAO LEOPO",
-        "documento": "VE0649307",
-        "valor": -38.49,
-        "saldo": 6829.21
+        "data": "04/05/2026",
+        "descricao": "PAGAMENTO PIX 92605125068 Olisandro Antonio Zanq",
+        "documento": "PIX_DEB",
+        "valor": -102.0,
+        "saldo": 1845.2
       },
       {
         "data": "05/05/2026",
-        "descricao": "PAGAMENTO PIX 23936101000174 COML AGROPECUARIA L",
-        "documento": "CX553935",
-        "valor": -42.0,
-        "saldo": 6749.3
+        "descricao": "PAGAMENTO PIX 04429653000141 FRUTEIRA ZIMMER E Z",
+        "documento": "CX813731",
+        "valor": -78.5,
+        "saldo": 5737.78
+      },
+      {
+        "data": "05/05/2026",
+        "descricao": "PAGAMENTO PIX 33137906000101 M E P RESTAURANTE E",
+        "documento": "CX287282",
+        "valor": -96.0,
+        "saldo": 7982.38
+      },
+      {
+        "data": "05/05/2026",
+        "descricao": "PAGAMENTO PIX 87842837000166 MOINHO GUARESE LTDA",
+        "documento": "CX205430",
+        "valor": -110.0,
+        "saldo": 8108.38
+      },
+      {
+        "data": "05/05/2026",
+        "descricao": "COMPRAS NACIONAIS TRANSTIRES SAPUCAIA DO SBR",
+        "documento": "VE0957683",
+        "valor": -69.9,
+        "saldo": 8218.38
       },
       {
         "data": "05/05/2026",
         "descricao": "COMPRAS NACIONAIS RSC CANOAS BR",
-        "documento": "VE0940675",
-        "valor": -65.0,
-        "saldo": 6646.39
+        "documento": "VE0284037",
+        "valor": -49.8,
+        "saldo": 5816.28
       },
       {
         "data": "05/05/2026",
-        "descricao": "PAGAMENTO PIX 06559006085 WILLIAM RAFAEL SCHMIDT",
-        "documento": "PIX_DEB",
-        "valor": -20.0,
-        "saldo": 6626.39
+        "descricao": "COMPRAS NACIONAIS FERRAGEM SANTOS SAPUCAIA DO SB",
+        "documento": "VE0458568",
+        "valor": -21.8,
+        "saldo": 5655.98
       },
       {
         "data": "05/05/2026",
@@ -764,6 +771,13 @@
         "documento": "PIX_DEB",
         "valor": -26.0,
         "saldo": 6600.39
+      },
+      {
+        "data": "05/05/2026",
+        "descricao": "PAGAMENTO PIX 06559006085 WILLIAM RAFAEL SCHMIDT",
+        "documento": "PIX_DEB",
+        "valor": -20.0,
+        "saldo": 6626.39
       },
       {
         "data": "05/05/2026",
@@ -775,58 +789,23 @@
       {
         "data": "05/05/2026",
         "descricao": "COMPRAS NACIONAIS RSC CANOAS BR",
-        "documento": "VE0284037",
-        "valor": -49.8,
-        "saldo": 5816.28
+        "documento": "VE0940675",
+        "valor": -65.0,
+        "saldo": 6646.39
       },
       {
         "data": "05/05/2026",
-        "descricao": "PAGAMENTO PIX 04429653000141 FRUTEIRA ZIMMER E Z",
-        "documento": "CX813731",
-        "valor": -78.5,
-        "saldo": 5737.78
+        "descricao": "PAGAMENTO PIX 23936101000174 COML AGROPECUARIA L",
+        "documento": "CX553935",
+        "valor": -42.0,
+        "saldo": 6749.3
       },
       {
         "data": "05/05/2026",
-        "descricao": "COMPRAS NACIONAIS FERRAGEM SANTOS SAPUCAIA DO SB",
-        "documento": "VE0458568",
-        "valor": -21.8,
-        "saldo": 5655.98
-      },
-      {
-        "data": "05/05/2026",
-        "descricao": "COMPRAS NACIONAIS TRANSTIRES SAPUCAIA DO SBR",
-        "documento": "VE0957683",
-        "valor": -69.9,
-        "saldo": 8218.38
-      },
-      {
-        "data": "05/05/2026",
-        "descricao": "PAGAMENTO PIX 87842837000166 MOINHO GUARESE LTDA",
-        "documento": "CX205430",
-        "valor": -110.0,
-        "saldo": 8108.38
-      },
-      {
-        "data": "05/05/2026",
-        "descricao": "PAGAMENTO PIX 33137906000101 M E P RESTAURANTE E",
-        "documento": "CX287282",
-        "valor": -96.0,
-        "saldo": 7982.38
-      },
-      {
-        "data": "06/05/2026",
-        "descricao": "PAGAMENTO PIX 21510466053 REALDA AGNEZ PLETSCH",
-        "documento": "PIX_DEB",
-        "valor": -520.0,
-        "saldo": 7105.01
-      },
-      {
-        "data": "06/05/2026",
-        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
-        "documento": "PIX_DEB",
-        "valor": -48.0,
-        "saldo": 7625.01
+        "descricao": "COMPRAS NACIONAIS COMERCIAL NUNES LTDA SAO LEOPO",
+        "documento": "VE0649307",
+        "valor": -38.49,
+        "saldo": 6829.21
       },
       {
         "data": "06/05/2026",
@@ -850,25 +829,18 @@
         "saldo": 7673.01
       },
       {
-        "data": "07/05/2026",
+        "data": "06/05/2026",
         "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
         "documento": "PIX_DEB",
-        "valor": -15.0,
-        "saldo": 6990.01
+        "valor": -48.0,
+        "saldo": 7625.01
       },
       {
-        "data": "07/05/2026",
-        "descricao": "PAGAMENTO PIX 02300202085 TASSIA VARGAS WENTZ",
+        "data": "06/05/2026",
+        "descricao": "PAGAMENTO PIX 21510466053 REALDA AGNEZ PLETSCH",
         "documento": "PIX_DEB",
-        "valor": -58.0,
-        "saldo": 6932.01
-      },
-      {
-        "data": "07/05/2026",
-        "descricao": "PAGAMENTO PIX 86343734015 PEDRO DA SILVA MARTINS",
-        "documento": "PIX_DEB",
-        "valor": -3700.0,
-        "saldo": 644.65
+        "valor": -520.0,
+        "saldo": 7105.01
       },
       {
         "data": "07/05/2026",
@@ -886,10 +858,17 @@
       },
       {
         "data": "07/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
         "documento": "PIX_DEB",
-        "valor": -125.0,
-        "saldo": 8093.09
+        "valor": -15.0,
+        "saldo": 6990.01
+      },
+      {
+        "data": "07/05/2026",
+        "descricao": "PAGAMENTO PIX 02300202085 TASSIA VARGAS WENTZ",
+        "documento": "PIX_DEB",
+        "valor": -58.0,
+        "saldo": 6932.01
       },
       {
         "data": "08/05/2026",
@@ -977,48 +956,6 @@
       },
       {
         "data": "13/05/2026",
-        "descricao": "COMPRAS NACIONAIS MarceloDeCarvalho PORTO ALEGRE",
-        "documento": "VE0864742",
-        "valor": -23.44,
-        "saldo": 2708.5
-      },
-      {
-        "data": "13/05/2026",
-        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
-        "documento": "PIX_DEB",
-        "valor": -15.0,
-        "saldo": 2693.5
-      },
-      {
-        "data": "13/05/2026",
-        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
-        "documento": "PIX_DEB",
-        "valor": -15.0,
-        "saldo": 2101.6
-      },
-      {
-        "data": "13/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -125.0,
-        "saldo": 1955.3
-      },
-      {
-        "data": "13/05/2026",
-        "descricao": "PAGAMENTO PIX 59535952000152 MARTIM PESCADOR RES",
-        "documento": "PIX_DEB",
-        "valor": -109.0,
-        "saldo": 1721.3
-      },
-      {
-        "data": "13/05/2026",
-        "descricao": "PAGAMENTO PIX 46795812049 DENIS FRANCISCO RUSCHE",
-        "documento": "PIX_DEB",
-        "valor": -850.0,
-        "saldo": 7775.34
-      },
-      {
-        "data": "13/05/2026",
         "descricao": "PAGAMENTO PIX 01642800066 ADIMAR ERHART",
         "documento": "PIX_DEB",
         "valor": -68.33,
@@ -1032,18 +969,39 @@
         "saldo": 7610.08
       },
       {
-        "data": "14/05/2026",
-        "descricao": "PAGAMENTO PIX 47273125000159 47.273.125 EVERTON ",
+        "data": "13/05/2026",
+        "descricao": "PAGAMENTO PIX 46795812049 DENIS FRANCISCO RUSCHE",
         "documento": "PIX_DEB",
-        "valor": -780.0,
-        "saldo": 11442.29
+        "valor": -850.0,
+        "saldo": 7775.34
       },
       {
-        "data": "14/05/2026",
-        "descricao": "PAGAMENTO PIX 45543915000181 CARREFOUR COMERCIO ",
+        "data": "13/05/2026",
+        "descricao": "PAGAMENTO PIX 59535952000152 MARTIM PESCADOR RES",
         "documento": "PIX_DEB",
-        "valor": -70.0,
-        "saldo": 6803.03
+        "valor": -109.0,
+        "saldo": 1721.3
+      },
+      {
+        "data": "13/05/2026",
+        "descricao": "PAGAMENTO PIX 98147099053 TATIANE CORREA BARBOSA",
+        "documento": "PIX_DEB",
+        "valor": -15.0,
+        "saldo": 2101.6
+      },
+      {
+        "data": "13/05/2026",
+        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
+        "documento": "PIX_DEB",
+        "valor": -15.0,
+        "saldo": 2693.5
+      },
+      {
+        "data": "13/05/2026",
+        "descricao": "COMPRAS NACIONAIS MarceloDeCarvalho PORTO ALEGRE",
+        "documento": "VE0864742",
+        "valor": -23.44,
+        "saldo": 2708.5
       },
       {
         "data": "14/05/2026",
@@ -1060,6 +1018,41 @@
         "saldo": 7545.03
       },
       {
+        "data": "14/05/2026",
+        "descricao": "PAGAMENTO PIX 45543915000181 CARREFOUR COMERCIO ",
+        "documento": "PIX_DEB",
+        "valor": -70.0,
+        "saldo": 6803.03
+      },
+      {
+        "data": "14/05/2026",
+        "descricao": "PAGAMENTO PIX 47273125000159 47.273.125 EVERTON ",
+        "documento": "PIX_DEB",
+        "valor": -780.0,
+        "saldo": 11442.29
+      },
+      {
+        "data": "15/05/2026",
+        "descricao": "PAGAMENTO PIX 02897054018 Marcelo de Carvalho He",
+        "documento": "PIX_DEB",
+        "valor": -6.2,
+        "saldo": 9355.59
+      },
+      {
+        "data": "15/05/2026",
+        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
+        "documento": "PIX_DEB",
+        "valor": -20.0,
+        "saldo": 9361.79
+      },
+      {
+        "data": "15/05/2026",
+        "descricao": "PAGAMENTO PIX 02908784033 Anderson da Rosa",
+        "documento": "PIX_DEB",
+        "valor": -200.0,
+        "saldo": 10898.91
+      },
+      {
         "data": "15/05/2026",
         "descricao": "COMPRAS NACIONAIS ARMAZEM PADARIA E CONF ESTEIO ",
         "documento": "VE0841028",
@@ -1074,67 +1067,11 @@
         "saldo": 9394.29
       },
       {
-        "data": "15/05/2026",
+        "data": "18/05/2026",
         "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
         "documento": "PIX_DEB",
         "valor": -20.0,
-        "saldo": 9361.79
-      },
-      {
-        "data": "15/05/2026",
-        "descricao": "PAGAMENTO PIX 02897054018 Marcelo de Carvalho He",
-        "documento": "PIX_DEB",
-        "valor": -6.2,
-        "saldo": 9355.59
-      },
-      {
-        "data": "15/05/2026",
-        "descricao": "PAGAMENTO PIX 02908784033 Anderson da Rosa",
-        "documento": "PIX_DEB",
-        "valor": -200.0,
-        "saldo": 10898.91
-      },
-      {
-        "data": "18/05/2026",
-        "descricao": "COMPRAS NACIONAIS ROMEU CENCI LTDA SAO LEOPOLDO ",
-        "documento": "VE0138362",
-        "valor": -431.5,
-        "saldo": 10046.03
-      },
-      {
-        "data": "18/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -80.0,
-        "saldo": 8070.78
-      },
-      {
-        "data": "18/05/2026",
-        "descricao": "COMPRAS NACIONAIS SUPERMERCADO TRADICAO PORTO AL",
-        "documento": "VE0524624",
-        "valor": -42.6,
-        "saldo": 8150.78
-      },
-      {
-        "data": "18/05/2026",
-        "descricao": "PAGAMENTO PIX 04731727000108 PANIFICADORA FRILLU",
-        "documento": "CX364851",
-        "valor": -20.41,
-        "saldo": 8193.38
-      },
-      {
-        "data": "18/05/2026",
-        "descricao": "PAGAMENTO PIX 18533558015 José Luiz Krummenauer",
-        "documento": "PIX_DEB",
-        "valor": -68.0,
-        "saldo": 9262.56
-      },
-      {
-        "data": "18/05/2026",
-        "descricao": "COMPRAS NACIONAIS BITENCURT E BITENCURT LANTRES ",
-        "documento": "VE0621754",
-        "valor": -34.0,
-        "saldo": 10230.56
+        "saldo": 10878.91
       },
       {
         "data": "18/05/2026",
@@ -1145,17 +1082,45 @@
       },
       {
         "data": "18/05/2026",
-        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
+        "descricao": "COMPRAS NACIONAIS BITENCURT E BITENCURT LANTRES ",
+        "documento": "VE0621754",
+        "valor": -34.0,
+        "saldo": 10230.56
+      },
+      {
+        "data": "18/05/2026",
+        "descricao": "PAGAMENTO PIX 18533558015 José Luiz Krummenauer",
         "documento": "PIX_DEB",
-        "valor": -20.0,
-        "saldo": 10878.91
+        "valor": -68.0,
+        "saldo": 9262.56
+      },
+      {
+        "data": "18/05/2026",
+        "descricao": "PAGAMENTO PIX 04731727000108 PANIFICADORA FRILLU",
+        "documento": "CX364851",
+        "valor": -20.41,
+        "saldo": 8193.38
+      },
+      {
+        "data": "18/05/2026",
+        "descricao": "COMPRAS NACIONAIS SUPERMERCADO TRADICAO PORTO AL",
+        "documento": "VE0524624",
+        "valor": -42.6,
+        "saldo": 8150.78
+      },
+      {
+        "data": "18/05/2026",
+        "descricao": "COMPRAS NACIONAIS ROMEU CENCI LTDA SAO LEOPOLDO ",
+        "documento": "VE0138362",
+        "valor": -431.5,
+        "saldo": 10046.03
       },
       {
         "data": "19/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "descricao": "PAGAMENTO PIX 00511861000134 ROMEU CENCI LTDA",
         "documento": "PIX_DEB",
-        "valor": -25.0,
-        "saldo": 11221.86
+        "valor": -10.75,
+        "saldo": 9490.17
       },
       {
         "data": "19/05/2026",
@@ -1173,6 +1138,13 @@
       },
       {
         "data": "19/05/2026",
+        "descricao": "PAGAMENTO PIX 00511861000134 ROMEU CENCI LTDA",
+        "documento": "PIX_DEB",
+        "valor": -39.0,
+        "saldo": 9500.92
+      },
+      {
+        "data": "19/05/2026",
         "descricao": "PAGAMENTO PIX 47136880025 IVANEI LUIS LOPES DA C",
         "documento": "CX410731",
         "valor": -20.0,
@@ -1180,10 +1152,10 @@
       },
       {
         "data": "19/05/2026",
-        "descricao": "PAGAMENTO PIX 00511861000134 ROMEU CENCI LTDA",
+        "descricao": "PAGAMENTO PIX 34626350000180 DEMOLIDORA ZOIO",
         "documento": "PIX_DEB",
-        "valor": -10.75,
-        "saldo": 9490.17
+        "valor": -50.0,
+        "saldo": 9589.92
       },
       {
         "data": "19/05/2026",
@@ -1201,13 +1173,6 @@
       },
       {
         "data": "19/05/2026",
-        "descricao": "PAGAMENTO PIX 34626350000180 DEMOLIDORA ZOIO",
-        "documento": "PIX_DEB",
-        "valor": -50.0,
-        "saldo": 9589.92
-      },
-      {
-        "data": "19/05/2026",
         "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
         "documento": "PIX_DEB",
         "valor": -15.0,
@@ -1221,18 +1186,11 @@
         "saldo": 9858.38
       },
       {
-        "data": "19/05/2026",
-        "descricao": "PAGAMENTO PIX 00511861000134 ROMEU CENCI LTDA",
-        "documento": "PIX_DEB",
-        "valor": -39.0,
-        "saldo": 9500.92
-      },
-      {
         "data": "20/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "descricao": "PAGAMENTO PIX 04320233050 Derick Pimentel De Sou",
         "documento": "PIX_DEB",
-        "valor": -20.0,
-        "saldo": 15923.68
+        "valor": -100.0,
+        "saldo": 16605.96
       },
       {
         "data": "20/05/2026",
@@ -1243,10 +1201,10 @@
       },
       {
         "data": "20/05/2026",
-        "descricao": "PAGAMENTO PIX 04320233050 Derick Pimentel De Sou",
-        "documento": "PIX_DEB",
-        "valor": -100.0,
-        "saldo": 16605.96
+        "descricao": "COMPRAS NACIONAIS Supermercado CAXIAS DO SULBR",
+        "documento": "VE0154481",
+        "valor": -115.9,
+        "saldo": 10819.82
       },
       {
         "data": "20/05/2026",
@@ -1256,46 +1214,11 @@
         "saldo": 10778.52
       },
       {
-        "data": "20/05/2026",
-        "descricao": "COMPRAS NACIONAIS Supermercado CAXIAS DO SULBR",
-        "documento": "VE0154481",
-        "valor": -115.9,
-        "saldo": 10819.82
-      },
-      {
-        "data": "21/05/2026",
-        "descricao": "PAGAMENTO PIX 01035038030 ANDRE FRANCISCO OLIVEI",
-        "documento": "CX120422",
-        "valor": -125.0,
-        "saldo": 19050.32
-      },
-      {
-        "data": "21/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -20.0,
-        "saldo": 19030.32
-      },
-      {
-        "data": "21/05/2026",
-        "descricao": "COMPRAS NACIONAIS AGAFARMA IVOTI IVOTI BR",
-        "documento": "VE0845033",
-        "valor": -34.55,
-        "saldo": 19252.42
-      },
-      {
         "data": "21/05/2026",
         "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
         "documento": "PIX_DEB",
         "valor": -20.0,
         "saldo": 13744.61
-      },
-      {
-        "data": "21/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -105.0,
-        "saldo": 15472.25
       },
       {
         "data": "21/05/2026",
@@ -1312,6 +1235,20 @@
         "saldo": 19308.27
       },
       {
+        "data": "21/05/2026",
+        "descricao": "COMPRAS NACIONAIS AGAFARMA IVOTI IVOTI BR",
+        "documento": "VE0845033",
+        "valor": -34.55,
+        "saldo": 19252.42
+      },
+      {
+        "data": "21/05/2026",
+        "descricao": "PAGAMENTO PIX 01035038030 ANDRE FRANCISCO OLIVEI",
+        "documento": "CX120422",
+        "valor": -125.0,
+        "saldo": 19050.32
+      },
+      {
         "data": "22/05/2026",
         "descricao": "PAGAMENTO PIX 46795812049 DENIS FRANCISCO RUSCHE",
         "documento": "PIX_DEB",
@@ -1320,10 +1257,10 @@
       },
       {
         "data": "22/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "descricao": "PAGAMENTO PIX 91171369034 JOSE ALEX BORGES MENDE",
         "documento": "PIX_DEB",
-        "valor": -105.0,
-        "saldo": 19272.19
+        "valor": -450.0,
+        "saldo": 16672.19
       },
       {
         "data": "22/05/2026",
@@ -1334,10 +1271,10 @@
       },
       {
         "data": "22/05/2026",
-        "descricao": "PAGAMENTO PIX 91171369034 JOSE ALEX BORGES MENDE",
+        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
         "documento": "PIX_DEB",
-        "valor": -450.0,
-        "saldo": 16672.19
+        "valor": -20.0,
+        "saldo": 18468.6
       },
       {
         "data": "22/05/2026",
@@ -1355,13 +1292,6 @@
       },
       {
         "data": "22/05/2026",
-        "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
-        "documento": "PIX_DEB",
-        "valor": -20.0,
-        "saldo": 18468.6
-      },
-      {
-        "data": "22/05/2026",
         "descricao": "PAGAMENTO PIX 22568702000109 MINI MERCADO JARDEL",
         "documento": "PIX_DEB",
         "valor": -43.38,
@@ -1373,27 +1303,6 @@
         "documento": "PIX_DEB",
         "valor": -23.44,
         "saldo": 16648.75
-      },
-      {
-        "data": "25/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -25.0,
-        "saldo": 15402.45
-      },
-      {
-        "data": "25/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -25.0,
-        "saldo": 14216.24
-      },
-      {
-        "data": "25/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -70.0,
-        "saldo": 13971.24
       },
       {
         "data": "25/05/2026",
@@ -1411,38 +1320,10 @@
       },
       {
         "data": "26/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -25.0,
-        "saldo": 18674.1
-      },
-      {
-        "data": "26/05/2026",
         "descricao": "PAGAMENTO PIX 90298993000112 ASSOCIACAO EMPRESAS",
         "documento": "PIX_DEB",
         "valor": -5.0,
         "saldo": 18669.1
-      },
-      {
-        "data": "27/05/2026",
-        "descricao": "PAGAMENTO PIX 03289012026 EDUARDO RODRIGUES MEND",
-        "documento": "PIX_DEB",
-        "valor": -20.0,
-        "saldo": 24391.94
-      },
-      {
-        "data": "27/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
-        "documento": "PIX_DEB",
-        "valor": -30.0,
-        "saldo": 24211.94
-      },
-      {
-        "data": "27/05/2026",
-        "descricao": "PAGAMENTO PIX 01987867009 LUCENI BELUSSO PAWELKI",
-        "documento": "PIX_DEB",
-        "valor": -28.26,
-        "saldo": 16930.08
       },
       {
         "data": "27/05/2026",
@@ -1453,13 +1334,6 @@
       },
       {
         "data": "27/05/2026",
-        "descricao": "PAGAMENTO PIX 00942339002 MARILIA MORAES PETRY",
-        "documento": "CX38714",
-        "valor": -300.0,
-        "saldo": 17667.38
-      },
-      {
-        "data": "27/05/2026",
         "descricao": "PAGAMENTO PIX 01741185033 MARCELO DOS SANTOS AGO",
         "documento": "PIX_DEB",
         "valor": -40.0,
@@ -1467,10 +1341,17 @@
       },
       {
         "data": "27/05/2026",
-        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "descricao": "PAGAMENTO PIX 01987867009 LUCENI BELUSSO PAWELKI",
         "documento": "PIX_DEB",
-        "valor": -125.0,
-        "saldo": 17542.38
+        "valor": -28.26,
+        "saldo": 16930.08
+      },
+      {
+        "data": "27/05/2026",
+        "descricao": "PAGAMENTO PIX 03289012026 EDUARDO RODRIGUES MEND",
+        "documento": "PIX_DEB",
+        "valor": -20.0,
+        "saldo": 24391.94
       },
       {
         "data": "27/05/2026",
@@ -1880,8 +1761,8 @@
     ]
   },
   "CHAPA / OPERACIONAL PF": {
-    "total": -9199.0,
-    "quantidade": 35,
+    "total": -10104.0,
+    "quantidade": 49,
     "registros": [
       {
         "data": "28/04/2026",
@@ -1934,17 +1815,17 @@
       },
       {
         "data": "04/05/2026",
-        "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
-        "documento": "PIX_DEB",
-        "valor": -150.0,
-        "saldo": 6867.7
-      },
-      {
-        "data": "04/05/2026",
         "descricao": "PAGAMENTO PIX 01529482011 Paulo Dilmar dos Santo",
         "documento": "PIX_DEB",
         "valor": -575.0,
         "saldo": 3023.72
+      },
+      {
+        "data": "04/05/2026",
+        "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
+        "documento": "PIX_DEB",
+        "valor": -150.0,
+        "saldo": 6867.7
       },
       {
         "data": "06/05/2026",
@@ -1961,6 +1842,27 @@
         "saldo": 8268.09
       },
       {
+        "data": "07/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -125.0,
+        "saldo": 8093.09
+      },
+      {
+        "data": "08/05/2026",
+        "descricao": "PAGAMENTO PIX 04223081020 Lucas Everton Petry Di",
+        "documento": "PIX_DEB",
+        "valor": -600.0,
+        "saldo": 4199.48
+      },
+      {
+        "data": "08/05/2026",
+        "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
+        "documento": "PIX_DEB",
+        "valor": -350.0,
+        "saldo": 6099.48
+      },
+      {
         "data": "08/05/2026",
         "descricao": "PAGAMENTO PIX 01529482011 Paulo Dilmar dos Santo",
         "documento": "PIX_DEB",
@@ -1975,18 +1877,11 @@
         "saldo": 6449.48
       },
       {
-        "data": "08/05/2026",
+        "data": "11/05/2026",
         "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
         "documento": "PIX_DEB",
-        "valor": -350.0,
-        "saldo": 6099.48
-      },
-      {
-        "data": "08/05/2026",
-        "descricao": "PAGAMENTO PIX 04223081020 Lucas Everton Petry Di",
-        "documento": "PIX_DEB",
-        "valor": -600.0,
-        "saldo": 4199.48
+        "valor": -72.0,
+        "saldo": 2827.48
       },
       {
         "data": "11/05/2026",
@@ -1996,11 +1891,11 @@
         "saldo": 2667.48
       },
       {
-        "data": "11/05/2026",
-        "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
+        "data": "12/05/2026",
+        "descricao": "PAGAMENTO PIX 04223081020 Lucas Everton Petry Di",
         "documento": "PIX_DEB",
-        "valor": -72.0,
-        "saldo": 2827.48
+        "valor": -30.0,
+        "saldo": -876.89
       },
       {
         "data": "12/05/2026",
@@ -2010,11 +1905,11 @@
         "saldo": 3228.12
       },
       {
-        "data": "12/05/2026",
-        "descricao": "PAGAMENTO PIX 04223081020 Lucas Everton Petry Di",
+        "data": "13/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
         "documento": "PIX_DEB",
-        "valor": -30.0,
-        "saldo": -876.89
+        "valor": -125.0,
+        "saldo": 1955.3
       },
       {
         "data": "13/05/2026",
@@ -2034,15 +1929,8 @@
         "data": "15/05/2026",
         "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
         "documento": "PIX_DEB",
-        "valor": -650.0,
-        "saldo": 12198.91
-      },
-      {
-        "data": "15/05/2026",
-        "descricao": "PAGAMENTO PIX 01529482011 Paulo Dilmar dos Santo",
-        "documento": "PIX_DEB",
-        "valor": -825.0,
-        "saldo": 11373.91
+        "valor": -150.0,
+        "saldo": 11098.91
       },
       {
         "data": "15/05/2026",
@@ -2053,10 +1941,17 @@
       },
       {
         "data": "15/05/2026",
+        "descricao": "PAGAMENTO PIX 01529482011 Paulo Dilmar dos Santo",
+        "documento": "PIX_DEB",
+        "valor": -825.0,
+        "saldo": 11373.91
+      },
+      {
+        "data": "15/05/2026",
         "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
         "documento": "PIX_DEB",
-        "valor": -150.0,
-        "saldo": 11098.91
+        "valor": -650.0,
+        "saldo": 12198.91
       },
       {
         "data": "18/05/2026",
@@ -2066,11 +1961,25 @@
         "saldo": 9630.56
       },
       {
+        "data": "18/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -80.0,
+        "saldo": 8070.78
+      },
+      {
         "data": "19/05/2026",
         "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
         "documento": "PIX_DEB",
         "valor": -49.0,
         "saldo": 11508.77
+      },
+      {
+        "data": "19/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -25.0,
+        "saldo": 11221.86
       },
       {
         "data": "20/05/2026",
@@ -2088,10 +1997,38 @@
       },
       {
         "data": "20/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -20.0,
+        "saldo": 15923.68
+      },
+      {
+        "data": "20/05/2026",
         "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
         "documento": "PIX_DEB",
         "valor": -50.0,
         "saldo": 15873.68
+      },
+      {
+        "data": "21/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -105.0,
+        "saldo": 15472.25
+      },
+      {
+        "data": "21/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -20.0,
+        "saldo": 19030.32
+      },
+      {
+        "data": "22/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -105.0,
+        "saldo": 19272.19
       },
       {
         "data": "22/05/2026",
@@ -2109,10 +2046,31 @@
       },
       {
         "data": "25/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -25.0,
+        "saldo": 15402.45
+      },
+      {
+        "data": "25/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -25.0,
+        "saldo": 14216.24
+      },
+      {
+        "data": "25/05/2026",
         "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
         "documento": "PIX_DEB",
         "valor": -175.0,
         "saldo": 14041.24
+      },
+      {
+        "data": "25/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -70.0,
+        "saldo": 13971.24
       },
       {
         "data": "25/05/2026",
@@ -2122,17 +2080,38 @@
         "saldo": 18544.05
       },
       {
+        "data": "26/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -25.0,
+        "saldo": 18674.1
+      },
+      {
         "data": "27/05/2026",
         "descricao": "PAGAMENTO PIX 04685181000 Douglas Matozo Aleixo",
         "documento": "PIX_DEB",
         "valor": -50.0,
         "saldo": 24241.94
+      },
+      {
+        "data": "27/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -125.0,
+        "saldo": 17542.38
+      },
+      {
+        "data": "27/05/2026",
+        "descricao": "PAGAMENTO PIX 01605841080 Clodomiro Matozo Aleix",
+        "documento": "PIX_DEB",
+        "valor": -30.0,
+        "saldo": 24211.94
       }
     ]
   },
   "IMPOSTOS / TRIBUTOS / OUTROS": {
-    "total": -3648.91,
-    "quantidade": 10,
+    "total": -4411.91,
+    "quantidade": 12,
     "registros": [
       {
         "data": "28/04/2026",
@@ -2147,6 +2126,13 @@
         "documento": "PIX_DEB",
         "valor": -2217.42,
         "saldo": 4061.72
+      },
+      {
+        "data": "04/05/2026",
+        "descricao": "PAGAMENTO PIX 00942339002 MARILIA MORAES PETRY",
+        "documento": "CX394881",
+        "valor": -463.0,
+        "saldo": 3598.72
       },
       {
         "data": "05/05/2026",
@@ -2203,6 +2189,13 @@
         "documento": "PIX_DEB",
         "valor": -183.17,
         "saldo": 17339.59
+      },
+      {
+        "data": "27/05/2026",
+        "descricao": "PAGAMENTO PIX 00942339002 MARILIA MORAES PETRY",
+        "documento": "CX38714",
+        "valor": -300.0,
+        "saldo": 17667.38
       }
     ]
   },
@@ -2442,8 +2435,8 @@
     ]
   },
   "CONTA / BOLETO": {
-    "total": -8266.83,
-    "quantidade": 7,
+    "total": -11966.830000000002,
+    "quantidade": 8,
     "registros": [
       {
         "data": "30/04/2026",
@@ -2451,6 +2444,13 @@
         "documento": "CE0101524",
         "valor": -150.0,
         "saldo": 7184.14
+      },
+      {
+        "data": "07/05/2026",
+        "descricao": "PAGAMENTO PIX 86343734015 PEDRO DA SILVA MARTINS",
+        "documento": "PIX_DEB",
+        "valor": -3700.0,
+        "saldo": 644.65
       },
       {
         "data": "08/05/2026",

@@ -15,11 +15,25 @@
       "quantidade": 56
     },
     {
+      "nome": "CONTA / BOLETO",
+      "valor": -11966.83,
+      "valor_abs": 11966.83,
+      "percentual": 16.005041117905208,
+      "quantidade": 8
+    },
+    {
+      "nome": "CHAPA / OPERACIONAL PF",
+      "valor": -10104.0,
+      "valor_abs": 10104.0,
+      "percentual": 13.513598459685166,
+      "quantidade": 49
+    },
+    {
       "nome": "PAGAMENTOS",
-      "valor": -14954.9,
-      "valor_abs": 14954.9,
-      "percentual": 20.001436421689004,
-      "quantidade": 126
+      "valor": -9586.9,
+      "valor_abs": 9586.9,
+      "percentual": 12.822002877390709,
+      "quantidade": 109
     },
     {
       "nome": "PRÓ-LABORE / SOCIETÁRIO",
@@ -27,20 +41,6 @@
       "valor_abs": 9332.0,
       "percentual": 12.481086780065516,
       "quantidade": 12
-    },
-    {
-      "nome": "CHAPA / OPERACIONAL PF",
-      "valor": -9199.0,
-      "valor_abs": 9199.0,
-      "percentual": 12.3032058818927,
-      "quantidade": 35
-    },
-    {
-      "nome": "CONTA / BOLETO",
-      "valor": -8266.83,
-      "valor_abs": 8266.83,
-      "percentual": 11.056474777759217,
-      "quantidade": 7
     },
     {
       "nome": "MECÂNICA / MANUTENÇÃO",
@@ -51,10 +51,10 @@
     },
     {
       "nome": "IMPOSTOS / TRIBUTOS / OUTROS",
-      "valor": -3648.91,
-      "valor_abs": 3648.91,
-      "percentual": 4.880236001141112,
-      "quantidade": 10
+      "valor": -4411.91,
+      "valor_abs": 4411.91,
+      "percentual": 5.900710627500947,
+      "quantidade": 12
     },
     {
       "nome": "PEDÁGIOS / TAGS",
@@ -303,7 +303,7 @@
       },
       {
         "data": "04/05",
-        "valor": -615.0
+        "valor": -152.0
       },
       {
         "data": "05/05",
@@ -315,7 +315,7 @@
       },
       {
         "data": "07/05",
-        "valor": -4051.0
+        "valor": -226.0
       },
       {
         "data": "08/05",
@@ -331,7 +331,7 @@
       },
       {
         "data": "13/05",
-        "valor": -1300.7
+        "valor": -1175.7
       },
       {
         "data": "14/05",
@@ -343,35 +343,35 @@
       },
       {
         "data": "18/05",
-        "valor": -731.51
+        "valor": -651.51
       },
       {
         "data": "19/05",
-        "valor": -532.12
+        "valor": -507.12
       },
       {
         "data": "20/05",
-        "valor": -268.9
+        "valor": -248.9
       },
       {
         "data": "21/05",
-        "valor": -453.75
+        "valor": -328.75
       },
       {
         "data": "22/05",
-        "valor": -1720.36
+        "valor": -1615.36
       },
       {
         "data": "25/05",
-        "valor": -172.44
+        "valor": -52.44
       },
       {
         "data": "26/05",
-        "valor": -230.0
+        "valor": -205.0
       },
       {
         "data": "27/05",
-        "valor": -628.12
+        "valor": -173.12
       }
     ],
     "COMBUSTÍVEL / POSTO": [
@@ -479,7 +479,7 @@
       },
       {
         "data": "07/05",
-        "valor": -20.0
+        "valor": -145.0
       },
       {
         "data": "08/05",
@@ -495,7 +495,7 @@
       },
       {
         "data": "13/05",
-        "valor": -125.0
+        "valor": -250.0
       },
       {
         "data": "14/05",
@@ -507,27 +507,35 @@
       },
       {
         "data": "18/05",
-        "valor": -600.0
+        "valor": -680.0
       },
       {
         "data": "19/05",
-        "valor": -49.0
+        "valor": -74.0
       },
       {
         "data": "20/05",
-        "valor": -500.0
+        "valor": -520.0
+      },
+      {
+        "data": "21/05",
+        "valor": -125.0
       },
       {
         "data": "22/05",
-        "valor": -1308.0
+        "valor": -1413.0
       },
       {
         "data": "25/05",
-        "valor": -350.0
+        "valor": -470.0
+      },
+      {
+        "data": "26/05",
+        "valor": -25.0
       },
       {
         "data": "27/05",
-        "valor": -50.0
+        "valor": -205.0
       }
     ],
     "IMPOSTOS / TRIBUTOS / OUTROS": [
@@ -538,6 +546,10 @@
       {
         "data": "30/04",
         "valor": -2217.42
+      },
+      {
+        "data": "04/05",
+        "valor": -463.0
       },
       {
         "data": "05/05",
@@ -558,6 +570,10 @@
       {
         "data": "26/05",
         "valor": -183.17
+      },
+      {
+        "data": "27/05",
+        "valor": -300.0
       }
     ],
     "CUSTO OPERACIONAL ESPECÍFICO": [
@@ -658,6 +674,10 @@
       {
         "data": "30/04",
         "valor": -150.0
+      },
+      {
+        "data": "07/05",
+        "valor": -3700.0
       },
       {
         "data": "08/05",
