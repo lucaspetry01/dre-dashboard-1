@@ -1,0 +1,871 @@
+{
+  "resumo": {
+    "total_receitas": 96109.12999999998,
+    "total_despesas": -74769.13,
+    "resultado": 21339.99999999997,
+    "periodo_inicio": "27/04/2026",
+    "periodo_fim": "27/05/2026"
+  },
+  "categorias": [
+    {
+      "nome": "COMBUSTÍVEL / POSTO",
+      "valor": -15343.53,
+      "valor_abs": 15343.53,
+      "percentual": 20.521209755951418,
+      "quantidade": 48
+    },
+    {
+      "nome": "PAGAMENTOS PESSOAIS (PIX)",
+      "valor": -11298.63,
+      "valor_abs": 11298.63,
+      "percentual": 15.111356785882085,
+      "quantidade": 77
+    },
+    {
+      "nome": "PRÓ-LABORE / SOCIETÁRIO",
+      "valor": -9332.0,
+      "valor_abs": 9332.0,
+      "percentual": 12.481086780065516,
+      "quantidade": 12
+    },
+    {
+      "nome": "CHAPA / OPERACIONAL PF",
+      "valor": -9199.0,
+      "valor_abs": 9199.0,
+      "percentual": 12.3032058818927,
+      "quantidade": 35
+    },
+    {
+      "nome": "MECÂNICA / MANUTENÇÃO",
+      "valor": -6968.38,
+      "valor_abs": 6968.38,
+      "percentual": 9.319862354958524,
+      "quantidade": 7
+    },
+    {
+      "nome": "SAQUES / CHEQUES",
+      "valor": -4910.0,
+      "valor_abs": 4910.0,
+      "percentual": 6.566881278409953,
+      "quantidade": 3
+    },
+    {
+      "nome": "COMPRAS / CARTÃO",
+      "valor": -4426.21,
+      "valor_abs": 4426.21,
+      "percentual": 5.919836167680431,
+      "quantidade": 19
+    },
+    {
+      "nome": "CONSÓRCIO / FINANCIAMENTO",
+      "valor": -2967.44,
+      "valor_abs": 2967.44,
+      "percentual": 3.968803702811575,
+      "quantidade": 3
+    },
+    {
+      "nome": "IMPOSTOS / TRIBUTOS",
+      "valor": -2872.35,
+      "valor_abs": 2872.35,
+      "percentual": 3.8416255478698225,
+      "quantidade": 4
+    },
+    {
+      "nome": "FORNECEDORES (PIX CNPJ)",
+      "valor": -2427.47,
+      "valor_abs": 2427.47,
+      "percentual": 3.2466206307335654,
+      "quantidade": 27
+    },
+    {
+      "nome": "PEDÁGIOS / TAGS",
+      "valor": -2132.87,
+      "valor_abs": 2132.87,
+      "percentual": 2.8526077540289685,
+      "quantidade": 84
+    },
+    {
+      "nome": "CUSTO OPERACIONAL ESPECÍFICO",
+      "valor": -1000.0,
+      "valor_abs": 1000.0,
+      "percentual": 1.3374503622016198,
+      "quantidade": 9
+    },
+    {
+      "nome": "ALIMENTAÇÃO",
+      "valor": -725.3,
+      "valor_abs": 725.3,
+      "percentual": 0.9700527477048347,
+      "quantidade": 14
+    },
+    {
+      "nome": "PAGAMENTOS DE BOLETO",
+      "valor": -644.39,
+      "valor_abs": 644.39,
+      "percentual": 0.8618396388991016,
+      "quantidade": 2
+    },
+    {
+      "nome": "TELECOM / INTERNET",
+      "valor": -277.46,
+      "valor_abs": 277.46,
+      "percentual": 0.3710889774964614,
+      "quantidade": 3
+    },
+    {
+      "nome": "TARIFAS BANCÁRIAS",
+      "valor": -244.1,
+      "valor_abs": 244.1,
+      "percentual": 0.3264716334134154,
+      "quantidade": 2
+    }
+  ],
+  "diario": [
+    {
+      "data": "27/04",
+      "data_full": "2026-04-27",
+      "valor": 7135.7,
+      "saldo": 2172.06
+    },
+    {
+      "data": "28/04",
+      "data_full": "2026-04-28",
+      "valor": -1103.4099999999999,
+      "saldo": 9340.06
+    },
+    {
+      "data": "29/04",
+      "data_full": "2026-04-29",
+      "valor": 1309.77,
+      "saldo": 7975.99
+    },
+    {
+      "data": "30/04",
+      "data_full": "2026-04-30",
+      "valor": -6067.42,
+      "saldo": 9207.35
+    },
+    {
+      "data": "04/05",
+      "data_full": "2026-05-04",
+      "valor": 2805.98,
+      "saldo": 2013.0
+    },
+    {
+      "data": "05/05",
+      "data_full": "2026-05-05",
+      "valor": 1114.68,
+      "saldo": 5866.08
+    },
+    {
+      "data": "06/05",
+      "data_full": "2026-05-06",
+      "valor": -877.37,
+      "saldo": 7811.01
+    },
+    {
+      "data": "07/05",
+      "data_full": "2026-05-07",
+      "valor": 988.0799999999999,
+      "saldo": 566.9
+    },
+    {
+      "data": "08/05",
+      "data_full": "2026-05-08",
+      "valor": -5193.610000000001,
+      "saldo": 7354.48
+    },
+    {
+      "data": "11/05",
+      "data_full": "2026-05-11",
+      "valor": -1920.5400000000002,
+      "saldo": 2439.5
+    },
+    {
+      "data": "12/05",
+      "data_full": "2026-05-12",
+      "valor": 1752.9999999999998,
+      "saldo": 1547.33
+    },
+    {
+      "data": "13/05",
+      "data_full": "2026-05-13",
+      "valor": 4878.14,
+      "saldo": 1955.3
+    },
+    {
+      "data": "14/05",
+      "data_full": "2026-05-14",
+      "valor": 1832.2099999999998,
+      "saldo": 6873.03
+    },
+    {
+      "data": "15/05",
+      "data_full": "2026-05-15",
+      "valor": 1456.6200000000003,
+      "saldo": 8766.59
+    },
+    {
+      "data": "18/05",
+      "data_full": "2026-05-18",
+      "valor": -852.88,
+      "saldo": 9330.56
+    },
+    {
+      "data": "19/05",
+      "data_full": "2026-05-19",
+      "valor": 1175.83,
+      "saldo": 9539.92
+    },
+    {
+      "data": "20/05",
+      "data_full": "2026-05-20",
+      "valor": 2552.5,
+      "saldo": 10778.52
+    },
+    {
+      "data": "21/05",
+      "data_full": "2026-05-21",
+      "valor": 5255.96,
+      "saldo": 13012.7
+    },
+    {
+      "data": "22/05",
+      "data_full": "2026-05-22",
+      "valor": -2358.13,
+      "saldo": 20703.38
+    },
+    {
+      "data": "25/05",
+      "data_full": "2026-05-25",
+      "valor": 850.5700000000004,
+      "saldo": 15218.35
+    },
+    {
+      "data": "26/05",
+      "data_full": "2026-05-26",
+      "valor": 1026.34,
+      "saldo": 16879.84
+    },
+    {
+      "data": "27/05",
+      "data_full": "2026-05-27",
+      "valor": 5577.9800000000005,
+      "saldo": 24127.08
+    }
+  ],
+  "timeline_categorias": {
+    "PEDÁGIOS / TAGS": [
+      {
+        "data": "27/04",
+        "valor": -172.55
+      },
+      {
+        "data": "28/04",
+        "valor": -135.95
+      },
+      {
+        "data": "30/04",
+        "valor": -40.8
+      },
+      {
+        "data": "04/05",
+        "valor": -45.85
+      },
+      {
+        "data": "05/05",
+        "valor": -146.51
+      },
+      {
+        "data": "06/05",
+        "valor": -71.37
+      },
+      {
+        "data": "07/05",
+        "valor": -9.75
+      },
+      {
+        "data": "08/05",
+        "valor": -70.69
+      },
+      {
+        "data": "11/05",
+        "valor": -90.6
+      },
+      {
+        "data": "12/05",
+        "valor": -160.11
+      },
+      {
+        "data": "13/05",
+        "valor": -129.89999999999998
+      },
+      {
+        "data": "14/05",
+        "valor": -31.05
+      },
+      {
+        "data": "15/05",
+        "valor": -252.5
+      },
+      {
+        "data": "19/05",
+        "valor": -73.65
+      },
+      {
+        "data": "20/05",
+        "valor": -124.77
+      },
+      {
+        "data": "21/05",
+        "valor": -182.18
+      },
+      {
+        "data": "25/05",
+        "valor": -212.45999999999998
+      },
+      {
+        "data": "26/05",
+        "valor": -9.75
+      },
+      {
+        "data": "27/05",
+        "valor": -172.43
+      }
+    ],
+    "PAGAMENTOS PESSOAIS (PIX)": [
+      {
+        "data": "27/04",
+        "valor": -20.0
+      },
+      {
+        "data": "28/04",
+        "valor": -84.0
+      },
+      {
+        "data": "29/04",
+        "valor": -31.5
+      },
+      {
+        "data": "30/04",
+        "valor": -594.44
+      },
+      {
+        "data": "04/05",
+        "valor": -565.0
+      },
+      {
+        "data": "05/05",
+        "valor": -46.0
+      },
+      {
+        "data": "06/05",
+        "valor": -756.0
+      },
+      {
+        "data": "07/05",
+        "valor": -3966.0
+      },
+      {
+        "data": "08/05",
+        "valor": -31.5
+      },
+      {
+        "data": "11/05",
+        "valor": -260.0
+      },
+      {
+        "data": "12/05",
+        "valor": -84.0
+      },
+      {
+        "data": "13/05",
+        "valor": -1073.33
+      },
+      {
+        "data": "14/05",
+        "valor": -34.0
+      },
+      {
+        "data": "15/05",
+        "valor": -226.2
+      },
+      {
+        "data": "18/05",
+        "valor": -268.0
+      },
+      {
+        "data": "19/05",
+        "valor": -277.46000000000004
+      },
+      {
+        "data": "20/05",
+        "valor": -153.0
+      },
+      {
+        "data": "21/05",
+        "valor": -270.0
+      },
+      {
+        "data": "22/05",
+        "valor": -1646.5
+      },
+      {
+        "data": "25/05",
+        "valor": -143.44
+      },
+      {
+        "data": "26/05",
+        "valor": -225.0
+      },
+      {
+        "data": "27/05",
+        "valor": -543.26
+      }
+    ],
+    "COMBUSTÍVEL / POSTO": [
+      {
+        "data": "27/04",
+        "valor": -917.28
+      },
+      {
+        "data": "29/04",
+        "valor": -706.9
+      },
+      {
+        "data": "30/04",
+        "valor": -793.85
+      },
+      {
+        "data": "04/05",
+        "valor": -980.6700000000001
+      },
+      {
+        "data": "05/05",
+        "valor": -679.4
+      },
+      {
+        "data": "07/05",
+        "valor": -1377.21
+      },
+      {
+        "data": "08/05",
+        "valor": -501.4
+      },
+      {
+        "data": "11/05",
+        "valor": -75.8
+      },
+      {
+        "data": "12/05",
+        "valor": -2221.11
+      },
+      {
+        "data": "13/05",
+        "valor": -506.21
+      },
+      {
+        "data": "14/05",
+        "valor": -622.0
+      },
+      {
+        "data": "15/05",
+        "valor": -1245.4
+      },
+      {
+        "data": "18/05",
+        "valor": -604.0
+      },
+      {
+        "data": "19/05",
+        "valor": -200.0
+      },
+      {
+        "data": "20/05",
+        "valor": -881.95
+      },
+      {
+        "data": "21/05",
+        "valor": -1392.3200000000002
+      },
+      {
+        "data": "25/05",
+        "valor": -906.4200000000001
+      },
+      {
+        "data": "26/05",
+        "valor": -320.0
+      },
+      {
+        "data": "27/05",
+        "valor": -411.61
+      }
+    ],
+    "ALIMENTAÇÃO": [
+      {
+        "data": "27/04",
+        "valor": -87.0
+      },
+      {
+        "data": "05/05",
+        "valor": -96.0
+      },
+      {
+        "data": "11/05",
+        "valor": -43.97
+      },
+      {
+        "data": "15/05",
+        "valor": -48.0
+      },
+      {
+        "data": "18/05",
+        "valor": -42.6
+      },
+      {
+        "data": "20/05",
+        "valor": -115.9
+      },
+      {
+        "data": "21/05",
+        "valor": -122.3
+      },
+      {
+        "data": "22/05",
+        "valor": -55.67
+      },
+      {
+        "data": "25/05",
+        "valor": -29.0
+      },
+      {
+        "data": "27/05",
+        "valor": -84.86
+      }
+    ],
+    "COMPRAS / CARTÃO": [
+      {
+        "data": "27/04",
+        "valor": -542.53
+      },
+      {
+        "data": "28/04",
+        "valor": -473.46
+      },
+      {
+        "data": "05/05",
+        "valor": -244.99
+      },
+      {
+        "data": "11/05",
+        "valor": -484.18
+      },
+      {
+        "data": "12/05",
+        "valor": -50.0
+      },
+      {
+        "data": "13/05",
+        "valor": -23.44
+      },
+      {
+        "data": "18/05",
+        "valor": -1489.62
+      },
+      {
+        "data": "21/05",
+        "valor": -34.55
+      },
+      {
+        "data": "22/05",
+        "valor": -541.72
+      },
+      {
+        "data": "27/05",
+        "valor": -541.72
+      }
+    ],
+    "CHAPA / OPERACIONAL PF": [
+      {
+        "data": "28/04",
+        "valor": -290.0
+      },
+      {
+        "data": "30/04",
+        "valor": -1255.0
+      },
+      {
+        "data": "04/05",
+        "valor": -725.0
+      },
+      {
+        "data": "06/05",
+        "valor": -50.0
+      },
+      {
+        "data": "07/05",
+        "valor": -20.0
+      },
+      {
+        "data": "08/05",
+        "valor": -1805.0
+      },
+      {
+        "data": "11/05",
+        "valor": -92.0
+      },
+      {
+        "data": "12/05",
+        "valor": -180.0
+      },
+      {
+        "data": "13/05",
+        "valor": -125.0
+      },
+      {
+        "data": "14/05",
+        "valor": -50.0
+      },
+      {
+        "data": "15/05",
+        "valor": -1750.0
+      },
+      {
+        "data": "18/05",
+        "valor": -600.0
+      },
+      {
+        "data": "19/05",
+        "valor": -49.0
+      },
+      {
+        "data": "20/05",
+        "valor": -500.0
+      },
+      {
+        "data": "22/05",
+        "valor": -1308.0
+      },
+      {
+        "data": "25/05",
+        "valor": -350.0
+      },
+      {
+        "data": "27/05",
+        "valor": -50.0
+      }
+    ],
+    "IMPOSTOS / TRIBUTOS": [
+      {
+        "data": "28/04",
+        "valor": -120.0
+      },
+      {
+        "data": "30/04",
+        "valor": -2217.42
+      },
+      {
+        "data": "20/05",
+        "valor": -534.9300000000001
+      }
+    ],
+    "CUSTO OPERACIONAL ESPECÍFICO": [
+      {
+        "data": "29/04",
+        "valor": -100.0
+      },
+      {
+        "data": "30/04",
+        "valor": -100.0
+      },
+      {
+        "data": "07/05",
+        "valor": -100.0
+      },
+      {
+        "data": "11/05",
+        "valor": -100.0
+      },
+      {
+        "data": "18/05",
+        "valor": -200.0
+      },
+      {
+        "data": "19/05",
+        "valor": -100.0
+      },
+      {
+        "data": "21/05",
+        "valor": -100.0
+      },
+      {
+        "data": "25/05",
+        "valor": -100.0
+      },
+      {
+        "data": "27/05",
+        "valor": -100.0
+      }
+    ],
+    "FORNECEDORES (PIX CNPJ)": [
+      {
+        "data": "29/04",
+        "valor": -249.0
+      },
+      {
+        "data": "30/04",
+        "valor": -16.0
+      },
+      {
+        "data": "04/05",
+        "valor": -50.0
+      },
+      {
+        "data": "05/05",
+        "valor": -247.5
+      },
+      {
+        "data": "07/05",
+        "valor": -85.0
+      },
+      {
+        "data": "11/05",
+        "valor": -365.88
+      },
+      {
+        "data": "13/05",
+        "valor": -203.93
+      },
+      {
+        "data": "14/05",
+        "valor": -850.0
+      },
+      {
+        "data": "18/05",
+        "valor": -55.41
+      },
+      {
+        "data": "19/05",
+        "valor": -254.66
+      },
+      {
+        "data": "21/05",
+        "valor": -26.9
+      },
+      {
+        "data": "22/05",
+        "valor": -18.19
+      },
+      {
+        "data": "26/05",
+        "valor": -5.0
+      }
+    ],
+    "MECÂNICA / MANUTENÇÃO": [
+      {
+        "data": "30/04",
+        "valor": -3310.0
+      },
+      {
+        "data": "07/05",
+        "valor": -1321.76
+      },
+      {
+        "data": "11/05",
+        "valor": -445.33
+      },
+      {
+        "data": "20/05",
+        "valor": -920.0
+      },
+      {
+        "data": "25/05",
+        "valor": -971.29
+      }
+    ],
+    "PRÓ-LABORE / SOCIETÁRIO": [
+      {
+        "data": "30/04",
+        "valor": -2200.0
+      },
+      {
+        "data": "05/05",
+        "valor": -30.0
+      },
+      {
+        "data": "08/05",
+        "valor": -2600.0
+      },
+      {
+        "data": "13/05",
+        "valor": -2.0
+      },
+      {
+        "data": "15/05",
+        "valor": -2200.0
+      },
+      {
+        "data": "22/05",
+        "valor": -1100.0
+      },
+      {
+        "data": "25/05",
+        "valor": -1150.0
+      },
+      {
+        "data": "26/05",
+        "valor": -50.0
+      }
+    ],
+    "SAQUES / CHEQUES": [
+      {
+        "data": "30/04",
+        "valor": -150.0
+      },
+      {
+        "data": "11/05",
+        "valor": -2760.0
+      },
+      {
+        "data": "14/05",
+        "valor": -2000.0
+      }
+    ],
+    "TARIFAS BANCÁRIAS": [
+      {
+        "data": "05/05",
+        "valor": -60.0
+      },
+      {
+        "data": "25/05",
+        "valor": -184.1
+      }
+    ],
+    "CONSÓRCIO / FINANCIAMENTO": [
+      {
+        "data": "08/05",
+        "valor": -2380.3
+      },
+      {
+        "data": "11/05",
+        "valor": -587.14
+      }
+    ],
+    "TELECOM / INTERNET": [
+      {
+        "data": "11/05",
+        "valor": -94.28999999999999
+      },
+      {
+        "data": "26/05",
+        "valor": -183.17
+      }
+    ],
+    "PAGAMENTOS DE BOLETO": [
+      {
+        "data": "20/05",
+        "valor": -644.39
+      }
+    ]
+  }
+}
