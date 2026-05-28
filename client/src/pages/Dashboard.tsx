@@ -1,12 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import dashboardData from '@/data/dashboard.json';
+import detalhesData from '@/data/detalhes.json';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
+  LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, PieChart as PieChartIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
+import BarChartWithLabels from '@/components/BarChartWithLabels';
 
 const COLORS = [
   '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
@@ -15,6 +17,9 @@ const COLORS = [
 
 export default function Dashboard() {
   const { resumo, categorias, diario, timeline_categorias } = dashboardData;
+  const detalhes = detalhesData as Record<string, any>;
+  
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   // Formatar moeda
   const formatMoney = (value: number) => {
@@ -42,6 +47,8 @@ export default function Dashboard() {
     })),
     [diario]
   );
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
@@ -127,31 +134,14 @@ export default function Dashboard() {
             <TabsTrigger value="pizza">Composição</TabsTrigger>
           </TabsList>
 
-          {/* Gráfico de Categorias */}
+          {/* Gráfico de Categorias COM LABELS */}
           <TabsContent value="categorias">
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>Despesas por Categoria</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={categoriasChart}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis 
-                      dataKey="nome" 
-                      angle={-45} 
-                      textAnchor="end" 
-                      height={120}
-                      tick={{ fontSize: 12 }}
-                    />
-                    <YAxis />
-                    <Tooltip 
-                      formatter={(value: any) => formatMoney(Number(value))}
-                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0' }}
-                    />
-                    <Bar dataKey="valor_display" fill="#3B82F6" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <BarChartWithLabels data={categoriasChart} formatMoney={formatMoney} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -219,39 +209,75 @@ export default function Dashboard() {
           </TabsContent>
         </Tabs>
 
-        {/* Tabela de Categorias */}
+        {/* Tabela Expansível de Categorias */}
         <Card className="border-0 shadow-lg mt-8">
           <CardHeader>
             <CardTitle>Detalhamento de Categorias</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Categoria</th>
-                    <th className="text-right py-3 px-4 font-semibold text-slate-700">Valor</th>
-                    <th className="text-right py-3 px-4 font-semibold text-slate-700">% do Total</th>
-                    <th className="text-right py-3 px-4 font-semibold text-slate-700">Transações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categoriasChart.map((cat, idx) => (
-                    <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50">
-                      <td className="py-3 px-4 text-slate-900">{cat.nome}</td>
-                      <td className="py-3 px-4 text-right font-semibold text-slate-900">
-                        {formatMoney(cat.valor)}
-                      </td>
-                      <td className="py-3 px-4 text-right text-slate-600">
-                        {cat.percentual.toFixed(2)}%
-                      </td>
-                      <td className="py-3 px-4 text-right text-slate-600">
-                        {cat.quantidade}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-2">
+              {categoriasChart.map((cat, idx) => (
+                <div key={idx} className="border border-slate-200 rounded-lg overflow-hidden">
+                  {/* Cabeçalho da Categoria */}
+                  <button
+                    onClick={() => setExpandedCategory(expandedCategory === cat.nome ? null : cat.nome)}
+                    className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="w-4 h-4 rounded" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
+                      <div className="text-left">
+                        <h3 className="font-semibold text-slate-900">{cat.nome}</h3>
+                        <p className="text-sm text-slate-500">{cat.quantidade} transações</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <p className="font-bold text-slate-900">{formatMoney(cat.valor)}</p>
+                        <p className="text-sm text-slate-500">{cat.percentual.toFixed(2)}%</p>
+                      </div>
+                      {expandedCategory === cat.nome ? (
+                        <ChevronUp className="w-5 h-5 text-slate-600" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-slate-600" />
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Registros Detalhados */}
+                  {expandedCategory === cat.nome && (
+                    <div className="bg-white border-t border-slate-200">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="bg-slate-50 border-b border-slate-200">
+                              <th className="text-left py-2 px-4 font-semibold text-slate-700">Data</th>
+                              <th className="text-left py-2 px-4 font-semibold text-slate-700">Descrição</th>
+                              <th className="text-left py-2 px-4 font-semibold text-slate-700">Documento</th>
+                              <th className="text-right py-2 px-4 font-semibold text-slate-700">Valor</th>
+                              <th className="text-right py-2 px-4 font-semibold text-slate-700">Saldo</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {detalhes[cat.nome]?.registros.map((reg: any, ridx: number) => (
+                              <tr key={ridx} className="border-b border-slate-100 hover:bg-slate-50">
+                                <td className="py-2 px-4 text-slate-900 font-medium">{reg.data}</td>
+                                <td className="py-2 px-4 text-slate-700 max-w-xs truncate">{reg.descricao}</td>
+                                <td className="py-2 px-4 text-slate-600 text-xs">{reg.documento}</td>
+                                <td className="py-2 px-4 text-right font-semibold text-slate-900">
+                                  {formatMoney(reg.valor)}
+                                </td>
+                                <td className="py-2 px-4 text-right text-slate-600">
+                                  {formatMoney(reg.saldo)}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
