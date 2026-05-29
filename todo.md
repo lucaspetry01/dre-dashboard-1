@@ -9,13 +9,14 @@
 - [x] Endpoint `ofx.historicoUploads`
 - [x] Adicionar botão "Importar OFX" no Dashboard
 - [x] Testes do parser OFX (13 testes incluindo SGML legado e anos retroativos)
-- [ ] Migrar dados atuais do JSON para o banco (opcional - fica para depois)
-- [ ] Atualizar Dashboard para ler do banco automaticamente quando houver dados (opcional)
+- [x] Atualizar Dashboard para ler do banco automaticamente quando houver dados
+- [ ] Migrar dados atuais do JSON para o banco (opcional - não crítico, JSON segue como fallback)
 
 ## Integração OFX completa (Fase 2)
 
-- [ ] Endpoint `ofx.resumoCompleto` que agrega banco no formato dashboard
-- [ ] Dashboard usa tRPC para verificar `temDados` no mount
-- [ ] Quando há dados, dashboard lê do banco; senão usa JSON
-- [ ] Após upload OFX, invalidar queries para atualizar tela automaticamente
-- [ ] Indicador visual de fonte (Banco/JSON) para transparência
+- [x] Endpoint `ofx.resumoCompleto` que agrega banco no formato dashboard
+- [x] Dashboard usa tRPC para verificar `temDados` no mount (via resumoCompleto)
+- [x] Quando há dados, dashboard lê do banco; senão usa JSON
+- [x] Após upload OFX, invalidar queries para atualizar tela automaticamente
+- [x] Indicador visual de fonte (Banco/JSON) para transparência (badge no header)
+- [x] Testes do helper de agregação (5 testes em transacoes.test.ts)

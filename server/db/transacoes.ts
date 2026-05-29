@@ -166,12 +166,24 @@ function formatISO(d: Date): string {
 }
 
 /**
- * Constrói o resumo completo para alimentar o dashboard com dados do banco.
- * Mantém o mesmo formato do dashboard.json + detalhes.json para evitar refatoração no front.
+ * Tipo genérico das linhas usadas pela agregação (corresponde ao retorno de listTransacoes).
  */
-export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
-  const todas = await listTransacoes();
-  if (todas.length === 0) return null;
+export interface AggregateRow {
+  data: string;
+  dataTimestamp: Date | string;
+  descricao: string;
+  documento: string | null;
+  valor: string | number;
+  saldo: string | number | null;
+  categoria: string;
+}
+
+/**
+ * Função PURA: recebe linhas e produz o resumo agregado.
+ * Foi extraída para permitir testes unitários determinísticos sem depender do banco.
+ */
+export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
+  if (rows.length === 0) return null;
 
   let totalReceitas = 0;
   let totalDespesas = 0;
@@ -185,7 +197,7 @@ export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
   let periodoInicio: Date | null = null;
   let periodoFim: Date | null = null;
 
-  for (const t of todas) {
+  for (const t of rows) {
     const valor = Number(t.valor);
     const saldo = Number(t.saldo ?? 0);
     const dt = t.dataTimestamp instanceof Date ? t.dataTimestamp : new Date(t.dataTimestamp as unknown as string);
@@ -258,6 +270,14 @@ export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
     categorias,
     diario,
     detalhes,
-    totalRegistros: todas.length,
+    totalRegistros: rows.length,
   };
+}
+
+/**
+ * Constrói o resumo agregado a partir do banco. Apenas busca + delega para a função pura.
+ */
+export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
+  const todas = await listTransacoes();
+  return aggregateRows(todas as AggregateRow[]);
 }
