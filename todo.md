@@ -10,7 +10,7 @@
 - [x] Adicionar botão "Importar OFX" no Dashboard
 - [x] Testes do parser OFX (13 testes incluindo SGML legado e anos retroativos)
 - [x] Atualizar Dashboard para ler do banco automaticamente quando houver dados
-- [ ] Migrar dados atuais do JSON para o banco (opcional - não crítico, JSON segue como fallback)
+- [x] ~~Migrar dados atuais do JSON para o banco~~ (decisão: não fazer — JSON funciona como fallback automático e o banco é populado a partir do primeiro upload OFX)
 
 ## Integração OFX completa (Fase 2)
 
