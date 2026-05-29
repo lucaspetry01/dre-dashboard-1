@@ -24,11 +24,15 @@ export default function Dashboard() {
   const { resumo, categorias, diario, timeline_categorias } = dashboardData;
   const detalhes = detalhesData as Record<string, any>;
   
+  // Data de referência: último dia do extrato
+  const REFERENCE_DATE = '2026-05-27';
+
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+  // Inicializar com filtro 'Hoje' por padrão
+  const [startDate, setStartDate] = useState<string>(REFERENCE_DATE);
+  const [endDate, setEndDate] = useState<string>(REFERENCE_DATE);
   const [isUploading, setIsUploading] = useState(false);
-  const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
+  const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>('today');
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
@@ -56,7 +60,7 @@ export default function Dashboard() {
       } else {
         const filter = quickFilters.find(f => f.id === filterId);
         if (filter) {
-          const referenceDate = new Date('2026-05-27');
+          const referenceDate = new Date(REFERENCE_DATE);
           const endDateObj = referenceDate;
           const startDateObj = new Date(referenceDate);
           startDateObj.setDate(startDateObj.getDate() - filter.days + 1);
