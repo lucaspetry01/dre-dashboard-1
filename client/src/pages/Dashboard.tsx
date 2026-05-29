@@ -21,11 +21,30 @@ const COLORS = [
 ];
 
 export default function Dashboard() {
-  const { resumo, categorias, diario, timeline_categorias } = dashboardData;
-  const detalhes = detalhesData as Record<string, any>;
-  
-  // Data de referência: último dia do extrato
-  const REFERENCE_DATE = '2026-05-27';
+  // Buscar resumo do banco. Se houver dados → usa banco. Senão → JSON estático.
+  const utils = trpc.useUtils();
+  const { data: resumoBanco } = trpc.ofx.resumoCompleto.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+
+  // Quando há dados no banco usamos eles; senão caímos no JSON estático (compat).
+  const usandoBanco = !!(resumoBanco && resumoBanco.totalRegistros > 0);
+  const resumo = usandoBanco ? resumoBanco!.resumo : dashboardData.resumo;
+  const categorias = usandoBanco ? resumoBanco!.categorias : dashboardData.categorias;
+  const diario = usandoBanco ? resumoBanco!.diario : dashboardData.diario;
+  const timeline_categorias = (dashboardData as unknown as { timeline_categorias?: unknown[] }).timeline_categorias ?? [];
+  const detalhes = (usandoBanco ? resumoBanco!.detalhes : detalhesData) as Record<string, any>;
+
+  // Data de referência: último dia disponível (banco → JSON → hardcoded)
+  const REFERENCE_DATE = (() => {
+    if (usandoBanco && resumoBanco!.diario.length > 0) {
+      return resumoBanco!.diario[resumoBanco!.diario.length - 1].data_full;
+    }
+    if (dashboardData.diario.length > 0) {
+      return dashboardData.diario[dashboardData.diario.length - 1].data_full;
+    }
+    return '2026-05-27';
+  })();
 
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   // Inicializar com filtro 'Hoje' por padrão
@@ -235,7 +254,69 @@ export default function Dashboard() {
     [filteredDiario]
   );
 
-  // Lidar com upload de arquivo
+  // Lidar com upload de arquivo OFX (Sicredi e outros bancos)
+  const handleOfxUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const base64Data = (event.target?.result as string)?.split(',')[1];
+          if (!base64Data) {
+            toast.error('Erro ao ler arquivo OFX.');
+            setIsUploading(false);
+            return;
+          }
+
+          const response = await fetch('/api/trpc/ofx.processOFX', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              json: {
+                fileBase64: base64Data,
+                nomeArquivo: file.name,
+              },
+            }),
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            const data = result.result?.data?.json || result.result;
+            const novos = data.totalNovos ?? 0;
+            const dups = data.totalDuplicatas ?? 0;
+
+            if (data.success) {
+              toast.success(
+                `OFX importado: ${novos} novas transações, ${dups} duplicatas ignoradas.`
+              );
+              // Atualizar dados do banco sem reload
+              await utils.ofx.resumoCompleto.invalidate();
+              await utils.ofx.temDados.invalidate();
+            } else {
+              toast.warning(data.mensagem || 'Nenhuma transação encontrada.');
+            }
+          } else {
+            toast.error('Erro ao processar OFX. Verifique se é um arquivo válido.');
+          }
+        } catch (error) {
+          toast.error('Erro ao processar OFX.');
+          console.error(error);
+        } finally {
+          setIsUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast.error('Erro ao ler arquivo OFX.');
+      console.error(error);
+      setIsUploading(false);
+    }
+  };
+
+  // Lidar com upload de arquivo XLS (formato antigo)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -317,9 +398,16 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+          {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">Dashboard Financeiro</h1>
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <h1 className="text-2xl sm:text-4xl font-bold text-slate-900">Dashboard Financeiro</h1>
+            {usandoBanco && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+                Banco de dados ({resumoBanco!.totalRegistros} registros)
+              </span>
+            )}
+          </div>
           <p className="text-sm sm:text-base text-slate-600">Transportes Moraes e Petry LTDA ME</p>
           <p className="text-xs sm:text-sm text-slate-500">
             {(startDate && endDate) ? (
@@ -371,7 +459,7 @@ export default function Dashboard() {
             </div>
 
             {/* Datas Customizadas + Upload */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-200">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">Data Inicial (Customizado)</label>
                 <Input
@@ -400,7 +488,8 @@ export default function Dashboard() {
                 <label className="w-full">
                   <Button
                     disabled={isUploading}
-                    className="w-full gap-2"
+                    variant="outline"
+                    className="w-full gap-2 bg-white"
                     asChild
                   >
                     <span>
@@ -412,6 +501,27 @@ export default function Dashboard() {
                     type="file"
                     accept=".xls,.xlsx"
                     onChange={handleFileUpload}
+                    disabled={isUploading}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              <div className="flex items-end">
+                <label className="w-full">
+                  <Button
+                    disabled={isUploading}
+                    className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700"
+                    asChild
+                  >
+                    <span>
+                      <Upload className="w-4 h-4" />
+                      {isUploading ? 'Importando...' : 'Importar OFX'}
+                    </span>
+                  </Button>
+                  <input
+                    type="file"
+                    accept=".ofx"
+                    onChange={handleOfxUpload}
                     disabled={isUploading}
                     className="hidden"
                   />
