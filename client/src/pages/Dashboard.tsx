@@ -27,6 +27,42 @@ export default function Dashboard() {
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
+  const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
+
+  // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
+  const quickFilters = [
+    { id: 'today', label: 'Hoje', days: 1 },
+    { id: 'week', label: 'Última Semana', days: 7 },
+    { id: '15days', label: 'Últimos 15 dias', days: 15 },
+    { id: 'month', label: 'Último Mês', days: 30 },
+    { id: 'quarter', label: 'Último Trimestre', days: 90 },
+    { id: 'semester', label: 'Último Semestre', days: 180 },
+    { id: 'year', label: 'Último Ano', days: 365 },
+    { id: 'all', label: 'Todo o Período', days: 0 },
+  ];
+
+  // Aplicar filtro rápido baseado no último dia disponível
+  const applyQuickFilter = (filterId: string) => {
+    if (filterId === 'all') {
+      setStartDate('');
+      setEndDate('');
+      setActiveQuickFilter('all');
+      return;
+    }
+
+    const filter = quickFilters.find(f => f.id === filterId);
+    if (!filter) return;
+
+    // Usar a data final do extrato como referência (mais recente)
+    const referenceDate = new Date('2026-05-27');
+    const endDateObj = referenceDate;
+    const startDateObj = new Date(referenceDate);
+    startDateObj.setDate(startDateObj.getDate() - filter.days + 1);
+
+    setStartDate(startDateObj.toISOString().split('T')[0]);
+    setEndDate(endDateObj.toISOString().split('T')[0]);
+    setActiveQuickFilter(filterId);
+  };
 
   // Formatar moeda
   const formatMoney = (value: number) => {
@@ -159,6 +195,7 @@ export default function Dashboard() {
   const resetFilters = () => {
     setStartDate('');
     setEndDate('');
+    setActiveQuickFilter(null);
   };
 
   return (
@@ -179,35 +216,61 @@ export default function Dashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Filtros Rápidos em Tags */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-700 mb-2">Filtros Rápidos</label>
+              <div className="flex flex-wrap gap-2">
+                {quickFilters.map((filter) => (
+                  <button
+                    key={filter.id}
+                    onClick={() => applyQuickFilter(filter.id)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      activeQuickFilter === filter.id
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+                {(startDate || endDate) && (
+                  <button
+                    onClick={resetFilters}
+                    className="px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-all"
+                  >
+                    ✕ Limpar
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Datas Customizadas + Upload */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-200">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Data Inicial</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Data Inicial (Customizado)</label>
                 <Input
                   type="date"
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
+                    setActiveQuickFilter(null);
+                  }}
                   className="w-full"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Data Final</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Data Final (Customizado)</label>
                 <Input
                   type="date"
                   value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                    setActiveQuickFilter(null);
+                  }}
                   className="w-full"
                 />
               </div>
-              <div className="flex items-end gap-2">
-                <Button
-                  onClick={resetFilters}
-                  variant="outline"
-                  className="w-full"
-                >
-                  Limpar Filtros
-                </Button>
-              </div>
-              <div className="flex items-end gap-2">
+              <div className="flex items-end">
                 <label className="w-full">
                   <Button
                     disabled={isUploading}
@@ -246,7 +309,7 @@ export default function Dashboard() {
                 {formatMoney(resumoFiltrado.total_receitas)}
               </div>
               <p className="text-sm text-green-600">
-                {!startDate && !endDate ? resumo.total_receitas > 0 ? '42 transações' : '0 transações' : filteredDiario.filter(d => d.valor > 0).length} transações
+                {!startDate && !endDate ? (resumo.total_receitas > 0 ? '42 transações' : '0 transações') : `${filteredDiario.filter(d => d.valor > 0).length} transações`}
               </p>
             </CardContent>
           </Card>
@@ -263,7 +326,7 @@ export default function Dashboard() {
                 {formatMoney(resumoFiltrado.total_despesas)}
               </div>
               <p className="text-sm text-red-600">
-                {!startDate && !endDate ? resumo.total_despesas < 0 ? '349 transações' : '0 transações' : filteredDiario.filter(d => d.valor < 0).length} transações
+                {!startDate && !endDate ? (resumo.total_despesas < 0 ? '349 transações' : '0 transações') : `${filteredDiario.filter(d => d.valor < 0).length} transações`}
               </p>
             </CardContent>
           </Card>
