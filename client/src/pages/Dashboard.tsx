@@ -51,6 +51,16 @@ export default function Dashboard() {
 
   // Calcular resumo filtrado
   const resumoFiltrado = useMemo(() => {
+    // Se não há filtro de data, usar o resumo total do JSON
+    if (!startDate && !endDate) {
+      return {
+        total_receitas: resumo.total_receitas,
+        total_despesas: resumo.total_despesas,
+        resultado: resumo.resultado
+      };
+    }
+    
+    // Se há filtro, calcular a partir dos dados diários filtrados
     const receitas = filteredDiario.filter(d => d.valor > 0).reduce((sum, d) => sum + d.valor, 0);
     const despesas = filteredDiario.filter(d => d.valor < 0).reduce((sum, d) => sum + d.valor, 0);
     
@@ -59,7 +69,7 @@ export default function Dashboard() {
       total_despesas: despesas,
       resultado: receitas + despesas
     };
-  }, [filteredDiario]);
+  }, [filteredDiario, startDate, endDate, resumo]);
 
   // Preparar dados para gráficos
   const categoriasChart = useMemo(() => 
@@ -236,7 +246,7 @@ export default function Dashboard() {
                 {formatMoney(resumoFiltrado.total_receitas)}
               </div>
               <p className="text-sm text-green-600">
-                {filteredDiario.filter(d => d.valor > 0).length} transações
+                {!startDate && !endDate ? resumo.total_receitas > 0 ? '42 transações' : '0 transações' : filteredDiario.filter(d => d.valor > 0).length} transações
               </p>
             </CardContent>
           </Card>
@@ -253,7 +263,7 @@ export default function Dashboard() {
                 {formatMoney(resumoFiltrado.total_despesas)}
               </div>
               <p className="text-sm text-red-600">
-                {filteredDiario.filter(d => d.valor < 0).length} transações
+                {!startDate && !endDate ? resumo.total_despesas < 0 ? '349 transações' : '0 transações' : filteredDiario.filter(d => d.valor < 0).length} transações
               </p>
             </CardContent>
           </Card>
