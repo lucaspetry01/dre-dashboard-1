@@ -150,13 +150,69 @@ export default function Dashboard() {
   const variacaoDespesas = resumoAnterior ? calcularVariacao(resumoFiltrado.total_despesas, resumoAnterior.total_despesas) : null;
   const variacaoResultado = resumoAnterior ? calcularVariacao(resumoFiltrado.resultado, resumoAnterior.resultado) : null;
 
+  // Helper: parse data DD/MM/YYYY -> Date
+  const parseDataBr = (dataStr: string): Date | null => {
+    if (!dataStr) return null;
+    const parts = dataStr.split('/');
+    if (parts.length !== 3) return null;
+    const [dia, mes, ano] = parts;
+    return new Date(`${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}T00:00:00`);
+  };
+
+  // Filtrar detalhes (registros) por período
+  const detalhesFiltrados = useMemo(() => {
+    if (!startDate && !endDate) return detalhes;
+
+    const start = startDate ? new Date(startDate + 'T00:00:00') : new Date('1900-01-01');
+    const end = endDate ? new Date(endDate + 'T23:59:59') : new Date('2100-12-31');
+
+    const filtered: Record<string, any> = {};
+    Object.keys(detalhes).forEach(catName => {
+      const cat = detalhes[catName];
+      const registrosFiltrados = (cat?.registros || []).filter((r: any) => {
+        const dataObj = parseDataBr(r.data);
+        if (!dataObj) return false;
+        return dataObj >= start && dataObj <= end;
+      });
+
+      if (registrosFiltrados.length > 0) {
+        const total = registrosFiltrados.reduce((sum: number, r: any) => sum + (r.valor || 0), 0);
+        filtered[catName] = {
+          total,
+          quantidade: registrosFiltrados.length,
+          registros: registrosFiltrados,
+        };
+      }
+    });
+    return filtered;
+  }, [detalhes, startDate, endDate]);
+
+  // Categorias filtradas (recalculadas com base nos detalhes filtrados)
+  const categoriasFiltradas = useMemo(() => {
+    if (!startDate && !endDate) return categorias;
+
+    const totalDespesas = Object.values(detalhesFiltrados).reduce((sum: number, c: any) => {
+      return c.total < 0 ? sum + Math.abs(c.total) : sum;
+    }, 0);
+
+    return Object.entries(detalhesFiltrados)
+      .map(([nome, dados]: [string, any]) => ({
+        nome,
+        valor: dados.total,
+        valor_abs: Math.abs(dados.total),
+        quantidade: dados.quantidade,
+        percentual: totalDespesas > 0 && dados.total < 0 ? (Math.abs(dados.total) / totalDespesas) * 100 : 0,
+      }))
+      .sort((a, b) => b.valor_abs - a.valor_abs);
+  }, [categorias, detalhesFiltrados, startDate, endDate]);
+
   // Preparar dados para gráficos
   const categoriasChart = useMemo(() => 
-    categorias.map(cat => ({
+    categoriasFiltradas.map(cat => ({
       ...cat,
       valor_display: cat.valor_abs
     })),
-    [categorias]
+    [categoriasFiltradas]
   );
 
   const diarioChart = useMemo(() =>
@@ -465,7 +521,12 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {categorias.map((cat) => (
+                  {categoriasFiltradas.length === 0 && (
+                    <div className="text-center py-8 text-slate-500">
+                      <p>Nenhuma categoria encontrada no período selecionado.</p>
+                    </div>
+                  )}
+                  {categoriasFiltradas.map((cat) => (
                     <div key={cat.nome} className="border border-slate-200 rounded-lg">
                       <button
                         onClick={() => setExpandedCategory(expandedCategory === cat.nome ? null : cat.nome)}
@@ -485,7 +546,7 @@ export default function Dashboard() {
                       {expandedCategory === cat.nome && (
                         <div className="bg-slate-50 p-4 border-t border-slate-200">
                           <div className="space-y-2 max-h-64 overflow-y-auto">
-                            {detalhes[cat.nome]?.map((item: any, idx: number) => (
+                            {(detalhesFiltrados[cat.nome]?.registros || detalhes[cat.nome]?.registros || []).map((item: any, idx: number) => (
                               <div key={idx} className="bg-white p-3 rounded border border-slate-100 text-sm">
                                 <div className="flex justify-between items-start gap-2">
                                   <div className="flex-1">
