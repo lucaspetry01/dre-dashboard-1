@@ -77,9 +77,10 @@ export default function Dashboard() {
     if (!startDate && !endDate) return diario;
     
     return diario.filter(d => {
-      const dataObj = new Date(d.data.split('/').reverse().join('-'));
-      const start = startDate ? new Date(startDate) : new Date('1900-01-01');
-      const end = endDate ? new Date(endDate) : new Date('2100-12-31');
+      // Usar data_full (formato YYYY-MM-DD) para comparação correta
+      const dataObj = new Date(d.data_full + 'T00:00:00');
+      const start = startDate ? new Date(startDate + 'T00:00:00') : new Date('1900-01-01');
+      const end = endDate ? new Date(endDate + 'T23:59:59') : new Date('2100-12-31');
       
       return dataObj >= start && dataObj <= end;
     });
@@ -389,7 +390,7 @@ export default function Dashboard() {
                         </div>
                         <div className="text-right mr-4">
                           <p className="font-bold text-slate-900">{formatMoney(cat.valor)}</p>
-                          <p className="text-sm text-slate-600">{cat.percentual}%</p>
+                          <p className="text-sm text-slate-600">{(cat.percentual ?? 0).toFixed(1)}%</p>
                         </div>
                         {expandedCategory === cat.nome ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                       </button>
@@ -461,7 +462,7 @@ export default function Dashboard() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ categoria, percentual }) => `${categoria} (${percentual}%)`}
+                        label={({ categoria, percentual }) => `${categoria} (${(percentual ?? 0).toFixed(1)}%)`}
                         outerRadius={120}
                         fill="#8884d8"
                         dataKey="valor_abs"
