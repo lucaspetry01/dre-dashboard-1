@@ -108,6 +108,48 @@ export default function Dashboard() {
     };
   }, [filteredDiario, startDate, endDate, resumo]);
 
+  // Calcular resumo do período ANTERIOR (mesmo intervalo de dias)
+  const resumoAnterior = useMemo(() => {
+    if (!startDate || !endDate) return null;
+    
+    const start = new Date(startDate + 'T00:00:00');
+    const end = new Date(endDate + 'T23:59:59');
+    const diffMs = end.getTime() - start.getTime();
+    
+    // Período anterior: mesmo número de dias antes do startDate
+    const prevEnd = new Date(start.getTime() - 1); // dia anterior ao startDate
+    const prevStart = new Date(prevEnd.getTime() - diffMs);
+    
+    const dadosAnterior = diario.filter(d => {
+      const dataObj = new Date(d.data_full + 'T00:00:00');
+      return dataObj >= prevStart && dataObj <= prevEnd;
+    });
+    
+    if (dadosAnterior.length === 0) return null;
+    
+    const receitas = dadosAnterior.filter(d => d.valor > 0).reduce((sum, d) => sum + d.valor, 0);
+    const despesas = dadosAnterior.filter(d => d.valor < 0).reduce((sum, d) => sum + d.valor, 0);
+    
+    return {
+      total_receitas: receitas,
+      total_despesas: despesas,
+      resultado: receitas + despesas,
+      periodo_inicio: prevStart.toLocaleDateString('pt-BR'),
+      periodo_fim: prevEnd.toLocaleDateString('pt-BR'),
+    };
+  }, [diario, startDate, endDate]);
+
+  // Calcular variação percentual
+  const calcularVariacao = (atual: number, anterior: number): { valor: number; positivo: boolean } | null => {
+    if (anterior === 0 || !resumoAnterior) return null;
+    const variacao = ((atual - anterior) / Math.abs(anterior)) * 100;
+    return { valor: Math.abs(variacao), positivo: variacao >= 0 };
+  };
+
+  const variacaoReceitas = resumoAnterior ? calcularVariacao(resumoFiltrado.total_receitas, resumoAnterior.total_receitas) : null;
+  const variacaoDespesas = resumoAnterior ? calcularVariacao(resumoFiltrado.total_despesas, resumoAnterior.total_despesas) : null;
+  const variacaoResultado = resumoAnterior ? calcularVariacao(resumoFiltrado.resultado, resumoAnterior.resultado) : null;
+
   // Preparar dados para gráficos
   const categoriasChart = useMemo(() => 
     categorias.map(cat => ({
@@ -309,9 +351,24 @@ export default function Dashboard() {
               <div className="text-3xl font-bold text-green-700 mb-1">
                 {formatMoney(resumoFiltrado.total_receitas)}
               </div>
-              <p className="text-sm text-green-600">
-                {!startDate && !endDate ? (resumo.total_receitas > 0 ? '42 transações' : '0 transações') : `${filteredDiario.filter(d => d.valor > 0).length} transações`}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-green-600">
+                  {!startDate && !endDate ? (resumo.total_receitas > 0 ? '42 transações' : '0 transações') : `${filteredDiario.filter(d => d.valor > 0).length} transações`}
+                </p>
+                {variacaoReceitas && (
+                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
+                    variacaoReceitas.positivo ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
+                  }`}>
+                    {variacaoReceitas.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    {variacaoReceitas.positivo ? '+' : '-'}{variacaoReceitas.valor.toFixed(1)}%
+                  </div>
+                )}
+              </div>
+              {resumoAnterior && (
+                <p className="text-xs text-green-700 mt-1 opacity-75">
+                  vs. período anterior: {formatMoney(resumoAnterior.total_receitas)}
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -326,9 +383,24 @@ export default function Dashboard() {
               <div className="text-3xl font-bold text-red-700 mb-1">
                 {formatMoney(resumoFiltrado.total_despesas)}
               </div>
-              <p className="text-sm text-red-600">
-                {!startDate && !endDate ? (resumo.total_despesas < 0 ? '349 transações' : '0 transações') : `${filteredDiario.filter(d => d.valor < 0).length} transações`}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-red-600">
+                  {!startDate && !endDate ? (resumo.total_despesas < 0 ? '349 transações' : '0 transações') : `${filteredDiario.filter(d => d.valor < 0).length} transações`}
+                </p>
+                {variacaoDespesas && (
+                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
+                    variacaoDespesas.positivo ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
+                  }`}>
+                    {variacaoDespesas.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    {variacaoDespesas.positivo ? '+' : '-'}{variacaoDespesas.valor.toFixed(1)}%
+                  </div>
+                )}
+              </div>
+              {resumoAnterior && (
+                <p className="text-xs text-red-700 mt-1 opacity-75">
+                  vs. período anterior: {formatMoney(resumoAnterior.total_despesas)}
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -343,9 +415,24 @@ export default function Dashboard() {
               <div className={`text-3xl font-bold mb-1 ${resumoFiltrado.resultado >= 0 ? 'text-blue-700' : 'text-red-700'}`}>
                 {formatMoney(resumoFiltrado.resultado)}
               </div>
-              <p className="text-sm text-blue-600">
-                Período: {startDate || resumo.periodo_inicio} a {endDate || resumo.periodo_fim}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-blue-600">
+                  Período: {startDate || resumo.periodo_inicio} a {endDate || resumo.periodo_fim}
+                </p>
+                {variacaoResultado && (
+                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
+                    variacaoResultado.positivo ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
+                  }`}>
+                    {variacaoResultado.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    {variacaoResultado.positivo ? '+' : '-'}{variacaoResultado.valor.toFixed(1)}%
+                  </div>
+                )}
+              </div>
+              {resumoAnterior && (
+                <p className="text-xs text-blue-700 mt-1 opacity-75">
+                  vs. período anterior: {formatMoney(resumoAnterior.resultado)}
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
