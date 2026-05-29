@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [endDate, setEndDate] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
   const quickFilters = [
@@ -43,25 +44,29 @@ export default function Dashboard() {
 
   // Aplicar filtro rápido baseado no último dia disponível
   const applyQuickFilter = (filterId: string) => {
-    if (filterId === 'all') {
-      setStartDate('');
-      setEndDate('');
-      setActiveQuickFilter('all');
-      return;
-    }
+    setIsFiltering(true);
+    setExpandedCategory(null); // Fechar categoria expandida ao filtrar
+    
+    setTimeout(() => {
+      if (filterId === 'all') {
+        setStartDate('');
+        setEndDate('');
+        setActiveQuickFilter('all');
+      } else {
+        const filter = quickFilters.find(f => f.id === filterId);
+        if (filter) {
+          const referenceDate = new Date('2026-05-27');
+          const endDateObj = referenceDate;
+          const startDateObj = new Date(referenceDate);
+          startDateObj.setDate(startDateObj.getDate() - filter.days + 1);
 
-    const filter = quickFilters.find(f => f.id === filterId);
-    if (!filter) return;
-
-    // Usar a data final do extrato como referência (mais recente)
-    const referenceDate = new Date('2026-05-27');
-    const endDateObj = referenceDate;
-    const startDateObj = new Date(referenceDate);
-    startDateObj.setDate(startDateObj.getDate() - filter.days + 1);
-
-    setStartDate(startDateObj.toISOString().split('T')[0]);
-    setEndDate(endDateObj.toISOString().split('T')[0]);
-    setActiveQuickFilter(filterId);
+          setStartDate(startDateObj.toISOString().split('T')[0]);
+          setEndDate(endDateObj.toISOString().split('T')[0]);
+          setActiveQuickFilter(filterId);
+        }
+      }
+      setTimeout(() => setIsFiltering(false), 200);
+    }, 100);
   };
 
   // Formatar moeda
@@ -292,18 +297,35 @@ export default function Dashboard() {
   };
 
   const resetFilters = () => {
-    setStartDate('');
-    setEndDate('');
-    setActiveQuickFilter(null);
+    setIsFiltering(true);
+    setExpandedCategory(null);
+    setTimeout(() => {
+      setStartDate('');
+      setEndDate('');
+      setActiveQuickFilter(null);
+      setTimeout(() => setIsFiltering(false), 200);
+    }, 100);
   };
 
+  const isLucro = resumoFiltrado.resultado >= 0;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Dashboard Financeiro</h1>
-          <p className="text-slate-600">Transportes Moraes e Petry LTDA ME • {resumo.periodo_inicio} a {resumo.periodo_fim}</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">Dashboard Financeiro</h1>
+          <p className="text-sm sm:text-base text-slate-600">Transportes Moraes e Petry LTDA ME</p>
+          <p className="text-xs sm:text-sm text-slate-500">
+            {(startDate && endDate) ? (
+              <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                <Calendar className="w-3 h-3" />
+                {new Date(startDate + 'T00:00:00').toLocaleDateString('pt-BR')} a {new Date(endDate + 'T00:00:00').toLocaleDateString('pt-BR')}
+              </span>
+            ) : (
+              <>Período completo: {resumo.periodo_inicio} a {resumo.periodo_fim}</>
+            )}
+          </p>
         </div>
 
         {/* Controles de Filtro e Upload */}
@@ -394,101 +416,113 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-green-900 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" />
-                Total de Receitas
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-green-700 mb-1">
+        {/* KPI HERO: Lucro Líquido em Destaque */}
+        <div className={`mb-6 sm:mb-8 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+          <Card className={`relative overflow-hidden border-2 shadow-xl transition-all duration-500 ${
+            isLucro
+              ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 border-emerald-400'
+              : 'bg-gradient-to-br from-rose-500 via-rose-600 to-red-700 border-rose-400'
+          }`}>
+            {/* Background pattern decorativo */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-white" />
+              <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-white" />
+            </div>
+
+            <CardContent className="relative p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`p-2 rounded-lg ${isLucro ? 'bg-emerald-400/30' : 'bg-rose-400/30'}`}>
+                      {isLucro ? <TrendingUp className="w-5 h-5 text-white" /> : <TrendingDown className="w-5 h-5 text-white" />}
+                    </div>
+                    <p className="text-white/90 text-sm font-medium uppercase tracking-wider">
+                      {isLucro ? 'Lucro Líquido' : 'Prejuízo do Período'}
+                    </p>
+                  </div>
+                  <div className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-2 tracking-tight">
+                    {formatMoney(resumoFiltrado.resultado)}
+                  </div>
+                  {variacaoResultado && (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-semibold">
+                      {variacaoResultado.positivo ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                      <span>{variacaoResultado.positivo ? '+' : '-'}{variacaoResultado.valor.toFixed(1)}%</span>
+                      <span className="text-white/70 text-xs">vs. anterior</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="hidden sm:block w-px h-24 bg-white/20" />
+
+                <div className="sm:text-right">
+                  <p className="text-white/70 text-xs uppercase tracking-wider mb-1">Status</p>
+                  <div className="text-2xl sm:text-3xl font-bold text-white">
+                    {isLucro ? 'POSITIVO' : 'NEGATIVO'}
+                  </div>
+                  {resumoAnterior && (
+                    <p className="text-white/70 text-xs mt-2">
+                      Anterior: {formatMoney(resumoAnterior.resultado)}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* KPIs Secundários: Receitas e Despesas */}
+        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+          <Card className="bg-white border-l-4 border-l-emerald-500 hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-emerald-50 rounded-lg">
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <p className="text-sm font-medium text-slate-600">Receitas</p>
+                </div>
+                {variacaoReceitas && (
+                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    variacaoReceitas.positivo ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                  }`}>
+                    {variacaoReceitas.positivo ? '↑' : '↓'} {variacaoReceitas.valor.toFixed(1)}%
+                  </div>
+                )}
+              </div>
+              <div className="text-2xl sm:text-3xl font-bold text-emerald-700 mb-1">
                 {formatMoney(resumoFiltrado.total_receitas)}
               </div>
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-green-600">
-                  {!startDate && !endDate ? (resumo.total_receitas > 0 ? '42 transações' : '0 transações') : `${filteredDiario.filter(d => d.valor > 0).length} transações`}
-                </p>
-                {variacaoReceitas && (
-                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
-                    variacaoReceitas.positivo ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
-                  }`}>
-                    {variacaoReceitas.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {variacaoReceitas.positivo ? '+' : '-'}{variacaoReceitas.valor.toFixed(1)}%
-                  </div>
-                )}
-              </div>
-              {resumoAnterior && (
-                <p className="text-xs text-green-700 mt-1 opacity-75">
-                  vs. período anterior: {formatMoney(resumoAnterior.total_receitas)}
-                </p>
-              )}
+              <p className="text-xs text-slate-500">
+                {!startDate && !endDate ? '42' : filteredDiario.filter(d => d.valor > 0).length} entradas
+                {resumoAnterior && <span className="ml-2 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_receitas)}</span>}
+              </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-red-900 flex items-center gap-2">
-                <TrendingDown className="w-4 h-4" />
-                Total de Despesas
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-red-700 mb-1">
+          <Card className="bg-white border-l-4 border-l-rose-500 hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-rose-50 rounded-lg">
+                    <TrendingDown className="w-4 h-4 text-rose-600" />
+                  </div>
+                  <p className="text-sm font-medium text-slate-600">Despesas</p>
+                </div>
+                {variacaoDespesas && (
+                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    variacaoDespesas.positivo ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
+                  }`}>
+                    {variacaoDespesas.positivo ? '↑' : '↓'} {variacaoDespesas.valor.toFixed(1)}%
+                  </div>
+                )}
+              </div>
+              <div className="text-2xl sm:text-3xl font-bold text-rose-700 mb-1">
                 {formatMoney(resumoFiltrado.total_despesas)}
               </div>
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-red-600">
-                  {!startDate && !endDate ? (resumo.total_despesas < 0 ? '349 transações' : '0 transações') : `${filteredDiario.filter(d => d.valor < 0).length} transações`}
-                </p>
-                {variacaoDespesas && (
-                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
-                    variacaoDespesas.positivo ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
-                  }`}>
-                    {variacaoDespesas.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {variacaoDespesas.positivo ? '+' : '-'}{variacaoDespesas.valor.toFixed(1)}%
-                  </div>
-                )}
-              </div>
-              {resumoAnterior && (
-                <p className="text-xs text-red-700 mt-1 opacity-75">
-                  vs. período anterior: {formatMoney(resumoAnterior.total_despesas)}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-blue-900 flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
-                Resultado Líquido
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className={`text-3xl font-bold mb-1 ${resumoFiltrado.resultado >= 0 ? 'text-blue-700' : 'text-red-700'}`}>
-                {formatMoney(resumoFiltrado.resultado)}
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-blue-600">
-                  Período: {startDate || resumo.periodo_inicio} a {endDate || resumo.periodo_fim}
-                </p>
-                {variacaoResultado && (
-                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
-                    variacaoResultado.positivo ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
-                  }`}>
-                    {variacaoResultado.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {variacaoResultado.positivo ? '+' : '-'}{variacaoResultado.valor.toFixed(1)}%
-                  </div>
-                )}
-              </div>
-              {resumoAnterior && (
-                <p className="text-xs text-blue-700 mt-1 opacity-75">
-                  vs. período anterior: {formatMoney(resumoAnterior.resultado)}
-                </p>
-              )}
+              <p className="text-xs text-slate-500">
+                {!startDate && !endDate ? '349' : filteredDiario.filter(d => d.valor < 0).length} saídas
+                {resumoAnterior && <span className="ml-2 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_despesas)}</span>}
+              </p>
             </CardContent>
           </Card>
         </div>
