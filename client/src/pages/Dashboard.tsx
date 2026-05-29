@@ -1,14 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import dashboardData from '@/data/dashboard.json';
 import detalhesData from '@/data/detalhes.json';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, ChevronDown, ChevronUp, Upload, Calendar } from 'lucide-react';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
+import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
 
 const COLORS = [
   '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
@@ -20,6 +24,9 @@ export default function Dashboard() {
   const detalhes = detalhesData as Record<string, any>;
   
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [isUploading, setIsUploading] = useState(false);
 
   // Formatar moeda
   const formatMoney = (value: number) => {
@@ -28,6 +35,31 @@ export default function Dashboard() {
       currency: 'BRL'
     }).format(value);
   };
+
+  // Filtrar dados por data
+  const filteredDiario = useMemo(() => {
+    if (!startDate && !endDate) return diario;
+    
+    return diario.filter(d => {
+      const dataObj = new Date(d.data.split('/').reverse().join('-'));
+      const start = startDate ? new Date(startDate) : new Date('1900-01-01');
+      const end = endDate ? new Date(endDate) : new Date('2100-12-31');
+      
+      return dataObj >= start && dataObj <= end;
+    });
+  }, [diario, startDate, endDate]);
+
+  // Calcular resumo filtrado
+  const resumoFiltrado = useMemo(() => {
+    const receitas = filteredDiario.filter(d => d.valor > 0).reduce((sum, d) => sum + d.valor, 0);
+    const despesas = filteredDiario.filter(d => d.valor < 0).reduce((sum, d) => sum + d.valor, 0);
+    
+    return {
+      total_receitas: receitas,
+      total_despesas: despesas,
+      resultado: receitas + despesas
+    };
+  }, [filteredDiario]);
 
   // Preparar dados para gráficos
   const categoriasChart = useMemo(() => 
@@ -39,248 +71,340 @@ export default function Dashboard() {
   );
 
   const diarioChart = useMemo(() =>
-    diario.map(d => ({
+    filteredDiario.map(d => ({
       ...d,
       data_short: d.data,
       receita: d.valor > 0 ? d.valor : 0,
       despesa: d.valor < 0 ? Math.abs(d.valor) : 0
     })),
-    [diario]
+    [filteredDiario]
   );
 
+  // Lidar com upload de arquivo
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
+    setIsUploading(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const base64Data = (event.target?.result as string)?.split(',')[1];
+          if (!base64Data) {
+            toast.error('Erro ao ler arquivo.');
+            setIsUploading(false);
+            return;
+          }
+
+          // Enviar para servidor via tRPC
+          const response = await fetch('/api/trpc/upload.processXLS', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              json: {
+                fileBase64: base64Data,
+                existingTransactions: diario.map(d => ({
+                  data: d.data,
+                  descricao: d.data_full || d.data,
+                  documento: '',
+                  valor: d.valor,
+                  saldo: d.saldo,
+                  tipo: d.valor < 0 ? 'saida' : 'entrada',
+                }))
+              }
+            })
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            const processResult = result.result;
+            
+            toast.success(
+              `Importação concluída! ${processResult.totalNew} novos registros, ${processResult.totalDuplicates} duplicados ignorados.`
+            );
+            
+            // Recarregar a página para atualizar os dados
+            setTimeout(() => window.location.reload(), 2000);
+          } else {
+            toast.error('Erro ao processar arquivo. Verifique o formato.');
+          }
+        } catch (error) {
+          toast.error('Erro ao processar arquivo.');
+          console.error(error);
+        } finally {
+          setIsUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast.error('Erro ao ler arquivo.');
+      console.error(error);
+      setIsUploading(false);
+    }
+  };
+
+  const resetFilters = () => {
+    setStartDate('');
+    setEndDate('');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">
-            Dashboard Financeiro
-          </h1>
-          <p className="text-slate-600">
-            Transportes Moraes e Petry LTDA ME • {resumo.periodo_inicio} a {resumo.periodo_fim}
-          </p>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Dashboard Financeiro</h1>
+          <p className="text-slate-600">Transportes Moraes e Petry LTDA ME • {resumo.periodo_inicio} a {resumo.periodo_fim}</p>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {/* Receitas */}
-          <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-slate-600">
-                  Total de Receitas
-                </CardTitle>
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                </div>
+        {/* Controles de Filtro e Upload */}
+        <Card className="mb-6 bg-white border-slate-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Filtros e Importação
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Data Inicial</label>
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full"
+                />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Data Final</label>
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex items-end gap-2">
+                <Button
+                  onClick={resetFilters}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Limpar Filtros
+                </Button>
+              </div>
+              <div className="flex items-end gap-2">
+                <label className="w-full">
+                  <Button
+                    disabled={isUploading}
+                    className="w-full gap-2"
+                    asChild
+                  >
+                    <span>
+                      <Upload className="w-4 h-4" />
+                      {isUploading ? 'Importando...' : 'Importar XLS'}
+                    </span>
+                  </Button>
+                  <input
+                    type="file"
+                    accept=".xls,.xlsx"
+                    onChange={handleFileUpload}
+                    disabled={isUploading}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* KPIs */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-green-900 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" />
+                Total de Receitas
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-600">
-                {formatMoney(resumo.total_receitas)}
+              <div className="text-3xl font-bold text-green-700 mb-1">
+                {formatMoney(resumoFiltrado.total_receitas)}
               </div>
-              <p className="text-xs text-slate-500 mt-2">42 transações</p>
+              <p className="text-sm text-green-600">
+                {filteredDiario.filter(d => d.valor > 0).length} transações
+              </p>
             </CardContent>
           </Card>
 
-          {/* Despesas */}
-          <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow">
+          <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-slate-600">
-                  Total de Despesas
-                </CardTitle>
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <TrendingDown className="w-5 h-5 text-red-600" />
-                </div>
-              </div>
+              <CardTitle className="text-sm font-medium text-red-900 flex items-center gap-2">
+                <TrendingDown className="w-4 h-4" />
+                Total de Despesas
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-red-600">
-                {formatMoney(resumo.total_despesas)}
+              <div className="text-3xl font-bold text-red-700 mb-1">
+                {formatMoney(resumoFiltrado.total_despesas)}
               </div>
-              <p className="text-xs text-slate-500 mt-2">349 transações</p>
+              <p className="text-sm text-red-600">
+                {filteredDiario.filter(d => d.valor < 0).length} transações
+              </p>
             </CardContent>
           </Card>
 
-          {/* Resultado */}
-          <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-slate-600">
-                  Resultado Líquido
-                </CardTitle>
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-blue-600" />
-                </div>
-              </div>
+              <CardTitle className="text-sm font-medium text-blue-900 flex items-center gap-2">
+                <DollarSign className="w-4 h-4" />
+                Resultado Líquido
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600">
-                {formatMoney(resumo.resultado)}
+              <div className={`text-3xl font-bold mb-1 ${resumoFiltrado.resultado >= 0 ? 'text-blue-700' : 'text-red-700'}`}>
+                {formatMoney(resumoFiltrado.resultado)}
               </div>
-              <p className="text-xs text-slate-500 mt-2">Período: 27/04 a 27/05</p>
+              <p className="text-sm text-blue-600">
+                Período: {startDate || resumo.periodo_inicio} a {endDate || resumo.periodo_fim}
+              </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Gráficos */}
-        <Tabs defaultValue="categorias" className="space-y-4">
-          <TabsList className="bg-white border border-slate-200">
+        {/* Tabs */}
+        <Tabs defaultValue="categorias" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="categorias">Categorias</TabsTrigger>
             <TabsTrigger value="diario">Fluxo Diário</TabsTrigger>
             <TabsTrigger value="pizza">Composição</TabsTrigger>
           </TabsList>
 
-          {/* Gráfico de Categorias COM LABELS */}
+          {/* Tab: Categorias */}
           <TabsContent value="categorias">
-            <Card className="border-0 shadow-lg">
+            <Card className="bg-white border-slate-200">
               <CardHeader>
                 <CardTitle>Despesas por Categoria</CardTitle>
               </CardHeader>
               <CardContent>
-                <BarChartWithLabels data={categoriasChart} formatMoney={formatMoney} />
+                <div style={{ width: '100%', height: 400 }}>
+                  <BarChartWithLabels data={categoriasChart} formatMoney={formatMoney} />
+                </div>
               </CardContent>
             </Card>
-          </TabsContent>
 
-          {/* Gráfico Diário */}
-          <TabsContent value="diario">
-            <Card className="border-0 shadow-lg">
+            {/* Detalhamento de Categorias */}
+            <Card className="mt-6 bg-white border-slate-200">
               <CardHeader>
-                <CardTitle>Saldo ao Longo do Período</CardTitle>
+                <CardTitle>Detalhamento de Categorias</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <LineChart data={diarioChart}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="data_short" />
-                    <YAxis />
-                    <Tooltip 
-                      formatter={(value: any) => formatMoney(Number(value))}
-                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0' }}
-                    />
-                    <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="saldo" 
-                      stroke="#3B82F6" 
-                      strokeWidth={3}
-                      dot={{ fill: '#3B82F6', r: 4 }}
-                      activeDot={{ r: 6 }}
-                      name="Saldo"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                <div className="space-y-2">
+                  {categorias.map((cat) => (
+                    <div key={cat.nome} className="border border-slate-200 rounded-lg">
+                      <button
+                        onClick={() => setExpandedCategory(expandedCategory === cat.nome ? null : cat.nome)}
+                        className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="flex-1 text-left">
+                          <p className="font-medium text-slate-900">{cat.nome}</p>
+                          <p className="text-sm text-slate-600">{cat.quantidade} transações</p>
+                        </div>
+                        <div className="text-right mr-4">
+                          <p className="font-bold text-slate-900">{formatMoney(cat.valor)}</p>
+                          <p className="text-sm text-slate-600">{cat.percentual}%</p>
+                        </div>
+                        {expandedCategory === cat.nome ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </button>
+
+                      {expandedCategory === cat.nome && (
+                        <div className="bg-slate-50 p-4 border-t border-slate-200">
+                          <div className="space-y-2 max-h-64 overflow-y-auto">
+                            {detalhes[cat.nome]?.map((item: any, idx: number) => (
+                              <div key={idx} className="bg-white p-3 rounded border border-slate-100 text-sm">
+                                <div className="flex justify-between items-start gap-2">
+                                  <div className="flex-1">
+                                    <p className="font-medium text-slate-900">{item.data}</p>
+                                    <p className="text-slate-600 break-words">{item.descricao}</p>
+                                    {item.documento && <p className="text-xs text-slate-500">Doc: {item.documento}</p>}
+                                  </div>
+                                  <div className="text-right whitespace-nowrap">
+                                    <p className="font-bold text-slate-900">{formatMoney(item.valor)}</p>
+                                    <p className="text-xs text-slate-500">Saldo: {formatMoney(item.saldo)}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Gráfico Pizza */}
+          {/* Tab: Fluxo Diário */}
+          <TabsContent value="diario">
+            <Card className="bg-white border-slate-200">
+              <CardHeader>
+                <CardTitle>Evolução Diária de Entradas e Saídas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div style={{ width: '100%', height: 400 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={diarioChart}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="data_short" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => formatMoney(value as number)} />
+                      <Legend />
+                      <Line type="monotone" dataKey="receita" stroke="#10B981" name="Receitas" />
+                      <Line type="monotone" dataKey="despesa" stroke="#EF4444" name="Despesas" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab: Composição */}
           <TabsContent value="pizza">
-            <Card className="border-0 shadow-lg">
+            <Card className="bg-white border-slate-200">
               <CardHeader>
                 <CardTitle>Composição de Despesas</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <PieChart>
-                    <Pie
-                      data={categoriasChart}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ nome, percentual }) => `${nome}: ${percentual.toFixed(1)}%`}
-                      outerRadius={120}
-                      fill="#8884d8"
-                      dataKey="valor_display"
-                    >
-                      {categoriasChart.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value: any) => formatMoney(Number(value))} />
-                  </PieChart>
-                </ResponsiveContainer>
+                <div style={{ width: '100%', height: 400 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoriasChart}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ categoria, percentual }) => `${categoria} (${percentual}%)`}
+                        outerRadius={120}
+                        fill="#8884d8"
+                        dataKey="valor_abs"
+                      >
+                        {categoriasChart.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => formatMoney(value as number)} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-
-        {/* Tabela Expansível de Categorias */}
-        <Card className="border-0 shadow-lg mt-8">
-          <CardHeader>
-            <CardTitle>Detalhamento de Categorias</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {categoriasChart.map((cat, idx) => (
-                <div key={idx} className="border border-slate-200 rounded-lg overflow-hidden">
-                  {/* Cabeçalho da Categoria */}
-                  <button
-                    onClick={() => setExpandedCategory(expandedCategory === cat.nome ? null : cat.nome)}
-                    className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors"
-                  >
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="w-4 h-4 rounded" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
-                      <div className="text-left">
-                        <h3 className="font-semibold text-slate-900">{cat.nome}</h3>
-                        <p className="text-sm text-slate-500">{cat.quantidade} transações</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
-                        <p className="font-bold text-slate-900">{formatMoney(cat.valor)}</p>
-                        <p className="text-sm text-slate-500">{cat.percentual.toFixed(2)}%</p>
-                      </div>
-                      {expandedCategory === cat.nome ? (
-                        <ChevronUp className="w-5 h-5 text-slate-600" />
-                      ) : (
-                        <ChevronDown className="w-5 h-5 text-slate-600" />
-                      )}
-                    </div>
-                  </button>
-
-                  {/* Registros Detalhados */}
-                  {expandedCategory === cat.nome && (
-                    <div className="bg-white border-t border-slate-200">
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="bg-slate-50 border-b border-slate-200">
-                              <th className="text-left py-2 px-4 font-semibold text-slate-700">Data</th>
-                              <th className="text-left py-2 px-4 font-semibold text-slate-700">Descrição</th>
-                              <th className="text-left py-2 px-4 font-semibold text-slate-700">Documento</th>
-                              <th className="text-right py-2 px-4 font-semibold text-slate-700">Valor</th>
-                              <th className="text-right py-2 px-4 font-semibold text-slate-700">Saldo</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {detalhes[cat.nome]?.registros.map((reg: any, ridx: number) => (
-                              <tr key={ridx} className="border-b border-slate-100 hover:bg-slate-50">
-                                <td className="py-2 px-4 text-slate-900 font-medium">{reg.data}</td>
-                                <td className="py-2 px-4 text-slate-700 break-words" style={{ maxWidth: '400px' }}>{reg.descricao}</td>
-                                <td className="py-2 px-4 text-slate-600 text-xs">{reg.documento}</td>
-                                <td className="py-2 px-4 text-right font-semibold text-slate-900">
-                                  {formatMoney(reg.valor)}
-                                </td>
-                                <td className="py-2 px-4 text-right text-slate-600">
-                                  {formatMoney(reg.saldo)}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
