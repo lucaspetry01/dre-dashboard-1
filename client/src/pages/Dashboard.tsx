@@ -2,19 +2,15 @@ import { useState, useMemo } from 'react';
 import dashboardData from '@/data/dashboard.json';
 import detalhesData from '@/data/detalhes.json';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  LineChart, Line, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
-} from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, ChevronDown, ChevronUp, Upload, Calendar } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar } from 'lucide-react';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 
+// Paleta usada pelo BarChartWithLabels (mantida para coerência visual futura)
 const COLORS = [
   '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
   '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#06B6D4', '#84CC16'
@@ -672,16 +668,9 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Tabs */}
-        <Tabs defaultValue="categorias" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="categorias">Categorias</TabsTrigger>
-            <TabsTrigger value="diario">Fluxo Diário</TabsTrigger>
-            <TabsTrigger value="pizza">Composição</TabsTrigger>
-          </TabsList>
-
-          {/* Tab: Categorias */}
-          <TabsContent value="categorias">
+        {/* Secção Categorias (única visível após remoção das abas Fluxo Diário e Composição) */}
+        <div className="w-full">
+          <div>
             <Card className="bg-white border-slate-200">
               <CardHeader>
                 <CardTitle>Despesas por Categoria</CardTitle>
@@ -751,64 +740,8 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Tab: Fluxo Diário */}
-          <TabsContent value="diario">
-            <Card className="bg-white border-slate-200">
-              <CardHeader>
-                <CardTitle>Evolução Diária de Entradas e Saídas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div style={{ width: '100%', height: 400 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={diarioChart}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="data_short" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => formatMoney(value as number)} />
-                      <Legend />
-                      <Line type="monotone" dataKey="receita" stroke="#10B981" name="Receitas" />
-                      <Line type="monotone" dataKey="despesa" stroke="#EF4444" name="Despesas" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Tab: Composição */}
-          <TabsContent value="pizza">
-            <Card className="bg-white border-slate-200">
-              <CardHeader>
-                <CardTitle>Composição de Despesas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div style={{ width: '100%', height: 400 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={categoriasChart}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ categoria, percentual }) => `${categoria} (${(percentual ?? 0).toFixed(1)}%)`}
-                        outerRadius={120}
-                        fill="#8884d8"
-                        dataKey="valor_abs"
-                      >
-                        {categoriasChart.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => formatMoney(value as number)} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
       </div>
     </div>
   );
