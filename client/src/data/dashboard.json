@@ -4,7 +4,9 @@
     "total_despesas": -74769.13,
     "resultado": 21339.99999999997,
     "periodo_inicio": "27/04/2026",
-    "periodo_fim": "27/05/2026"
+    "periodo_fim": "27/05/2026",
+    "qtd_receitas": 42,
+    "qtd_despesas": 349
   },
   "categorias": [
     {

@@ -179,6 +179,18 @@ export default function Dashboard() {
   const variacaoDespesas = resumoAnterior ? calcularVariacao(resumoFiltrado.total_despesas, resumoAnterior.total_despesas) : null;
   const variacaoResultado = resumoAnterior ? calcularVariacao(resumoFiltrado.resultado, resumoAnterior.resultado) : null;
 
+  // Contagens reais: quando sem filtro, usa o total do resumo (banco/JSON);
+  // quando há filtro, conta dias com valor > 0 / < 0 no diário filtrado.
+  const semFiltro = !startDate && !endDate;
+  const qtdResumoReceitas = (resumo as { qtd_receitas?: number }).qtd_receitas;
+  const qtdResumoDespesas = (resumo as { qtd_despesas?: number }).qtd_despesas;
+  const qtdEntradas = semFiltro
+    ? (qtdResumoReceitas ?? filteredDiario.filter(d => d.valor > 0).length)
+    : filteredDiario.filter(d => d.valor > 0).length;
+  const qtdSaidas = semFiltro
+    ? (qtdResumoDespesas ?? filteredDiario.filter(d => d.valor < 0).length)
+    : filteredDiario.filter(d => d.valor < 0).length;
+
   // Helper: parse data DD/MM/YYYY -> Date
   const parseDataBr = (dataStr: string): Date | null => {
     if (!dataStr) return null;
@@ -608,7 +620,7 @@ export default function Dashboard() {
                 {formatMoney(resumoFiltrado.total_receitas)}
               </div>
               <p className="text-xs text-slate-500">
-                {!startDate && !endDate ? '42' : filteredDiario.filter(d => d.valor > 0).length} entradas
+                {qtdEntradas} entradas
                 {resumoAnterior && <span className="ml-2 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_receitas)}</span>}
               </p>
             </CardContent>
@@ -635,7 +647,7 @@ export default function Dashboard() {
                 {formatMoney(resumoFiltrado.total_despesas)}
               </div>
               <p className="text-xs text-slate-500">
-                {!startDate && !endDate ? '349' : filteredDiario.filter(d => d.valor < 0).length} saídas
+                {qtdSaidas} saídas
                 {resumoAnterior && <span className="ml-2 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_despesas)}</span>}
               </p>
             </CardContent>

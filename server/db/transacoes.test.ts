@@ -140,4 +140,26 @@ describe('aggregateRows (helper de produção)', () => {
     expect(result.resumo.total_receitas).toBe(5000);
     expect(result.resumo.total_despesas).toBe(-500.5);
   });
+
+  it('expõe qtd_receitas e qtd_despesas no resumo (correção do bug do card de Receitas)', () => {
+    const rows: AggregateRow[] = [
+      row({ valor: '5000.00', categoria: 'RECEITAS' }),
+      row({ valor: '2000.00', dataTimestamp: new Date('2026-05-02'), categoria: 'RECEITAS' }),
+      row({ valor: '-500.00', dataTimestamp: new Date('2026-05-03'), categoria: 'COMBUSTIVEL' }),
+      row({ valor: '-300.00', dataTimestamp: new Date('2026-05-04'), categoria: 'COMBUSTIVEL' }),
+      row({ valor: '-100.00', dataTimestamp: new Date('2026-05-05'), categoria: 'PEDAGIOS' }),
+    ];
+
+    const result = aggregateRows(rows)!;
+    expect(result.resumo.qtd_receitas).toBe(2);
+    expect(result.resumo.qtd_despesas).toBe(3);
+  });
+
+  it('qtd_receitas/qtd_despesas zera quando não há transações do tipo', () => {
+    const result = aggregateRows([
+      row({ valor: '5000.00', categoria: 'RECEITAS' }),
+    ])!;
+    expect(result.resumo.qtd_receitas).toBe(1);
+    expect(result.resumo.qtd_despesas).toBe(0);
+  });
 });

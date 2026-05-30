@@ -20,3 +20,7 @@
 - [x] Após upload OFX, invalidar queries para atualizar tela automaticamente
 - [x] Indicador visual de fonte (Banco/JSON) para transparência (badge no header)
 - [x] Testes do helper de agregação (5 testes em transacoes.test.ts)
+
+## Bugs reportados
+
+- [x] Card de Receitas/Despesas: contagens fixas ('42'/'349') substituídas por valores dinâmicos vindos do resumo agregado (banco ou JSON), corrigindo desatualização após importar OFX + limpar filtros

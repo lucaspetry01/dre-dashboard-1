@@ -111,6 +111,8 @@ export interface ResumoAgregado {
     resultado: number;
     periodo_inicio: string;
     periodo_fim: string;
+    qtd_receitas: number;
+    qtd_despesas: number;
   };
   categorias: Array<{
     nome: string;
@@ -187,6 +189,8 @@ export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
 
   let totalReceitas = 0;
   let totalDespesas = 0;
+  let qtdReceitas = 0;
+  let qtdDespesas = 0;
   const categoriasMap = new Map<string, { valor: number; quantidade: number }>();
   const diarioMap = new Map<
     string,
@@ -205,8 +209,13 @@ export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
     if (!periodoInicio || dt < periodoInicio) periodoInicio = dt;
     if (!periodoFim || dt > periodoFim) periodoFim = dt;
 
-    if (valor > 0) totalReceitas += valor;
-    else totalDespesas += valor;
+    if (valor > 0) {
+      totalReceitas += valor;
+      qtdReceitas += 1;
+    } else {
+      totalDespesas += valor;
+      qtdDespesas += 1;
+    }
 
     // categorias (apenas saídas)
     if (valor < 0) {
@@ -266,6 +275,8 @@ export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
       resultado: totalReceitas + totalDespesas,
       periodo_inicio: periodoInicio ? formatBR(periodoInicio) : '',
       periodo_fim: periodoFim ? formatBR(periodoFim) : '',
+      qtd_receitas: qtdReceitas,
+      qtd_despesas: qtdDespesas,
     },
     categorias,
     diario,
