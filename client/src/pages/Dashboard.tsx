@@ -47,11 +47,11 @@ export default function Dashboard() {
   })();
 
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-  // Inicializar com filtro 'Hoje' por padrão
-  const [startDate, setStartDate] = useState<string>(REFERENCE_DATE);
-  const [endDate, setEndDate] = useState<string>(REFERENCE_DATE);
+  // Sem filtro pré-setado: dashboard abre mostrando todo o período disponível
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
-  const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>('today');
+  const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
@@ -115,83 +115,7 @@ export default function Dashboard() {
     });
   }, [diario, startDate, endDate]);
 
-  // Calcular resumo filtrado
-  const resumoFiltrado = useMemo(() => {
-    // Se não há filtro de data, usar o resumo total do JSON
-    if (!startDate && !endDate) {
-      return {
-        total_receitas: resumo.total_receitas,
-        total_despesas: resumo.total_despesas,
-        resultado: resumo.resultado
-      };
-    }
-    
-    // Se há filtro, calcular a partir dos dados diários filtrados
-    const receitas = filteredDiario.filter(d => d.valor > 0).reduce((sum, d) => sum + d.valor, 0);
-    const despesas = filteredDiario.filter(d => d.valor < 0).reduce((sum, d) => sum + d.valor, 0);
-    
-    return {
-      total_receitas: receitas,
-      total_despesas: despesas,
-      resultado: receitas + despesas
-    };
-  }, [filteredDiario, startDate, endDate, resumo]);
-
-  // Calcular resumo do período ANTERIOR (mesmo intervalo de dias)
-  const resumoAnterior = useMemo(() => {
-    if (!startDate || !endDate) return null;
-    
-    const start = new Date(startDate + 'T00:00:00');
-    const end = new Date(endDate + 'T23:59:59');
-    const diffMs = end.getTime() - start.getTime();
-    
-    // Período anterior: mesmo número de dias antes do startDate
-    const prevEnd = new Date(start.getTime() - 1); // dia anterior ao startDate
-    const prevStart = new Date(prevEnd.getTime() - diffMs);
-    
-    const dadosAnterior = diario.filter(d => {
-      const dataObj = new Date(d.data_full + 'T00:00:00');
-      return dataObj >= prevStart && dataObj <= prevEnd;
-    });
-    
-    if (dadosAnterior.length === 0) return null;
-    
-    const receitas = dadosAnterior.filter(d => d.valor > 0).reduce((sum, d) => sum + d.valor, 0);
-    const despesas = dadosAnterior.filter(d => d.valor < 0).reduce((sum, d) => sum + d.valor, 0);
-    
-    return {
-      total_receitas: receitas,
-      total_despesas: despesas,
-      resultado: receitas + despesas,
-      periodo_inicio: prevStart.toLocaleDateString('pt-BR'),
-      periodo_fim: prevEnd.toLocaleDateString('pt-BR'),
-    };
-  }, [diario, startDate, endDate]);
-
-  // Calcular variação percentual
-  const calcularVariacao = (atual: number, anterior: number): { valor: number; positivo: boolean } | null => {
-    if (anterior === 0 || !resumoAnterior) return null;
-    const variacao = ((atual - anterior) / Math.abs(anterior)) * 100;
-    return { valor: Math.abs(variacao), positivo: variacao >= 0 };
-  };
-
-  const variacaoReceitas = resumoAnterior ? calcularVariacao(resumoFiltrado.total_receitas, resumoAnterior.total_receitas) : null;
-  const variacaoDespesas = resumoAnterior ? calcularVariacao(resumoFiltrado.total_despesas, resumoAnterior.total_despesas) : null;
-  const variacaoResultado = resumoAnterior ? calcularVariacao(resumoFiltrado.resultado, resumoAnterior.resultado) : null;
-
-  // Contagens reais: quando sem filtro, usa o total do resumo (banco/JSON);
-  // quando há filtro, conta dias com valor > 0 / < 0 no diário filtrado.
-  const semFiltro = !startDate && !endDate;
-  const qtdResumoReceitas = (resumo as { qtd_receitas?: number }).qtd_receitas;
-  const qtdResumoDespesas = (resumo as { qtd_despesas?: number }).qtd_despesas;
-  const qtdEntradas = semFiltro
-    ? (qtdResumoReceitas ?? filteredDiario.filter(d => d.valor > 0).length)
-    : filteredDiario.filter(d => d.valor > 0).length;
-  const qtdSaidas = semFiltro
-    ? (qtdResumoDespesas ?? filteredDiario.filter(d => d.valor < 0).length)
-    : filteredDiario.filter(d => d.valor < 0).length;
-
-  // Helper: parse data DD/MM/YYYY -> Date
+  // Helper: parse data DD/MM/YYYY -> Date (declarado cedo para uso nos useMemo abaixo)
   const parseDataBr = (dataStr: string): Date | null => {
     if (!dataStr) return null;
     const parts = dataStr.split('/');
@@ -227,6 +151,100 @@ export default function Dashboard() {
     });
     return filtered;
   }, [detalhes, startDate, endDate]);
+
+  // Calcular resumo filtrado a partir das transações individuais
+  // (mesma fonte usada pelo detalhamento, garante consistência entre cards e categorias).
+  // Quando não há filtro, lemos direto do `resumo` agregado pelo backend.
+  const resumoFiltrado = useMemo(() => {
+    if (!startDate && !endDate) {
+      return {
+        total_receitas: resumo.total_receitas,
+        total_despesas: resumo.total_despesas,
+        resultado: resumo.resultado,
+        qtd_receitas: (resumo as { qtd_receitas?: number }).qtd_receitas ?? 0,
+        qtd_despesas: (resumo as { qtd_despesas?: number }).qtd_despesas ?? 0,
+      };
+    }
+
+    // Itera todos os registros filtrados (transações individuais por categoria)
+    let receitas = 0;
+    let despesas = 0;
+    let qtdReceitas = 0;
+    let qtdDespesas = 0;
+    Object.values(detalhesFiltrados).forEach((cat: any) => {
+      (cat?.registros || []).forEach((r: any) => {
+        const v = Number(r.valor) || 0;
+        if (v > 0) {
+          receitas += v;
+          qtdReceitas += 1;
+        } else if (v < 0) {
+          despesas += v;
+          qtdDespesas += 1;
+        }
+      });
+    });
+
+    return {
+      total_receitas: receitas,
+      total_despesas: despesas,
+      resultado: receitas + despesas,
+      qtd_receitas: qtdReceitas,
+      qtd_despesas: qtdDespesas,
+    };
+  }, [detalhesFiltrados, startDate, endDate, resumo]);
+
+  // Calcular resumo do período ANTERIOR (mesmo intervalo de dias).
+  // Também soma a partir das transações individuais para coerência com `resumoFiltrado`.
+  const resumoAnterior = useMemo(() => {
+    if (!startDate || !endDate) return null;
+
+    const start = new Date(startDate + 'T00:00:00');
+    const end = new Date(endDate + 'T23:59:59');
+    const diffMs = end.getTime() - start.getTime();
+
+    const prevEnd = new Date(start.getTime() - 1);
+    const prevStart = new Date(prevEnd.getTime() - diffMs);
+
+    let receitas = 0;
+    let despesas = 0;
+    let qtd = 0;
+    Object.values(detalhes).forEach((cat: any) => {
+      (cat?.registros || []).forEach((r: any) => {
+        const dataObj = parseDataBr(r.data);
+        if (!dataObj) return;
+        if (dataObj < prevStart || dataObj > prevEnd) return;
+        const v = Number(r.valor) || 0;
+        if (v > 0) receitas += v;
+        else if (v < 0) despesas += v;
+        qtd += 1;
+      });
+    });
+
+    if (qtd === 0) return null;
+
+    return {
+      total_receitas: receitas,
+      total_despesas: despesas,
+      resultado: receitas + despesas,
+      periodo_inicio: prevStart.toLocaleDateString('pt-BR'),
+      periodo_fim: prevEnd.toLocaleDateString('pt-BR'),
+    };
+  }, [detalhes, startDate, endDate]);
+
+  // Calcular variação percentual
+  const calcularVariacao = (atual: number, anterior: number): { valor: number; positivo: boolean } | null => {
+    if (anterior === 0 || !resumoAnterior) return null;
+    const variacao = ((atual - anterior) / Math.abs(anterior)) * 100;
+    return { valor: Math.abs(variacao), positivo: variacao >= 0 };
+  };
+
+  const variacaoReceitas = resumoAnterior ? calcularVariacao(resumoFiltrado.total_receitas, resumoAnterior.total_receitas) : null;
+  const variacaoDespesas = resumoAnterior ? calcularVariacao(resumoFiltrado.total_despesas, resumoAnterior.total_despesas) : null;
+  const variacaoResultado = resumoAnterior ? calcularVariacao(resumoFiltrado.resultado, resumoAnterior.resultado) : null;
+
+  // Contagens reais vindas do resumo filtrado (já calcula via transações individuais).
+  const qtdEntradas = resumoFiltrado.qtd_receitas;
+  const qtdSaidas = resumoFiltrado.qtd_despesas;
 
   // Categorias filtradas (recalculadas com base nos detalhes filtrados)
   const categoriasFiltradas = useMemo(() => {
