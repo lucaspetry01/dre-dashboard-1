@@ -1,5 +1,5 @@
 import {
-  BarChart, Bar, YAxis, CartesianGrid, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer
 } from 'recharts';
 import { useMemo } from 'react';
 
@@ -46,12 +46,8 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
   };
 
   // Renderizar label customizado com valor centralizado na coluna
-  const renderCustomLabel = (props: any): any => {
+  const renderCustomLabel = (props: any) => {
     const { x, y, width, height, value } = props;
-
-    if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(width) || !Number.isFinite(height)) {
-      return null;
-    }
 
     return (
       <text
@@ -90,7 +86,12 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
             stroke="transparent"
             vertical={false}
           />
-
+          <XAxis
+            type="number"
+            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
+            stroke="#475569"
+            tickFormatter={(value) => formatMoney(value)}
+          />
           <YAxis
             type="category"
             dataKey="nomeAbreviado"
