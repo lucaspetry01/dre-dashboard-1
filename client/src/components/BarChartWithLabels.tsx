@@ -25,7 +25,8 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
       .map(d => ({
         ...d,
         nomeAbreviado: cleanName(d.nome),
-        total: d.valor_display
+        total: d.valor_display,
+        percentual: d.percentual ?? 0  // Preservar percentual do Dashboard
       }));
   }, [data]);
 
@@ -47,8 +48,9 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
 
   // Renderizar label customizado com valor e percentual
   const renderCustomLabel = (props: any) => {
-    const { x, y, width, height, value, payload } = props;
-    const percentual = payload?.percentual || 0;
+    const { x, y, width, height, value } = props;
+    // O percentual vem do objeto de dados passado para o Bar
+    const percentual = props.payload?.percentual ?? 0;
 
     return (
       <g>
