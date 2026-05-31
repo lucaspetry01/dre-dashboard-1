@@ -456,18 +456,7 @@ export default function Dashboard() {
       {/* Detalhamento por Categoria */}
       <Card className="border-slate-700 bg-slate-900/50 kpi-card-3d entrance-animate" style={{ animationDelay: '0.4s' }}>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base sm:text-lg text-slate-100">Detalhamento de Categorias</CardTitle>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={groupByDescription}
-                onChange={(e) => setGroupByDescription(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-400 bg-slate-800 cursor-pointer"
-              />
-              <span className="text-xs sm:text-sm text-slate-300 whitespace-nowrap">Agrupar por descrição</span>
-            </label>
-          </div>
+          <CardTitle className="text-base sm:text-lg text-slate-100">Detalhamento de Categorias</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -499,6 +488,15 @@ export default function Dashboard() {
 
                   {isExpanded && (
                     <div className="border-t border-slate-700 bg-slate-900/30 p-3 space-y-2">
+                      <label className="flex items-center gap-2 cursor-pointer mb-2">
+                        <input
+                          type="checkbox"
+                          checked={groupByDescription}
+                          onChange={(e) => setGroupByDescription(e.target.checked)}
+                          className="w-4 h-4 rounded border-slate-400 bg-slate-800 cursor-pointer"
+                        />
+                        <span className="text-xs text-slate-300">Agrupar por descrição</span>
+                      </label>
                       {items.map((item: any, idx: number) => (
                         <div key={idx} className="flex justify-between items-start text-xs sm:text-sm">
                           <div className="flex-1">
