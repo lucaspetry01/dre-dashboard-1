@@ -88,8 +88,8 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
           />
           <XAxis
             type="number"
-            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
-            stroke="#475569"
+            tick={{ fontSize: config.xAxisFontSize, fill: '#0f172a' }}
+            stroke="#0f172a"
             tickFormatter={(value) => formatMoney(value)}
           />
           <YAxis
