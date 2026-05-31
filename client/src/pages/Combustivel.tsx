@@ -1,16 +1,18 @@
 import { useState } from 'react';
+import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2, Edit2 } from 'lucide-react';
+import { Plus, Trash2, Edit2, ArrowLeft } from 'lucide-react';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
 
 const PASTAS: Pasta[] = ['IES', 'IJD', 'DAJ', 'MFF', 'IGU'];
 
 export default function Combustivel() {
+  const [, setLocation] = useLocation();
   const [selectedPasta, setSelectedPasta] = useState<Pasta>('IES');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -125,7 +127,16 @@ export default function Combustivel() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-xl font-bold text-white">Combustível - {selectedPasta}</h1>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setLocation('/')}
+                className="p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors"
+                title="Voltar ao Dashboard"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <h1 className="text-xl font-bold text-white">Combustível - {selectedPasta}</h1>
+            </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-xs h-7">
