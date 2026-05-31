@@ -221,21 +221,30 @@ export default function Dashboard() {
       periodo_fim: resumo.periodo_fim,
     };
 
-    filteredDiario.forEach(d => {
-      if (d.valor > 0) {
-        result.receitas += d.valor;
-        result.qtd_receitas += 1;
-      } else if (d.valor < 0) {
-        result.despesas += Math.abs(d.valor);
-        result.qtd_despesas += 1;
-      }
-    });
+    // Se não há filtro de data, usar os totais do resumo (que incluem TODAS as transações)
+    if (!startDate && !endDate) {
+      result.receitas = resumo.total_receitas || 0;
+      result.despesas = Math.abs(resumo.total_despesas || 0);
+      result.qtd_receitas = resumo.qtd_receitas || 0;
+      result.qtd_despesas = resumo.qtd_despesas || 0;
+    } else {
+      // Se há filtro, calcular a partir do diário filtrado
+      filteredDiario.forEach(d => {
+        if (d.valor > 0) {
+          result.receitas += d.valor;
+          result.qtd_receitas += 1;
+        } else if (d.valor < 0) {
+          result.despesas += Math.abs(d.valor);
+          result.qtd_despesas += 1;
+        }
+      });
+    }
 
     result.lucro = result.receitas - result.despesas;
     result.resultado = result.receitas - result.despesas;
 
     return result;
-  }, [filteredDiario, resumo]);
+  }, [filteredDiario, resumo, startDate, endDate]);
 
   // Categorias com dados
   const categoriasComDados = useMemo(() => {
