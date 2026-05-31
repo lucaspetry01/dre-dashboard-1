@@ -53,6 +53,10 @@ ENCODING:USASCII
 <MEMO>POSTO SHELL ABASTECIMENTO</MEMO>
 </STMTTRN>
 </BANKTRANLIST>
+<LEDGERBAL>
+<BALAMT>18310.46</BALAMT>
+<DTASOF>20260527235959[-3:BRT]</DTASOF>
+</LEDGERBAL>
 </STMTRS>
 </STMTTRNRS>
 </BANKMSGSRSV1>
@@ -132,6 +136,10 @@ describe('parseOfx', () => {
       expect(t.dataTimestamp.getFullYear()).toBe(2026);
       expect(t.dataTimestamp.getMonth()).toBe(4); // Maio (0-indexed)
       expect(t.dataTimestamp.getDate()).toBe(8);
+    });
+
+    it('extrai saldo final da conta (LEDGERBAL)', () => {
+      expect(result.saldoFinal).toBe(18310.46);
     });
   });
 

@@ -19,6 +19,7 @@ export interface OfxTransaction {
   descricao: string;
   valor: number;
   tipo: 'entrada' | 'saida';
+  saldo?: number; // Saldo após a transação (se disponível no OFX)
 }
 
 export interface OfxParseResult {
@@ -120,6 +121,7 @@ export function parseOfx(ofxContent: string): OfxParseResult {
     const dtPosted = extractTag(block, 'DTPOSTED');
     const trnAmt = extractTag(block, 'TRNAMT');
     const memo = extractTag(block, 'MEMO') || extractTag(block, 'NAME') || '';
+    const balAmtRaw = extractTag(block, 'BALAMT'); // Saldo após a transação
 
     if (!fitId || !dtPosted || !trnAmt) continue;
 
@@ -130,6 +132,15 @@ export function parseOfx(ofxContent: string): OfxParseResult {
     const dataTimestamp = parseOfxDate(dtPosted);
     const data = formatDateBR(dataTimestamp);
 
+    // Extrair saldo se disponível
+    let saldo: number | undefined;
+    if (balAmtRaw) {
+      const saldoValue = parseFloat(balAmtRaw.replace(',', '.'));
+      if (!isNaN(saldoValue)) {
+        saldo = saldoValue;
+      }
+    }
+
     transactions.push({
       fitId: fitId.trim(),
       data,
@@ -137,6 +148,7 @@ export function parseOfx(ofxContent: string): OfxParseResult {
       descricao: memo.trim(),
       valor,
       tipo: valor < 0 ? 'saida' : 'entrada',
+      saldo,
     });
   }
 

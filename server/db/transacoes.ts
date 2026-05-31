@@ -348,25 +348,17 @@ export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
 
 /**
  * Constrói o resumo agregado a partir do banco. Busca + delega para a função pura.
- * Também busca o saldoFinal do último upload.
+ * Também busca o saldoFinal do último registro de transação (do diário).
  */
 export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
   const todas = await listTransacoes();
   const resumo = aggregateRows(todas as AggregateRow[]);
   
-  // Buscar saldoFinal do último upload
-  if (resumo) {
-    const db = await getDb();
-    if (db) {
-      const lastUpload = await db
-        .select({ saldoFinal: uploads.saldoFinal })
-        .from(uploads)
-        .orderBy(desc(uploads.createdAt))
-        .limit(1);
-      
-      if (lastUpload.length > 0 && lastUpload[0].saldoFinal) {
-        resumo.saldoFinal = parseFloat(lastUpload[0].saldoFinal as unknown as string);
-      }
+  // Buscar saldoFinal do último registro do diário
+  if (resumo && resumo.diario && resumo.diario.length > 0) {
+    const ultimoDia = resumo.diario[resumo.diario.length - 1];
+    if (ultimoDia && ultimoDia.saldo) {
+      resumo.saldoFinal = ultimoDia.saldo;
     }
   }
   
