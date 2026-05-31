@@ -77,6 +77,8 @@ export const uploads = mysqlTable("uploads", {
   periodoInicio: varchar("periodoInicio", { length: 10 }),
   /** Período final das transações (maior data) */
   periodoFim: varchar("periodoFim", { length: 10 }),
+  /** Saldo final da conta conforme OFX */
+  saldoFinal: decimal("saldoFinal", { precision: 15, scale: 2 }).default("0"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

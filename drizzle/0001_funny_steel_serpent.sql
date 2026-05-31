@@ -1,0 +1,1 @@
+ALTER TABLE `uploads` ADD `saldoFinal` decimal(15,2) DEFAULT '0';

@@ -80,24 +80,27 @@ export async function listTransacoes(filters?: {
 }
 
 /**
- * Conta total de transações no banco.
+ * Conta o total de transações no banco.
  */
 export async function countTransacoes(): Promise<number> {
   const db = await getDb();
   if (!db) return 0;
 
-  const result = await db.select({ count: sql<number>`COUNT(*)` }).from(transacoes);
-  return Number(result[0]?.count ?? 0);
+  const result = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(transacoes);
+
+  return result[0]?.count ?? 0;
 }
 
 /**
- * Retorna lista de uploads ordenados pelo mais recente.
+ * Lista todos os uploads em ordem reversa (mais recentes primeiro).
  */
-export async function listUploads(limit = 20) {
+export async function listUploads() {
   const db = await getDb();
   if (!db) return [];
 
-  return await db.select().from(uploads).orderBy(desc(uploads.createdAt)).limit(limit);
+  return await db.select().from(uploads).orderBy(desc(uploads.createdAt));
 }
 
 /**
@@ -114,6 +117,7 @@ export interface ResumoAgregado {
     qtd_receitas: number;
     qtd_despesas: number;
   };
+  saldoFinal?: number; // Saldo final da conta do último OFX importado
   categorias: Array<{
     nome: string;
     valor: number;
@@ -154,12 +158,9 @@ function formatBR(d: Date): string {
   return `${dd}/${mm}/${yyyy}`;
 }
 
-function formatShort(d: Date): string {
-  const dd = String(d.getDate()).padStart(2, '0');
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  return `${dd}/${mm}`;
-}
-
+/**
+ * Formata Date como YYYY-MM-DD (ISO format para data_full).
+ */
 function formatISO(d: Date): string {
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -167,128 +168,207 @@ function formatISO(d: Date): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-/**
- * Tipo genérico das linhas usadas pela agregação (corresponde ao retorno de listTransacoes).
- */
-export interface AggregateRow {
+function formatShort(d: Date): string {
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dd}/${mm}`;
+}
+
+interface AggregateRow {
   data: string;
-  dataTimestamp: Date | string;
+  dataTimestamp: Date;
   descricao: string;
-  documento: string | null;
-  valor: string | number;
-  saldo: string | number | null;
+  documento: string;
+  valor: number | string;
+  saldo: number | string;
   categoria: string;
 }
 
 /**
- * Função PURA: recebe linhas e produz o resumo agregado.
- * Foi extraída para permitir testes unitários determinísticos sem depender do banco.
+ * Agrega linhas de transações em resumo, categorias, diário e detalhes.
+ * Função pura: sem I/O, apenas transformação de dados.
  */
 export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {
+    return null;
+  }
 
-  let totalReceitas = 0;
-  let totalDespesas = 0;
-  let qtdReceitas = 0;
-  let qtdDespesas = 0;
-  const categoriasMap = new Map<string, { valor: number; quantidade: number }>();
-  const diarioMap = new Map<
+  let total_receitas = 0;
+  let total_despesas = 0;
+  let qtd_receitas = 0;
+  let qtd_despesas = 0;
+
+  const categoriaMap: Record<
     string,
-    { data: string; data_full: string; valor: number; saldo: number; ts: number }
-  >();
-  const detalhes: ResumoAgregado['detalhes'] = {};
+    {
+      total: number;
+      quantidade: number;
+    }
+  > = {};
 
-  let periodoInicio: Date | null = null;
-  let periodoFim: Date | null = null;
+  const diarioMap: Record<
+    string,
+    {
+      data: string;
+      data_full: string;
+      valor: number;
+      saldo: number;
+    }
+  > = {};
 
-  for (const t of rows) {
-    const valor = Number(t.valor);
-    const saldo = Number(t.saldo ?? 0);
-    const dt = t.dataTimestamp instanceof Date ? t.dataTimestamp : new Date(t.dataTimestamp as unknown as string);
+  const detalhesMap: Record<
+    string,
+    {
+      total: number;
+      quantidade: number;
+      registros: Array<{
+        data: string;
+        descricao: string;
+        documento: string;
+        valor: number;
+        saldo: number;
+      }>;
+    }
+  > = {};
 
-    if (!periodoInicio || dt < periodoInicio) periodoInicio = dt;
-    if (!periodoFim || dt > periodoFim) periodoFim = dt;
+  // Processar cada linha
+  for (const row of rows) {
+    const valor = Number(row.valor);
+    const saldo = Number(row.saldo);
+    const categoria = row.categoria || 'OUTROS';
 
+    // Acumular receitas/despesas
     if (valor > 0) {
-      totalReceitas += valor;
-      qtdReceitas += 1;
-    } else {
-      totalDespesas += valor;
-      qtdDespesas += 1;
+      total_receitas += valor;
+      qtd_receitas++;
+    } else if (valor < 0) {
+      total_despesas += valor;
+      qtd_despesas++;
     }
 
-    // categorias (apenas saídas)
-    if (valor < 0) {
-      const cat = categoriasMap.get(t.categoria) ?? { valor: 0, quantidade: 0 };
-      cat.valor += valor;
-      cat.quantidade += 1;
-      categoriasMap.set(t.categoria, cat);
+    // Agregar por categoria
+    if (!categoriaMap[categoria]) {
+      categoriaMap[categoria] = { total: 0, quantidade: 0 };
     }
+    categoriaMap[categoria].total += valor;
+    categoriaMap[categoria].quantidade++;
 
-    // diário
-    const isoKey = formatISO(dt);
-    const dia = diarioMap.get(isoKey) ?? {
-      data: formatShort(dt),
-      data_full: isoKey,
-      valor: 0,
-      saldo: 0,
-      ts: dt.getTime(),
-    };
-    dia.valor += valor;
-    dia.saldo = saldo;
-    diarioMap.set(isoKey, dia);
+    // Agregar por data (diário)
+    const dataFull = row.dataTimestamp
+      ? formatISO(new Date(row.dataTimestamp))
+      : row.data;
+    const dataShort = row.dataTimestamp
+      ? formatShort(new Date(row.dataTimestamp))
+      : row.data.substring(0, 5);
 
-    // detalhes por categoria
-    if (!detalhes[t.categoria]) {
-      detalhes[t.categoria] = { total: 0, quantidade: 0, registros: [] };
+    if (!diarioMap[dataFull]) {
+      diarioMap[dataFull] = {
+        data: dataShort,
+        data_full: dataFull,
+        valor: 0,
+        saldo: 0,
+      };
     }
-    detalhes[t.categoria].total += valor;
-    detalhes[t.categoria].quantidade += 1;
-    detalhes[t.categoria].registros.push({
-      data: formatBR(dt),
-      descricao: t.descricao,
-      documento: t.documento ?? '',
+    diarioMap[dataFull].valor += valor;
+    diarioMap[dataFull].saldo = saldo; // Última transação do dia
+
+    // Agregar por categoria (detalhes)
+    if (!detalhesMap[categoria]) {
+      detalhesMap[categoria] = {
+        total: 0,
+        quantidade: 0,
+        registros: [],
+      };
+    }
+    detalhesMap[categoria].total += valor;
+    detalhesMap[categoria].quantidade++;
+    detalhesMap[categoria].registros.push({
+      data: row.data,
+      descricao: row.descricao,
+      documento: row.documento || '',
       valor,
       saldo,
     });
   }
 
-  const totalDespesasAbs = Math.abs(totalDespesas);
-  const categorias = Array.from(categoriasMap.entries())
-    .map(([nome, v]) => ({
+  // Construir array de categorias ordenado por valor absoluto
+  const categorias = Object.entries(categoriaMap)
+    .map(([nome, dados]) => ({
       nome,
-      valor: v.valor,
-      valor_abs: Math.abs(v.valor),
-      percentual: totalDespesasAbs > 0 ? (Math.abs(v.valor) / totalDespesasAbs) * 100 : 0,
-      quantidade: v.quantidade,
+      valor: dados.total,
+      valor_abs: Math.abs(dados.total),
+      percentual:
+        total_despesas < 0 && dados.total < 0
+          ? (Math.abs(dados.total) / Math.abs(total_despesas)) * 100
+          : 0,
+      quantidade: dados.quantidade,
     }))
     .sort((a, b) => b.valor_abs - a.valor_abs);
 
-  const diario = Array.from(diarioMap.values())
-    .sort((a, b) => a.ts - b.ts)
-    .map(({ ts: _ts, ...rest }) => rest);
+  // Construir array de diário ordenado por data (data_full já está em YYYY-MM-DD)
+  const diario = Object.values(diarioMap).sort((a, b) => {
+    return a.data_full.localeCompare(b.data_full);
+  });
+
+  // Calcular periodo_inicio e periodo_fim a partir das datas do diário
+  let periodo_inicio = '';
+  let periodo_fim = '';
+  
+  if (diario.length > 0) {
+    // data_full está em YYYY-MM-DD (ISO), converter para DD/MM/YYYY
+    const firstDate = diario[0].data_full;
+    const lastDate = diario[diario.length - 1].data_full;
+    
+    if (firstDate) {
+      const [yyyy, mm, dd] = firstDate.split('-');
+      periodo_inicio = `${dd}/${mm}/${yyyy}`;
+    }
+    if (lastDate) {
+      const [yyyy, mm, dd] = lastDate.split('-');
+      periodo_fim = `${dd}/${mm}/${yyyy}`;
+    }
+  }
 
   return {
     resumo: {
-      total_receitas: totalReceitas,
-      total_despesas: totalDespesas,
-      resultado: totalReceitas + totalDespesas,
-      periodo_inicio: periodoInicio ? formatBR(periodoInicio) : '',
-      periodo_fim: periodoFim ? formatBR(periodoFim) : '',
-      qtd_receitas: qtdReceitas,
-      qtd_despesas: qtdDespesas,
+      total_receitas,
+      total_despesas,
+      resultado: total_receitas + total_despesas,
+      periodo_inicio,
+      periodo_fim,
+      qtd_receitas,
+      qtd_despesas,
     },
     categorias,
     diario,
-    detalhes,
+    detalhes: detalhesMap,
     totalRegistros: rows.length,
   };
 }
 
 /**
- * Constrói o resumo agregado a partir do banco. Apenas busca + delega para a função pura.
+ * Constrói o resumo agregado a partir do banco. Busca + delega para a função pura.
+ * Também busca o saldoFinal do último upload.
  */
 export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
   const todas = await listTransacoes();
-  return aggregateRows(todas as AggregateRow[]);
+  const resumo = aggregateRows(todas as AggregateRow[]);
+  
+  // Buscar saldoFinal do último upload
+  if (resumo) {
+    const db = await getDb();
+    if (db) {
+      const lastUpload = await db
+        .select({ saldoFinal: uploads.saldoFinal })
+        .from(uploads)
+        .orderBy(desc(uploads.createdAt))
+        .limit(1);
+      
+      if (lastUpload.length > 0 && lastUpload[0].saldoFinal) {
+        resumo.saldoFinal = parseFloat(lastUpload[0].saldoFinal as unknown as string);
+      }
+    }
+  }
+  
+  return resumo;
 }

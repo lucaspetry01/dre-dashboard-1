@@ -26,6 +26,7 @@ export interface OfxParseResult {
   accountId?: string;
   periodoInicio?: string;
   periodoFim?: string;
+  saldoFinal?: number; // Saldo final da conta (LEDGERBAL/BALAMT)
   transactions: OfxTransaction[];
 }
 
@@ -87,6 +88,26 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   const periodoInicio = dtStartRaw ? formatDateBR(parseOfxDate(dtStartRaw)) : undefined;
   const periodoFim = dtEndRaw ? formatDateBR(parseOfxDate(dtEndRaw)) : undefined;
 
+  // Extrair saldo final da conta (LEDGERBAL/BALAMT ou AVAILBAL/BALAMT)
+  let saldoFinal: number | undefined;
+  const ledgerBalBlock = content.match(/<LEDGERBAL>([\s\S]*?)<\/LEDGERBAL>/i);
+  if (ledgerBalBlock) {
+    const balAmtRaw = extractTag(ledgerBalBlock[1], 'BALAMT');
+    if (balAmtRaw) {
+      saldoFinal = parseFloat(balAmtRaw.replace(',', '.'));
+    }
+  }
+  // Fallback para AVAILBAL se LEDGERBAL não existir
+  if (saldoFinal === undefined) {
+    const availBalBlock = content.match(/<AVAILBAL>([\s\S]*?)<\/AVAILBAL>/i);
+    if (availBalBlock) {
+      const balAmtRaw = extractTag(availBalBlock[1], 'BALAMT');
+      if (balAmtRaw) {
+        saldoFinal = parseFloat(balAmtRaw.replace(',', '.'));
+      }
+    }
+  }
+
   // Extrair todas as transações <STMTTRN>...</STMTTRN>
   const stmttrnRegex = /<STMTTRN>([\s\S]*?)<\/STMTTRN>/gi;
   const transactions: OfxTransaction[] = [];
@@ -124,6 +145,7 @@ export function parseOfx(ofxContent: string): OfxParseResult {
     accountId,
     periodoInicio,
     periodoFim,
+    saldoFinal,
     transactions,
   };
 }

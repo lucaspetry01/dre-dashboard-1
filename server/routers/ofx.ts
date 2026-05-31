@@ -95,6 +95,7 @@ export const ofxRouter = router({
         totalDuplicatas: duplicatas,
         periodoInicio: parsed.periodoInicio,
         periodoFim: parsed.periodoFim,
+        saldoFinal: parsed.saldoFinal ? parsed.saldoFinal.toFixed(2) : '0',
       });
 
       // Associar uploadId aos novos registros
@@ -114,6 +115,7 @@ export const ofxRouter = router({
         totalDuplicatas: duplicatas,
         periodoInicio: parsed.periodoInicio,
         periodoFim: parsed.periodoFim,
+        saldoFinal: parsed.saldoFinal ? parsed.saldoFinal.toFixed(2) : '0',
         mensagem: `${novosRegistros.length} transações importadas, ${duplicatas} duplicatas ignoradas.`,
       };
     }),

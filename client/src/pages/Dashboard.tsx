@@ -26,6 +26,7 @@ export default function Dashboard() {
   // Quando há dados no banco usamos eles; senão caímos no JSON estático (compat).
   const usandoBanco = !!(resumoBanco && resumoBanco.totalRegistros > 0);
   const resumo = usandoBanco ? resumoBanco!.resumo : dashboardData.resumo;
+  const saldoFinal = usandoBanco ? resumoBanco!.saldoFinal : undefined;
   const categorias = usandoBanco ? resumoBanco!.categorias : dashboardData.categorias;
   const diario = usandoBanco ? resumoBanco!.diario : dashboardData.diario;
   const timeline_categorias = (dashboardData as unknown as { timeline_categorias?: unknown[] }).timeline_categorias ?? [];
@@ -695,6 +696,29 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+          {/* Card de Saldo da Conta */}
+          {saldoFinal !== undefined && (
+            <Card className="relative overflow-hidden border-2 shadow-lg bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 border-blue-400">
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-white" />
+                <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-white" />
+              </div>
+              <CardContent className="relative p-3 sm:p-4">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1 rounded-lg bg-blue-400/30">
+                      <TrendingUp className="w-3 h-3 text-white" />
+                    </div>
+                    <p className="text-white/90 text-xs font-medium uppercase tracking-wider">Saldo da Conta</p>
+                  </div>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                    {formatMoney(saldoFinal)}
+                  </div>
+                  <p className="text-white/70 text-xs">Conforme último OFX importado</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* KPIs Secundários: Receitas e Despesas */}
