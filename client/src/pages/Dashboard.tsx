@@ -644,59 +644,43 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* KPI HERO: Lucro Líquido em Destaque */}
-        <div className={`mb-2 sm:mb-3 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+        {/* KPI HERO: Lucro Líquido e Saldo da Conta lado a lado */}
+        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mb-2 sm:mb-3 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+          {/* Card Lucro Líquido */}
           <Card className={`relative overflow-hidden border-2 shadow-xl transition-all duration-500 ${
             isLucro
               ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 border-emerald-400'
               : 'bg-gradient-to-br from-rose-500 via-rose-600 to-red-700 border-rose-400'
           }`}>
-            {/* Background pattern decorativo */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-white" />
               <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-white" />
             </div>
-
             <CardContent className="relative p-3 sm:p-4">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className={`p-1 rounded-lg ${isLucro ? 'bg-emerald-400/30' : 'bg-rose-400/30'}`}>
-                      {isLucro ? <TrendingUp className="w-3 h-3 text-white" /> : <TrendingDown className="w-3 h-3 text-white" />}
-                    </div>
-                    <p className="text-white/90 text-xs font-medium uppercase tracking-wider">
-                      {isLucro ? 'Lucro Líquido' : 'Prejuízo do Período'}
-                    </p>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <div className={`p-1 rounded-lg ${isLucro ? 'bg-emerald-400/30' : 'bg-rose-400/30'}`}>
+                    {isLucro ? <TrendingUp className="w-3 h-3 text-white" /> : <TrendingDown className="w-3 h-3 text-white" />}
                   </div>
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-1 tracking-tight">
-                    {formatMoney(resumoFiltrado.resultado)}
-                  </div>
-                  {variacaoResultado && (
-                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold">
-                      {variacaoResultado.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                      <span>{variacaoResultado.positivo ? '+' : '-'}{variacaoResultado.valor.toFixed(1)}%</span>
-                      <span className="text-white/70 text-xs">vs. anterior</span>
-                    </div>
-                  )}
+                  <p className="text-white/90 text-xs font-medium uppercase tracking-wider">
+                    {isLucro ? 'Lucro Líquido' : 'Prejuízo'}
+                  </p>
                 </div>
-
-                <div className="hidden sm:block w-px h-12 bg-white/20" />
-
-                <div className="sm:text-right">
-                  <p className="text-white/70 text-xs uppercase tracking-wider mb-0.5">Status</p>
-                  <div className="text-lg sm:text-xl font-bold text-white">
-                    {isLucro ? 'POSITIVO' : 'NEGATIVO'}
-                  </div>
-                  {resumoAnterior && (
-                    <p className="text-white/70 text-xs mt-1">
-                      Anterior: {formatMoney(resumoAnterior.resultado)}
-                    </p>
-                  )}
+                <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  {formatMoney(resumoFiltrado.resultado)}
                 </div>
+                {variacaoResultado && (
+                  <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold w-fit">
+                    {variacaoResultado.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    <span>{variacaoResultado.positivo ? '+' : '-'}{variacaoResultado.valor.toFixed(1)}%</span>
+                  </div>
+                )}
+                <p className="text-white/70 text-xs mt-1">Status: {isLucro ? 'POSITIVO' : 'NEGATIVO'}</p>
               </div>
             </CardContent>
           </Card>
-          {/* Card de Saldo da Conta */}
+
+          {/* Card Saldo da Conta */}
           {saldoFinal !== undefined && (
             <Card className="relative overflow-hidden border-2 shadow-lg bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 border-blue-400">
               <div className="absolute inset-0 opacity-10">
@@ -711,10 +695,10 @@ export default function Dashboard() {
                     </div>
                     <p className="text-white/90 text-xs font-medium uppercase tracking-wider">Saldo da Conta</p>
                   </div>
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                     {formatMoney(saldoFinal)}
                   </div>
-                  <p className="text-white/70 text-xs">Conforme último OFX importado</p>
+                  <p className="text-white/70 text-xs">Último OFX importado</p>
                 </div>
               </CardContent>
             </Card>
