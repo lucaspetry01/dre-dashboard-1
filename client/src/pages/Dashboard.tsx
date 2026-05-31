@@ -774,7 +774,7 @@ export default function Dashboard() {
                                     <p className="font-medium text-slate-900">{item.data}</p>
                                     <p className="text-slate-600 break-words">{item.descricao}</p>
                                     {item.documento && <p className="text-xs text-slate-500">Doc: {item.documento}</p>}
-                                    {groupByDescription && item.count > 1 && (
+                                    {groupByDescription && item.count >= 1 && (
                                       <p className="text-xs text-emerald-600 mt-1">Agrupados: {item.count} registros</p>
                                     )}
                                   </div>
