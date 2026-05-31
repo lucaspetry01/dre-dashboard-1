@@ -454,17 +454,68 @@ export default function Dashboard() {
         {/* Controles de Filtro e Upload */}
         <Card className="mb-6 bg-white border-slate-200">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Filtros e Importação
+            <CardTitle className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                Filtros e Importação
+              </div>
+              <label>
+                <Button
+                  disabled={isUploading}
+                  size="sm"
+                  className="gap-1 bg-emerald-600 hover:bg-emerald-700 text-sm"
+                  asChild
+                >
+                  <span>
+                    <Upload className="w-3 h-3" />
+                    OFX
+                  </span>
+                </Button>
+                <input
+                  type="file"
+                  accept=".ofx"
+                  onChange={handleOfxUpload}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </label>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {/* Filtros Rápidos em Tags */}
             <div className="mb-4">
               <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-2">Filtros Rápidos</label>
-              <div className="flex flex-wrap gap-1 sm:gap-2">
-                {quickFilters.map((filter) => (
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {/* Botão "Hoje" dobrado de tamanho e negrito */}
+                <button
+                  onClick={() => applyQuickFilter('today')}
+                  className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap ${
+                    activeQuickFilter === 'today'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Hoje
+                </button>
+                {/* Botão "Ontem" novo */}
+                <button
+                  onClick={() => {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const year = yesterday.getFullYear();
+                    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+                    const day = String(yesterday.getDate()).padStart(2, '0');
+                    const dateStr = `${year}-${month}-${day}`;
+                    setStartDate(dateStr);
+                    setEndDate(dateStr);
+                    setActiveQuickFilter(null);
+                  }}
+                  className="px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200"
+                >
+                  Ontem
+                </button>
+                {/* Outros filtros rápidos */}
+                {quickFilters.filter(f => f.id !== 'today').map((filter) => (
                   <button
                     key={filter.id}
                     onClick={() => applyQuickFilter(filter.id)}
@@ -482,16 +533,16 @@ export default function Dashboard() {
                     onClick={resetFilters}
                     className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-all whitespace-nowrap"
                   >
-                    ✕ Limpar
+                    ✗ Limpar
                   </button>
                 )}
               </div>
             </div>
 
-            {/* Datas Customizadas + Upload OFX */}
-            <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-4 border-t border-slate-200">
-              <div className="flex-1 min-w-0 max-w-xs">
-                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Data Inicial</label>
+            {/* Datas Customizadas lado a lado em mobile */}
+            <div className="grid grid-cols-2 sm:flex sm:items-end gap-2 sm:gap-3 pt-4 border-t border-slate-200">
+              <div className="min-w-0">
+                <label className="block text-xs font-medium text-slate-700 mb-1">Data Inicial</label>
                 <Input
                   type="date"
                   value={startDate}
@@ -499,11 +550,11 @@ export default function Dashboard() {
                     setStartDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full text-sm"
+                  className="w-full text-xs"
                 />
               </div>
-              <div className="flex-1 min-w-0 max-w-xs">
-                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Data Final</label>
+              <div className="min-w-0">
+                <label className="block text-xs font-medium text-slate-700 mb-1">Data Final</label>
                 <Input
                   type="date"
                   value={endDate}
@@ -511,29 +562,9 @@ export default function Dashboard() {
                     setEndDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full text-sm"
+                  className="w-full text-xs"
                 />
               </div>
-              <label className="flex-1 min-w-0 max-w-xs">
-                <Button
-                  disabled={isUploading}
-                  size="sm"
-                  className="w-full gap-1 bg-emerald-600 hover:bg-emerald-700 text-sm"
-                  asChild
-                >
-                  <span>
-                    <Upload className="w-3 h-3" />
-                    {isUploading ? 'Importando...' : 'OFX'}
-                  </span>
-                </Button>
-                <input
-                  type="file"
-                  accept=".ofx"
-                  onChange={handleOfxUpload}
-                  disabled={isUploading}
-                  className="hidden"
-                />
-              </label>
             </div>
           </CardContent>
         </Card>

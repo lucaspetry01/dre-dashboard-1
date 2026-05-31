@@ -36,3 +36,6 @@
 - [x] Remover botão "Importar XLS" (removido, apenas OFX permanece)
 - [x] Reduzir tamanho do botão "Importar OFX": size="sm", texto "OFX", ícone w-3 h-3, gap-1
 - [x] Reduzir caixas de data customizada pela metade: mudado para flex layout com max-w-xs, reduzindo largura real em ~50%. Mobile: coluna única. Desktop: lado a lado com botão OFX
+- [x] Dobrar tamanho do botão "Hoje" (px-4 sm:px-6, py-2 sm:py-3, text-sm sm:text-base), deixar negrito, adicionar botão "Ontem" ao lado com mesmas dimensões
+- [x] Mover botão OFX para CardHeader (justify-between), removido da seção de datas. Espaço economizado.
+- [x] Data Inicial e Data Final lado a lado em mobile: grid grid-cols-2 em mobile, flex em sm+. Gap reduzido (2 em mobile, 3 em sm+)
