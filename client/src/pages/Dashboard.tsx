@@ -11,6 +11,7 @@ import CategoryIcon from '@/components/CategoryIcon';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useState, useMemo, useRef } from 'react';
+import { useLocation } from 'wouter';
 
 // Paleta usada pelo BarChartWithLabels (mantida para coerência visual futura)
 const COLORS = [
@@ -80,6 +81,7 @@ const groupRegistrosByDescription = (registros: any[], groupByDescription: boole
 };
 
 export default function Dashboard() {
+  const [, setLocation] = useLocation();
   // Buscar resumo do banco. Se houver dados → usa banco. Senão → JSON estático.
   const utils = trpc.useUtils();
   const { data: resumoBanco } = trpc.ofx.resumoCompleto.useQuery(undefined, {
@@ -288,8 +290,8 @@ export default function Dashboard() {
               variant="outline"
               size="icon"
               className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-amber-400 transition-colors"
-              title="Combustível (em desenvolvimento)"
-              onClick={() => toast.info('Funcionalidade em desenvolvimento')}
+              title="Combustível"
+              onClick={() => setLocation('/combustivel')}
             >
               <Fuel className="w-5 h-5" />
             </Button>
