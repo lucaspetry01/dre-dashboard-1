@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { protectedProcedure, router } from '../_core/trpc';
+import { protectedProcedure, publicProcedure, router } from '../_core/trpc';
 import {
   createAbastecimento,
   getAbastecimentosByPasta,
@@ -29,20 +29,20 @@ export const abastecimentosRouter = router({
     }),
 
   // Listar abastecimentos por pasta
-  getByPasta: protectedProcedure
+  getByPasta: publicProcedure
     .input(z.object({ pasta: pastaEnum }))
     .query(async ({ input }) => {
       return await getAbastecimentosByPasta(input.pasta);
     }),
 
   // Listar todos os abastecimentos
-  getAll: protectedProcedure
+  getAll: publicProcedure
     .query(async () => {
       return await getAllAbastecimentos();
     }),
 
   // Obter abastecimento por ID
-  getById: protectedProcedure
+  getById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
       const result = await getAbastecimentoById(input.id);
