@@ -543,10 +543,10 @@ export default function Dashboard() {
               </label>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2">
             {/* Filtros Rápidos em Tags */}
-            <div className="mb-2">
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Filtros</label>
+            <div className="mb-1">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Filtros</label>
               <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2">
                 {quickFilters.map((filter) => (
                   <button
@@ -573,7 +573,7 @@ export default function Dashboard() {
             </div>
 
             {/* Datas Customizadas lado a lado em mobile */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-700">
               <div className="flex-1 min-w-0 sm:max-w-[160px]">
                 <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
                 <Input
