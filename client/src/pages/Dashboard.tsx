@@ -173,15 +173,14 @@ export default function Dashboard() {
       saidas: 0,
     };
 
-    for (const dia of filteredDiario) {
-      for (const transacao of dia.transacoes || []) {
-        if (transacao.tipo === 'entrada') {
-          result.receitas += transacao.valor;
-          result.entradas += 1;
-        } else {
-          result.despesas += transacao.valor;
-          result.saidas += 1;
-        }
+    // Somar valores das categorias
+    for (const cat of categorias) {
+      if (cat.valor > 0) {
+        result.receitas += cat.valor;
+        result.entradas += cat.quantidade || 1;
+      } else {
+        result.despesas += Math.abs(cat.valor);
+        result.saidas += cat.quantidade || 1;
       }
     }
 
@@ -460,7 +459,8 @@ export default function Dashboard() {
         <CardContent>
           <div className="space-y-2">
             {categoriasComDados.map((categoria) => {
-              const items = detalhes[categoria.nome] || [];
+              const categoryData = detalhes[categoria.nome];
+              const items = categoryData?.registros || [];
               const isExpanded = expandedCategory === categoria.nome;
 
               return (
@@ -470,12 +470,12 @@ export default function Dashboard() {
                     className="w-full flex items-center justify-between p-3 hover:bg-slate-800/50 transition-colors"
                   >
                     <div className="flex items-center gap-2 flex-1">
-                      <CategoryIcon category={categoria.nome} />
+                      <CategoryIcon categoryName={categoria.nome} />
                       <span className="text-sm font-semibold text-slate-100">{categoria.nome}</span>
                       <span className="text-xs text-slate-400">({items.length})</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-100">{formatMoney(categoria.total)}</span>
+                      <span className="text-sm font-bold text-slate-100">{formatMoney(categoria.valor_abs)}</span>
                       {isExpanded ? (
                         <ChevronUp className="w-4 h-4 text-slate-400" />
                       ) : (
