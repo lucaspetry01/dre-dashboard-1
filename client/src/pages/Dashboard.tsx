@@ -47,6 +47,7 @@ const simplifyCategoriName = (name: string): string => {
     'PRÓ-LABORE / SOCIETÁRIO': 'Pró-labore',
     'MECÂNICA / MANUTENÇÃO': 'Mecânica',
     'SAÍDAS NÃO CATEGORIZADAS': 'Outros',
+    'PEDÁGIOS / TAGS': 'Pedágios',
     'PEDAGIOS / ESTACIONAMENTOS': 'Pedágios',
     'CUSTO OPERACIONAL ESPECÍFICO': 'Custo Op'
   };
