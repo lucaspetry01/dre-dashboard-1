@@ -554,7 +554,7 @@ export default function Dashboard() {
                   className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap ${
                     activeQuickFilter === 'today'
                       ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
+                      : 'bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-slate-100'
                   }`}
                 >
                   Hoje
@@ -597,7 +597,7 @@ export default function Dashboard() {
                     className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                       activeQuickFilter === filter.id
                         ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        : 'bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-slate-100'
                     }`}
                   >
                     {filter.label}
@@ -606,7 +606,7 @@ export default function Dashboard() {
                 {(startDate || endDate) && (
                   <button
                     onClick={resetFilters}
-                    className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-all whitespace-nowrap"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap"
                   >
                     ✗ Limpar
                   </button>
@@ -615,9 +615,9 @@ export default function Dashboard() {
             </div>
 
             {/* Datas Customizadas lado a lado em mobile */}
-            <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-4 border-t border-slate-200">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
               <div className="flex-1 min-w-0 sm:max-w-[180px]">
-                <label className="block text-xs font-medium text-slate-700 mb-1">Data Inicial</label>
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-1">Data Inicial</label>
                 <Input
                   type="date"
                   value={startDate}
@@ -629,7 +629,7 @@ export default function Dashboard() {
                 />
               </div>
               <div className="flex-1 min-w-0 sm:max-w-[180px]">
-                <label className="block text-xs font-medium text-slate-700 mb-1">Data Final</label>
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-1">Data Final</label>
                 <Input
                   type="date"
                   value={endDate}
