@@ -101,9 +101,10 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
           <YAxis 
             type="category"
             dataKey="nomeAbreviado"
-            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9', textAnchor: 'start' }}
+            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
             stroke="#475569"
-            width={isMobile ? 70 : 100}
+            width={isMobile ? 90 : 110}
+            interval={0}
           />
           <Tooltip 
             formatter={(value: any) => formatMoney(Number(value))}
