@@ -39,3 +39,7 @@
 - [x] Dobrar tamanho do botão "Hoje" (px-4 sm:px-6, py-2 sm:py-3, text-sm sm:text-base), deixar negrito, adicionar botão "Ontem" ao lado com mesmas dimensões
 - [x] Mover botão OFX para CardHeader (justify-between), removido da seção de datas. Espaço economizado.
 - [x] Data Inicial e Data Final lado a lado em mobile: grid grid-cols-2 em mobile, flex em sm+. Gap reduzido (2 em mobile, 3 em sm+)
+
+## Agrupamento de Transações
+
+- [x] Adicionar agrupamento por descrição completa no detalhamento de categorias com toggle para alternar entre visualizações individual e agrupada. Checkbox "Agrupar por descrição" aparece ao expandir categoria, mostrando contador de registros agrupados em verde.

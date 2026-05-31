@@ -49,6 +49,7 @@ export default function Dashboard() {
   const [isUploading, setIsUploading] = useState(false);
   const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
   const [isFiltering, setIsFiltering] = useState(false);
+  const [groupByDescription, setGroupByDescription] = useState(false);
 
   // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
   const quickFilters = [
@@ -425,6 +426,29 @@ export default function Dashboard() {
 
   const isLucro = resumoFiltrado.resultado >= 0;
 
+  // Agrupar registros por descricao completa
+  const groupRegistrosByDescription = (registros: any[]) => {
+    if (!groupByDescription) return registros;
+    
+    const grouped = registros.reduce((acc: Record<string, any>, item: any) => {
+      const key = item.descricao;
+      if (!acc[key]) {
+        acc[key] = {
+          ...item,
+          valor: 0,
+          count: 0,
+          originalItems: []
+        };
+      }
+      acc[key].count += 1;
+      acc[key].originalItems.push(item);
+      acc[key].valor += Number(item.valor);
+      return acc;
+    }, {});
+    
+    return Object.values(grouped);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
@@ -731,18 +755,34 @@ export default function Dashboard() {
 
                       {expandedCategory === cat.nome && (
                         <div className="bg-slate-50 p-4 border-t border-slate-200">
+                          <div className="flex items-center justify-between mb-3">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={groupByDescription}
+                                onChange={(e) => setGroupByDescription(e.target.checked)}
+                                className="w-4 h-4 rounded border-slate-300"
+                              />
+                              <span className="text-sm text-slate-700">Agrupar por descricao</span>
+                            </label>
+                          </div>
                           <div className="space-y-2 max-h-64 overflow-y-auto">
-                            {(detalhesFiltrados[cat.nome]?.registros || detalhes[cat.nome]?.registros || []).map((item: any, idx: number) => (
+                            {groupRegistrosByDescription(detalhesFiltrados[cat.nome]?.registros || detalhes[cat.nome]?.registros || []).map((item: any, idx: number) => (
                               <div key={idx} className="bg-white p-3 rounded border border-slate-100 text-sm">
                                 <div className="flex justify-between items-start gap-2">
                                   <div className="flex-1">
                                     <p className="font-medium text-slate-900">{item.data}</p>
                                     <p className="text-slate-600 break-words">{item.descricao}</p>
                                     {item.documento && <p className="text-xs text-slate-500">Doc: {item.documento}</p>}
+                                    {groupByDescription && item.count > 1 && (
+                                      <p className="text-xs text-emerald-600 mt-1">Agrupados: {item.count} registros</p>
+                                    )}
                                   </div>
                                   <div className="text-right whitespace-nowrap">
                                     <p className="font-bold text-slate-900">{formatMoney(item.valor)}</p>
-                                    <p className="text-xs text-slate-500">Saldo: {formatMoney(item.saldo)}</p>
+                                    {!groupByDescription && item.saldo && (
+                                      <p className="text-xs text-slate-500">Saldo: {formatMoney(item.saldo)}</p>
+                                    )}
                                   </div>
                                 </div>
                               </div>
