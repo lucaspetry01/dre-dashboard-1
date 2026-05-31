@@ -453,7 +453,7 @@ export default function Dashboard() {
               data={categoriasComDados
                 .filter(cat => cat.valor < 0)
                 .map(cat => ({
-                  nome: cat.nome,
+                  nome: simplifyCategoriName(cat.nome),
                   valor_display: cat.valor_abs
                 }))}
               formatMoney={formatMoney}
