@@ -135,23 +135,6 @@ export default function Dashboard() {
     
     setActiveQuickFilter(filterId);
     
-    // Se é filtro de semana (id === 'sem'), calcular semana anterior (domingo a sábado)
-    if (filterId === 'sem') {
-      const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
-      const dayOfWeek = refDate.getDay(); // 0 = domingo, 6 = sábado
-      
-      // Calcular o domingo e sábado da semana anterior
-      const daysToSaturday = dayOfWeek === 0 ? 1 : 7 - dayOfWeek;
-      const saturdayLastWeek = new Date(refDate);
-      saturdayLastWeek.setDate(saturdayLastWeek.getDate() - daysToSaturday - 1);
-      
-      const sundayLastWeek = new Date(saturdayLastWeek);
-      sundayLastWeek.setDate(sundayLastWeek.getDate() - 6);
-      
-      setStartDate(sundayLastWeek.toISOString().split('T')[0]);
-      setEndDate(saturdayLastWeek.toISOString().split('T')[0]);
-      return;
-    }
     
     // Se é filtro de ano (daysFromNow), calcular a partir do ano atual
     if ((filter as any).daysFromNow) {
@@ -460,7 +443,11 @@ export default function Dashboard() {
           </div>
 
           {/* Card Saldo */}
-          <div className="kpi-card-3d bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg p-4 sm:p-6 text-white shadow-lg">
+          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
+            saldoFinal !== null && saldoFinal !== undefined && saldoFinal < 0
+              ? 'bg-gradient-to-br from-red-500 to-red-700'
+              : 'bg-gradient-to-br from-blue-500 to-blue-700'
+          }`}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs sm:text-sm font-semibold opacity-90">🏦 SALDO</span>
               <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
