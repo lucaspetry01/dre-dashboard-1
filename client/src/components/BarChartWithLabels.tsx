@@ -1,5 +1,5 @@
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { useMemo } from 'react';
 
@@ -8,67 +8,52 @@ interface BarChartWithLabelsProps {
   formatMoney: (value: number) => string;
 }
 
-// Abreviar nomes para mobile
-const abbreviateName = (name: string): string => {
-  const abbreviations: Record<string, string> = {
-    'Combustível': 'Comb.',
-    'Conta/Boleto': 'Conta',
-    'Chapa': 'Chapa',
-    'Manutenção': 'Manut.',
-    'Salário': 'Salário',
-    'Despesa Operacional': 'Desp. Op.',
-    'Seguro': 'Seguro',
-    'Taxas': 'Taxas',
-    'Outros': 'Outros'
-  };
-  
-  return abbreviations[name] || name.substring(0, 8);
+// Limpar nome: remover "/" e textos após barra
+const cleanName = (name: string): string => {
+  if (!name) return '';
+  // Remove tudo após "/" e trim
+  const cleaned = name.split('/')[0].trim();
+  return cleaned;
 };
 
 export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLabelsProps) {
-  // Processar dados: mostrar todas as categorias
+  // Processar dados: filtrar categorias sem valor e limpar nomes
   const processedData = useMemo(() => {
-    return data.map(d => ({
-      ...d,
-      nomeAbreviado: abbreviateName(d.nome),
-      total: d.valor_display
-    }));
+    return data
+      .filter(d => (d.valor_display ?? 0) > 0)
+      .map(d => ({
+        ...d,
+        nomeAbreviado: cleanName(d.nome),
+        total: d.valor_display
+      }));
   }, [data]);
-  
-  // Calcular altura dinâmica baseada no número de categorias
-  const dynamicHeight = Math.max(320, processedData.length * 45 + 100);
 
-  // Configuração responsiva baseada na largura da tela
+  // Configuração responsiva
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  
-  const chartConfig = {
-    mobile: {
-      height: 320,
-      margin: { top: 40, right: 16, left: 0, bottom: 80 },
-      xAxisFontSize: 10,
-    },
-    desktop: {
-      height: 500,
-      margin: { top: 60, right: 30, left: 0, bottom: 100 },
-      xAxisFontSize: 11,
-    }
+
+  // Altura dinâmica - mais compacta
+  const rowHeight = isMobile ? 32 : 38;
+  const dynamicHeight = Math.max(240, processedData.length * rowHeight + 60);
+
+  const config = {
+    height: dynamicHeight,
+    margin: isMobile
+      ? { top: 20, right: 80, left: 0, bottom: 20 }
+      : { top: 24, right: 100, left: 0, bottom: 24 },
+    xAxisFontSize: isMobile ? 9 : 11,
+    yAxisFontSize: isMobile ? 10 : 11,
   };
 
-  const baseConfig = isMobile ? chartConfig.mobile : chartConfig.desktop;
-  const config = { ...baseConfig, height: dynamicHeight };
-
-  // Renderizar label customizado com valor em moeda no topo
+  // Renderizar label customizado com valor centralizado na coluna
   const renderCustomLabel = (props: any) => {
-    const { x, y, width, height, value, index } = props;
-    
-    const isFirst = index === 0;
-    
+    const { x, y, width, height, value } = props;
+
     return (
       <text
-        x={isFirst ? x + width / 2 : x + width + 8}
-        y={isFirst ? y - 20 : y - 12}
+        x={x + width + 6}
+        y={y + height / 2}
         fill="#f1f5f9"
-        textAnchor={isFirst ? "middle" : "start"}
+        textAnchor="start"
         fontSize={isMobile ? 10 : 11}
         fontWeight="600"
         dominantBaseline="middle"
@@ -78,38 +63,46 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
     );
   };
 
+  if (processedData.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-40 text-slate-400 text-sm">
+        Sem dados para exibir no período selecionado
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full overflow-x-hidden">
       <ResponsiveContainer width="100%" height={config.height}>
-        <BarChart 
-          data={processedData} 
+        <BarChart
+          data={processedData}
           margin={config.margin}
           layout="vertical"
-          className="sm:static"
+          barCategoryGap={isMobile ? 4 : 6}
         >
-          <CartesianGrid 
+          <CartesianGrid
             strokeDasharray="0"
             stroke="transparent"
             vertical={false}
           />
-          <XAxis 
+          <XAxis
             type="number"
             tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
             stroke="#475569"
             tickFormatter={(value) => formatMoney(value)}
           />
-          <YAxis 
+          <YAxis
             type="category"
             dataKey="nomeAbreviado"
-            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
+            tick={{ fontSize: config.yAxisFontSize, fill: '#f1f5f9' }}
             stroke="#475569"
-            width={isMobile ? 90 : 110}
+            width={isMobile ? 80 : 110}
             interval={0}
           />
-          <Tooltip 
+          <Tooltip
             formatter={(value: any) => formatMoney(Number(value))}
-            contentStyle={{ 
-              backgroundColor: '#1e293b', 
+            contentStyle={{
+              backgroundColor: '#1e293b',
               border: '1px solid #475569',
               borderRadius: '6px',
               color: '#f1f5f9'
@@ -117,12 +110,13 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
             cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
             labelStyle={{ color: '#f1f5f9' }}
           />
-          <Bar 
-            dataKey="valor_display" 
-            fill="#3B82F6" 
-            radius={[0, 8, 8, 0]}
+          <Bar
+            dataKey="valor_display"
+            fill="#3B82F6"
+            radius={[0, 6, 6, 0]}
             isAnimationActive={true}
             label={renderCustomLabel}
+            barSize={isMobile ? 18 : 24}
           />
         </BarChart>
       </ResponsiveContainer>
