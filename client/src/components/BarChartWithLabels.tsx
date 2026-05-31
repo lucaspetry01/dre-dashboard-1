@@ -101,7 +101,7 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
           <YAxis 
             type="category"
             dataKey="nomeAbreviado"
-            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
+            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9', textAnchor: 'end' }}
             stroke="#475569"
             width={isMobile ? 60 : 80}
           />
