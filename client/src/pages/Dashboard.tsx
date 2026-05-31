@@ -111,7 +111,8 @@ export default function Dashboard() {
     
     // Buscar em todas as categorias
     for (const cat of categorias) {
-      const items = (detalhes[cat.nome] || []) as any[];
+      const categoryData = detalhes[cat.nome];
+      const items = categoryData?.registros || [];
       const foundItem = items.find((item: any) => 
         item.descricao && item.descricao.toLowerCase().includes(query)
       );
@@ -211,7 +212,8 @@ export default function Dashboard() {
   // Categorias filtradas (com dados)
   const categoriasComDados = useMemo(() => {
     return categorias.filter(cat => {
-      const items = detalhes[cat.nome] || [];
+      const categoryData = detalhes[cat.nome];
+      const items = categoryData?.registros || [];
       return items.length > 0;
     });
   }, [categorias, detalhes]);
