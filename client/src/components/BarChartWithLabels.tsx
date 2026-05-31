@@ -38,8 +38,8 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
   const config = {
     height: dynamicHeight,
     margin: isMobile
-      ? { top: 20, right: 80, left: 0, bottom: 20 }
-      : { top: 24, right: 100, left: 0, bottom: 24 },
+      ? { top: 20, right: 80, left: 12, bottom: 20 }
+      : { top: 24, right: 100, left: 16, bottom: 24 },
     xAxisFontSize: isMobile ? 9 : 11,
     yAxisFontSize: isMobile ? 10 : 11,
   };
@@ -94,10 +94,25 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
           <YAxis
             type="category"
             dataKey="nomeAbreviado"
-            tick={{ fontSize: config.yAxisFontSize, fill: '#f1f5f9', textAnchor: 'start' }}
             stroke="#475569"
-            width={isMobile ? 80 : 110}
+            width={isMobile ? 90 : 120}
             interval={0}
+            tick={(props: any) => {
+              const { x, y, payload } = props;
+              const axisWidth = isMobile ? 90 : 120;
+              return (
+                <text
+                  x={x - axisWidth + 4}
+                  y={y}
+                  fill="#f1f5f9"
+                  fontSize={config.yAxisFontSize}
+                  textAnchor="start"
+                  dominantBaseline="middle"
+                >
+                  {payload.value}
+                </text>
+              );
+            }}
           />
           <Tooltip
             formatter={(value: any) => formatMoney(Number(value))}
