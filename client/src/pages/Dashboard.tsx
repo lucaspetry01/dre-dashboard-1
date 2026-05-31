@@ -4,7 +4,7 @@ import detalhesData from '@/data/detalhes.json';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap } from 'lucide-react';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
 import { toast } from 'sonner';
@@ -55,13 +55,13 @@ export default function Dashboard() {
   // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
   const quickFilters = [
     { id: 'today', label: 'Hoje', days: 1 },
-    { id: 'week', label: 'Última Semana', days: 7 },
-    { id: '15days', label: 'Últimos 15 dias', days: 15 },
-    { id: 'month', label: 'Último Mês', days: 30 },
-    { id: 'quarter', label: 'Último Trimestre', days: 90 },
-    { id: 'semester', label: 'Último Semestre', days: 180 },
-    { id: 'year', label: 'Último Ano', days: 365 },
-    { id: 'all', label: 'Todo o Período', days: 0 },
+    { id: 'week', label: '7d', days: 7 },
+    { id: '15days', label: '15d', days: 15 },
+    { id: 'month', label: 'Mês', days: 30 },
+    { id: 'quarter', label: 'Trim', days: 90 },
+    { id: 'semester', label: 'Sem', days: 180 },
+    { id: 'year', label: 'Ano', days: 365 },
+    { id: 'all', label: 'Tudo', days: 0 },
   ];
 
   // Aplicar filtro rápido baseado no último dia disponível
@@ -547,57 +547,15 @@ export default function Dashboard() {
             {/* Filtros Rápidos em Tags */}
             <div className="mb-4">
               <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Filtros Rápidos</label>
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                {/* Botão "Hoje" dobrado de tamanho e negrito */}
-                  <button
-                    onClick={() => applyQuickFilter('today')}
-                    className={`btn-3d px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap ${
-                    activeQuickFilter === 'today'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-slate-100'
-                  }`}
-                >
-                  Hoje
-                </button>
-                {/* Botão "Ontem" novo com toggle e estilo azul quando ativo */}
-                <button
-                  onClick={() => {
-                    // Se já está selecionado, limpar ao clicar novamente (toggle)
-                    if (activeQuickFilter === 'yesterday') {
-                      resetFilters();
-                      return;
-                    }
-
-                    setIsFiltering(true);
-                    setExpandedCategory(null);
-                    setTimeout(() => {
-                      const referenceDate = new Date(REFERENCE_DATE);
-                      const yesterdayDate = new Date(referenceDate);
-                      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-                      
-                      setStartDate(yesterdayDate.toISOString().split('T')[0]);
-                      setEndDate(yesterdayDate.toISOString().split('T')[0]);
-                      setActiveQuickFilter('yesterday');
-                      setTimeout(() => setIsFiltering(false), 200);
-                    }, 100);
-                  }}
-                  className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap ${
-                    activeQuickFilter === 'yesterday'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  Ontem
-                </button>
-                {/* Outros filtros rápidos */}
-                {quickFilters.filter(f => f.id !== 'today').map((filter) => (
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-2.5">
+                {quickFilters.map((filter) => (
                   <button
                     key={filter.id}
                     onClick={() => applyQuickFilter(filter.id)}
-                    className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                    className={`btn-3d px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
                       activeQuickFilter === filter.id
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-slate-100'
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
                     }`}
                   >
                     {filter.label}
@@ -606,9 +564,9 @@ export default function Dashboard() {
                 {(startDate || endDate) && (
                   <button
                     onClick={resetFilters}
-                    className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap"
+                    className="btn-3d col-span-2 sm:col-span-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
                   >
-                    ✗ Limpar
+                    Limpar
                   </button>
                 )}
               </div>
