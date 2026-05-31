@@ -121,13 +121,11 @@ export default function Dashboard() {
   // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
   const quickFilters = [
     { id: 'hoje', label: 'Hoje', days: 0 },
-    { id: '7d', label: '7d', days: 7 },
+    { id: 'sem', label: 'Sem', days: 7 },
     { id: '15d', label: '15d', days: 15 },
     { id: 'mes', label: 'Mês', days: 30 },
     { id: 'trim', label: 'Trim', days: 90 },
-    { id: 'sem', label: 'Sem', days: 180 },
-    { id: 'ano', label: 'Ano', days: 365 },
-    { id: 'tudo', label: 'Tudo', days: null },
+    { id: 'ano', label: 'Ano', daysFromNow: true },
   ];
 
   // Aplicar filtro rápido
@@ -137,15 +135,22 @@ export default function Dashboard() {
     
     setActiveQuickFilter(filterId);
     
-    if (filter.days === null) {
-      setStartDate('');
-      setEndDate('');
+    // Se é filtro de ano (daysFromNow), calcular a partir do ano atual
+    if ((filter as any).daysFromNow) {
+      const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
+      const start = new Date(refDate);
+      start.setFullYear(start.getFullYear()); // Ano atual
+      start.setMonth(0); // Janeiro
+      start.setDate(1); // Dia 1
+      
+      setStartDate(start.toISOString().split('T')[0]);
+      setEndDate(REFERENCE_DATE);
       return;
     }
 
     const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
     const start = new Date(refDate);
-    start.setDate(start.getDate() - filter.days);
+    start.setDate(start.getDate() - (filter as any).days);
     
     setStartDate(start.toISOString().split('T')[0]);
     setEndDate(REFERENCE_DATE);
@@ -337,13 +342,13 @@ export default function Dashboard() {
           <CardContent className="pt-2">
             {/* Filtros Rápidos em Tags */}
             <div className="mb-1">
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Filtros</label>
-              <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2">
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Filtros</label>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
                 {quickFilters.map((filter) => (
                   <button
                     key={filter.id}
                     onClick={() => applyQuickFilter(filter.id)}
-                    className={`btn-3d px-2 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
+                    className={`btn-3d px-3 py-2 rounded-md text-sm font-bold transition-all whitespace-nowrap entrance-animate ${
                       activeQuickFilter === filter.id
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
