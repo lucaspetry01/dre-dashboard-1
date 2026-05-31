@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar } from 'lucide-react';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
-import SaldoEvolutionChart from '@/components/SaldoEvolutionChart';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 
@@ -757,18 +756,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Gráfico de Evolução de Saldo com Comparativo */}
-        <Card className="bg-white border-slate-200 mb-2">
-          <CardHeader>
-            <CardTitle>Evolução de Saldo - Período vs Anterior</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div style={{ width: '100%', height: 300 }}>
-              <SaldoEvolutionChart data={filteredDiario.slice(-10).map((d: any, idx: number) => ({ periodo: d.data_full, saldo: d.saldo || 0, saldoAnterior: idx > 0 ? filteredDiario[idx - 1].saldo || 0 : null, }))} formatMoney={formatMoney} />
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Secção Categorias (única visível após remoção das abas Fluxo Diário e Composição) */}
         <div className="w-full">
