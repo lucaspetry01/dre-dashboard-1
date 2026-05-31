@@ -514,9 +514,9 @@ export default function Dashboard() {
         </div>
 
         {/* Controles de Filtro e Upload */}
-        <Card className="mb-2 bg-white border-slate-200">
+        <Card className="mb-2 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between gap-2">
+            <CardTitle className="flex items-center justify-between gap-2 dark:text-slate-100">
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
                 Filtros e Importação
@@ -546,7 +546,7 @@ export default function Dashboard() {
           <CardContent>
             {/* Filtros Rápidos em Tags */}
             <div className="mb-4">
-              <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-2">Filtros Rápidos</label>
+              <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Filtros Rápidos</label>
               <div className="flex flex-wrap gap-2 sm:gap-3">
                 {/* Botão "Hoje" dobrado de tamanho e negrito */}
                 <button
@@ -554,7 +554,7 @@ export default function Dashboard() {
                   className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap ${
                     activeQuickFilter === 'today'
                       ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
                   }`}
                 >
                   Hoje
@@ -703,14 +703,14 @@ export default function Dashboard() {
           </Card>
 
           {/* Card Receitas */}
-          <Card className="bg-white border-l-4 border-l-emerald-500 hover:shadow-md transition-shadow">
+          <Card className="bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-l-4 border-l-emerald-500 hover:shadow-md transition-shadow">
             <CardContent className="p-2 sm:p-3">
               <div className="flex items-start justify-between mb-1.5">
                 <div className="flex items-center gap-1">
-                  <div className="p-0.5 bg-emerald-50 rounded-lg">
-                    <TrendingUp className="w-2.5 h-2.5 text-emerald-600" />
+                  <div className="p-0.5 bg-emerald-50 dark:bg-emerald-500/20 rounded-lg">
+                    <TrendingUp className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  <p className="text-xs font-medium text-slate-600">Receitas</p>
+                  <p className="text-xs font-medium text-slate-600 dark:text-slate-300">Receitas</p>
                 </div>
                 {variacaoReceitas && (
                   <div className={`flex items-center gap-0.5 text-xs font-semibold px-1 py-0.5 rounded-full ${
@@ -720,24 +720,24 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
-              <div className="text-base sm:text-lg font-bold text-emerald-700 mb-0.5">
+              <div className="text-base sm:text-lg font-bold text-emerald-700 dark:text-emerald-400 mb-0.5">
                 {formatMoney(resumoFiltrado.total_receitas)}
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {qtdEntradas} entradas
               </p>
             </CardContent>
           </Card>
 
           {/* Card Despesas */}
-          <Card className="bg-white border-l-4 border-l-rose-500 hover:shadow-md transition-shadow">
+          <Card className="bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-l-4 border-l-rose-500 hover:shadow-md transition-shadow">
             <CardContent className="p-2 sm:p-3">
               <div className="flex items-start justify-between mb-1.5">
                 <div className="flex items-center gap-1">
-                  <div className="p-0.5 bg-rose-50 rounded-lg">
-                    <TrendingDown className="w-2.5 h-2.5 text-rose-600" />
+                  <div className="p-0.5 bg-rose-50 dark:bg-rose-500/20 rounded-lg">
+                    <TrendingDown className="w-2.5 h-2.5 text-rose-600 dark:text-rose-400" />
                   </div>
-                  <p className="text-xs font-medium text-slate-600">Despesas</p>
+                  <p className="text-xs font-medium text-slate-600 dark:text-slate-300">Despesas</p>
                 </div>
                 {variacaoDespesas && (
                   <div className={`flex items-center gap-0.5 text-xs font-semibold px-1 py-0.5 rounded-full ${
@@ -747,10 +747,10 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
-              <div className="text-base sm:text-lg font-bold text-rose-700 mb-0.5">
+              <div className="text-base sm:text-lg font-bold text-rose-700 dark:text-rose-400 mb-0.5">
                 {formatMoney(resumoFiltrado.total_despesas)}
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {qtdSaidas} saídas
               </p>
             </CardContent>
@@ -760,9 +760,9 @@ export default function Dashboard() {
         {/* Secção Categorias (única visível após remoção das abas Fluxo Diário e Composição) */}
         <div className="w-full">
           <div>
-            <Card className="bg-white border-slate-200">
+            <Card className="bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
               <CardHeader>
-                <CardTitle>Despesas por Categoria</CardTitle>
+                <CardTitle className="dark:text-slate-100">Despesas por Categoria</CardTitle>
               </CardHeader>
               <CardContent>
                 <div style={{ width: '100%', height: 400 }}>
@@ -772,32 +772,32 @@ export default function Dashboard() {
             </Card>
 
             {/* Detalhamento de Categorias */}
-            <Card className="mt-2 bg-white border-slate-200">
+            <Card className="mt-2 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
               <CardHeader>
-                <CardTitle>Detalhamento de Categorias</CardTitle>
+                <CardTitle className="dark:text-slate-100">Detalhamento de Categorias</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   {categoriasFiltradas.length === 0 && (
-                    <div className="text-center py-8 text-slate-500">
+                    <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                       <p>Nenhuma categoria encontrada no período selecionado.</p>
                     </div>
                   )}
                   {categoriasFiltradas.map((cat) => (
-                    <div key={cat.nome} className="border border-slate-200 rounded-lg">
+                    <div key={cat.nome} className="border border-slate-200 dark:border-slate-700 rounded-lg">
                       <button
                         onClick={() => setExpandedCategory(expandedCategory === cat.nome ? null : cat.nome)}
-                        className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                        className="w-full p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                       >
                         <div className="flex items-center gap-3 flex-1 text-left">
                           <CategoryIcon categoryName={cat.nome} size="md" />
                           <div className="flex-1">
-                            <p className="font-medium text-slate-900">{cat.nome}</p>
-                            <p className="text-sm text-slate-600">{cat.quantidade} transações</p>
+                            <p className="font-medium text-slate-900 dark:text-slate-100">{cat.nome}</p>
+                            <p className="text-sm text-slate-600 dark:text-slate-400">{cat.quantidade} transações</p>
                           </div>
                         </div>
                         <div className="text-right mr-4">
-                          <p className="font-bold text-slate-900">{formatMoney(cat.valor)}</p>
+                          <p className="font-bold text-slate-900 dark:text-slate-100">{formatMoney(cat.valor)}</p>
                           <p className="text-sm text-slate-600">{(cat.percentual ?? 0).toFixed(1)}%</p>
                         </div>
                         {expandedCategory === cat.nome ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
