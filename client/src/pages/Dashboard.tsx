@@ -254,10 +254,57 @@ export default function Dashboard() {
     return result;
   }, [filteredDiario, resumo, startDate, endDate]);
 
-  // Categorias com dados
+  // Helper: converte data "dd/MM/yyyy" ou "dd/MM" para Date
+  const parseRegistroDate = (dataStr: string): Date | null => {
+    if (!dataStr) return null;
+    const parts = dataStr.split('/');
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00`);
+    }
+    if (parts.length === 2) {
+      const [day, month] = parts;
+      return new Date(`2026-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00`);
+    }
+    return null;
+  };
+
+  // Categorias com dados (respeitando filtros de data)
   const categoriasComDados = useMemo(() => {
-    return categorias.filter(cat => cat.valor_abs > 0);
-  }, [categorias]);
+    if (!startDate && !endDate) {
+      return categorias.filter(cat => cat.valor_abs > 0);
+    }
+
+    const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
+    const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
+    const result: any[] = [];
+
+    Object.entries(detalhes).forEach(([nome, data]: [string, any]) => {
+      const items = data?.registros || [];
+      let total = 0;
+      let count = 0;
+
+      items.forEach((item: any) => {
+        const itemDate = parseRegistroDate(item.data);
+        if (!itemDate) return;
+        if (startObj && itemDate < startObj) return;
+        if (endObj && itemDate > endObj) return;
+        total += Number(item.valor) || 0;
+        count++;
+      });
+
+      if (count > 0 && total !== 0) {
+        result.push({
+          nome,
+          valor: total,
+          valor_abs: Math.abs(total),
+          quantidade: count,
+        });
+      }
+    });
+
+    return result.sort((a, b) => b.valor_abs - a.valor_abs);
+  }, [categorias, detalhes, startDate, endDate]);
 
   // Upload OFX
   const uploadMutation = trpc.ofx.processOFX.useMutation();
@@ -516,7 +563,17 @@ export default function Dashboard() {
             <div className="space-y-2">
               {categoriasComDados.map((categoria) => {
                 const categoryData = detalhes[categoria.nome];
-                const items = categoryData?.registros || [];
+                const allItems = categoryData?.registros || [];
+                // Filtrar items por data se houver filtro ativo
+                const items = (!startDate && !endDate) ? allItems : allItems.filter((item: any) => {
+                  const itemDate = parseRegistroDate(item.data);
+                  if (!itemDate) return false;
+                  const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
+                  const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
+                  if (startObj && itemDate < startObj) return false;
+                  if (endObj && itemDate > endObj) return false;
+                  return true;
+                });
                 const isExpanded = expandedCategory === categoria.nome;
 
                 return (
