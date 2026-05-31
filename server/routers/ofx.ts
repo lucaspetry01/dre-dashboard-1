@@ -87,6 +87,11 @@ export const ofxRouter = router({
         });
       }
 
+      // Se temos saldoFinal e transacoes novas, preencher o saldo da ultima transacao
+      if (parsed.saldoFinal && novosRegistros.length > 0) {
+        novosRegistros[novosRegistros.length - 1].saldo = parsed.saldoFinal.toFixed(2);
+      }
+
       // Criar registro de upload
       const uploadId = await createUpload({
         nomeArquivo: input.nomeArquivo || 'extrato.ofx',
