@@ -82,11 +82,12 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
     return (
       <text
         x={x + width / 2}
-        y={y - 8}
+        y={y - 12}
         fill="#f1f5f9"
         textAnchor="middle"
-        fontSize={isMobile ? 9 : 10}
-        fontWeight="bold"
+        fontSize={isMobile ? 10 : 11}
+        fontWeight="600"
+        dominantBaseline="middle"
       >
         {formatMoney(value)}
       </text>
