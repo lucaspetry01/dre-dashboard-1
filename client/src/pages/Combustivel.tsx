@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Edit2 } from 'lucide-react';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
 
@@ -13,6 +13,7 @@ const PASTAS: Pasta[] = ['IES', 'IJD', 'DAJ', 'MFF', 'IGU'];
 export default function Combustivel() {
   const [selectedPasta, setSelectedPasta] = useState<Pasta>('IES');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     data: '',
     placa: '',
@@ -32,8 +33,7 @@ export default function Combustivel() {
   const createMutation = trpc.abastecimentos.create.useMutation({
     onSuccess: () => {
       utils.abastecimentos.getByPasta.invalidate({ pasta: selectedPasta });
-      setFormData({ data: '', placa: '', rota: '', motorista: '', protocolo: '' });
-      setIsDialogOpen(false);
+      handleCloseDialog();
       console.log('Abastecimento registrado com sucesso!');
     },
     onError: (error) => {
@@ -71,6 +71,24 @@ export default function Combustivel() {
     if (confirm('Tem certeza que deseja deletar este abastecimento?')) {
       deleteMutation.mutate({ id });
     }
+  };
+
+  const handleEdit = (abastecimento: any) => {
+    setEditingId(abastecimento.id);
+    setFormData({
+      data: abastecimento.data instanceof Date ? abastecimento.data.toISOString().split('T')[0] : abastecimento.data,
+      placa: abastecimento.placa,
+      rota: abastecimento.rota || '',
+      motorista: abastecimento.motorista || '',
+      protocolo: abastecimento.protocolo || '',
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setEditingId(null);
+    setFormData({ data: '', placa: '', rota: '', motorista: '', protocolo: '' });
   };
 
   const formatDate = (date: any) => {
@@ -117,7 +135,7 @@ export default function Combustivel() {
               </DialogTrigger>
               <DialogContent className="bg-slate-800 border-slate-700">
                 <DialogHeader>
-                  <DialogTitle className="text-white">Registrar Abastecimento</DialogTitle>
+                  <DialogTitle className="text-white">{editingId ? 'Editar Abastecimento' : 'Registrar Abastecimento'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -208,7 +226,14 @@ export default function Combustivel() {
                           <td className="px-4 py-2">{abastecimento.rota || '-'}</td>
                           <td className="px-4 py-2">{abastecimento.motorista || '-'}</td>
                           <td className="px-4 py-2">{abastecimento.protocolo || '-'}</td>
-                          <td className="px-4 py-2 text-center">
+                          <td className="px-4 py-2 text-center flex gap-2 justify-center">
+                            <button
+                              onClick={() => handleEdit(abastecimento)}
+                              className="text-blue-400 hover:text-blue-300 transition-colors"
+                              title="Editar"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
                             <button
                               onClick={() => handleDelete(abastecimento.id)}
                               className="text-red-400 hover:text-red-300 transition-colors"
