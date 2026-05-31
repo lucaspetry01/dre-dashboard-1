@@ -491,7 +491,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
           {/* Header */}
-        <div className="mb-6 sm:mb-8">
+        <div className="mb-6 sm:mb-8 entrance-fade delay-0">
           <div className="flex flex-wrap items-center gap-2 mb-1">
             <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Dashboard Financeiro</h1>
             {usandoBanco && (
@@ -514,7 +514,7 @@ export default function Dashboard() {
         </div>
 
         {/* Controles de Filtro e Upload */}
-        <Card className="mb-2 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
+        <Card className="mb-2 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700 entrance-fade delay-1">
           <CardHeader>
             <CardTitle className="flex items-center justify-between gap-2 dark:text-slate-100">
               <div className="flex items-center gap-2">
@@ -647,7 +647,7 @@ export default function Dashboard() {
         {/* KPI HERO: 4 Cards em Grid 2x2 */}
         <div className={`grid grid-cols-2 gap-1.5 sm:gap-2 mb-2 sm:mb-3 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
           {/* Card Lucro Líquido */}
-          <Card className={`kpi-card-3d relative overflow-hidden border-2 shadow-xl transition-all duration-500 ${
+          <Card className={`kpi-card-3d entrance-animate delay-2 relative overflow-hidden border-2 shadow-xl transition-all duration-500 ${
             isLucro
               ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 border-emerald-400'
               : 'bg-gradient-to-br from-rose-500 via-rose-600 to-red-700 border-rose-400'
@@ -681,7 +681,7 @@ export default function Dashboard() {
           </Card>
 
           {/* Card Saldo da Conta */}
-          <Card className="kpi-card-3d relative overflow-hidden border-2 shadow-lg bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 border-blue-400">
+          <Card className="kpi-card-3d entrance-animate delay-3 relative overflow-hidden border-2 shadow-lg bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 border-blue-400">
             <div className="absolute inset-0 opacity-10">
               <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white" />
               <div className="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-white" />
@@ -703,7 +703,7 @@ export default function Dashboard() {
           </Card>
 
           {/* Card Receitas */}
-          <Card className="kpi-card-3d bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-l-4 border-l-emerald-500 hover:shadow-md transition-shadow">
+          <Card className="kpi-card-3d entrance-animate delay-4 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-l-4 border-l-emerald-500 hover:shadow-md transition-shadow">
             <CardContent className="p-2 sm:p-3">
               <div className="flex items-start justify-between mb-1.5">
                 <div className="flex items-center gap-1">
@@ -730,7 +730,7 @@ export default function Dashboard() {
           </Card>
 
           {/* Card Despesas */}
-          <Card className="kpi-card-3d bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-l-4 border-l-rose-500 hover:shadow-md transition-shadow">
+          <Card className="kpi-card-3d entrance-animate delay-5 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-l-4 border-l-rose-500 hover:shadow-md transition-shadow">
             <CardContent className="p-2 sm:p-3">
               <div className="flex items-start justify-between mb-1.5">
                 <div className="flex items-center gap-1">
@@ -760,7 +760,7 @@ export default function Dashboard() {
         {/* Secção Categorias (única visível após remoção das abas Fluxo Diário e Composição) */}
         <div className="w-full">
           <div>
-            <Card className="kpi-card-3d bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
+            <Card className="kpi-card-3d entrance-animate delay-6 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="dark:text-slate-100">Despesas por Categoria</CardTitle>
               </CardHeader>
@@ -772,7 +772,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Detalhamento de Categorias */}
-            <Card className="kpi-card-3d mt-2 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
+            <Card className="kpi-card-3d entrance-animate delay-6 mt-2 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="dark:text-slate-100">Detalhamento de Categorias</CardTitle>
               </CardHeader>

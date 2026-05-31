@@ -221,3 +221,69 @@
   transform: translateY(0) rotateX(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+
+/* Entrance Animations */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Staggered entrance animation for cards */
+.entrance-animate {
+  animation: fadeInSlideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  opacity: 0;
+}
+
+.entrance-animate.delay-1 {
+  animation-delay: 0.1s;
+}
+
+.entrance-animate.delay-2 {
+  animation-delay: 0.2s;
+}
+
+.entrance-animate.delay-3 {
+  animation-delay: 0.3s;
+}
+
+.entrance-animate.delay-4 {
+  animation-delay: 0.4s;
+}
+
+.entrance-animate.delay-5 {
+  animation-delay: 0.5s;
+}
+
+.entrance-animate.delay-6 {
+  animation-delay: 0.6s;
+}
+
+/* Fade-in for header and filter section */
+.entrance-fade {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.entrance-fade.delay-0 {
+  animation-delay: 0s;
+}
+
+.entrance-fade.delay-1 {
+  animation-delay: 0.1s;
+}
