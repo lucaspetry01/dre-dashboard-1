@@ -760,7 +760,7 @@ export default function Dashboard() {
         {/* Secção Categorias (única visível após remoção das abas Fluxo Diário e Composição) */}
         <div className="w-full">
           <div>
-            <Card className="bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
+            <Card className="kpi-card-3d bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="dark:text-slate-100">Despesas por Categoria</CardTitle>
               </CardHeader>
@@ -772,7 +772,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Detalhamento de Categorias */}
-            <Card className="mt-2 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
+            <Card className="kpi-card-3d mt-2 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="dark:text-slate-100">Detalhamento de Categorias</CardTitle>
               </CardHeader>
