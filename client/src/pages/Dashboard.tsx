@@ -461,13 +461,13 @@ export default function Dashboard() {
                       onClick={() => setExpandedCategory(isExpanded ? null : categoria.nome)}
                       className="w-full flex items-center justify-between p-3 hover:bg-slate-800/50 transition-colors"
                     >
-                      <div className="flex items-center gap-2 flex-1">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
                         <CategoryIcon categoryName={categoria.nome} />
-                        <span className="text-sm font-semibold text-slate-100">{categoria.nome}</span>
-                        <span className="text-xs text-slate-400">({items.length})</span>
+                        <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate">{categoria.nome}</span>
+                        <span className="text-xs text-slate-400 flex-shrink-0">({items.length})</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-slate-100">{formatMoney(categoria.valor_abs)}</span>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="text-xs sm:text-sm font-bold text-slate-100 whitespace-nowrap">{formatMoney(categoria.valor_abs)}</span>
                         {isExpanded ? (
                           <ChevronUp className="w-4 h-4 text-slate-400" />
                         ) : (
@@ -490,9 +490,9 @@ export default function Dashboard() {
                         {groupRegistrosByDescription(items, groupByDescription).map((item: any, idx: number) => {
                           const isGrouped = item.count > 1;
                           return (
-                            <div key={idx} className="flex justify-between items-start text-xs sm:text-sm">
-                              <div className="flex-1">
-                                <p className="text-slate-200 font-medium">{item.descricao}</p>
+                            <div key={idx} className="flex justify-between items-start text-xs gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-slate-200 font-medium text-xs truncate">{item.descricao}</p>
                                 {isGrouped && (
                                   <p className="text-slate-500 text-xs">Agrupado: {item.count} transacoes</p>
                                 )}
@@ -500,7 +500,7 @@ export default function Dashboard() {
                                   <p className="text-slate-500 text-xs">{item.data || 'N/A'}</p>
                                 )}
                               </div>
-                              <span className="text-slate-100 font-semibold ml-2">{formatMoney(item.valor)}</span>
+                              <span className="text-slate-100 font-semibold text-xs flex-shrink-0 whitespace-nowrap">{formatMoney(item.valor)}</span>
                             </div>
                           );
                         })}
