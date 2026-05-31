@@ -1,5 +1,5 @@
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer
+  BarChart, Bar, YAxis, CartesianGrid, ResponsiveContainer
 } from 'recharts';
 import { useMemo } from 'react';
 
@@ -86,12 +86,7 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
             stroke="transparent"
             vertical={false}
           />
-          <XAxis
-            type="number"
-            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
-            stroke="#475569"
-            tickFormatter={(value) => formatMoney(value)}
-          />
+
           <YAxis
             type="category"
             dataKey="nomeAbreviado"
