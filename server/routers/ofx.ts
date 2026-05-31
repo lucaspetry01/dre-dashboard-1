@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../_core/trpc';
 import { parseOfx } from '../lib/parseOfx';
-import { categorizar } from '../lib/categorizar';
+import { categorizarDinamico } from '../lib/categorizarDinamico';
 import {
   buildResumoAgregado,
   countTransacoes,
@@ -72,7 +72,7 @@ export const ofxRouter = router({
           continue;
         }
 
-        const categoria = categorizar(t.descricao, t.valor);
+        const categoria = await categorizarDinamico(t.descricao, t.valor);
 
         novosRegistros.push({
           data: t.data,
