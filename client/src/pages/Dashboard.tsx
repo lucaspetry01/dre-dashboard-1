@@ -597,8 +597,8 @@ export default function Dashboard() {
             </div>
 
             {/* Datas Customizadas lado a lado em mobile */}
-            <div className="grid grid-cols-2 sm:flex sm:items-end gap-2 sm:gap-3 pt-4 border-t border-slate-200">
-              <div className="min-w-0">
+            <div className="grid grid-cols-2 sm:flex sm:items-end gap-3 sm:gap-3 pt-4 border-t border-slate-200">
+              <div className="min-w-0 sm:max-w-[180px]">
                 <label className="block text-xs font-medium text-slate-700 mb-1">Data Inicial</label>
                 <Input
                   type="date"
@@ -607,10 +607,10 @@ export default function Dashboard() {
                     setStartDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full text-xs"
+                  className="w-full text-sm h-10 px-2"
                 />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 sm:max-w-[180px]">
                 <label className="block text-xs font-medium text-slate-700 mb-1">Data Final</label>
                 <Input
                   type="date"
@@ -619,7 +619,7 @@ export default function Dashboard() {
                     setEndDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full text-xs"
+                  className="w-full text-sm h-10 px-2"
                 />
               </div>
             </div>
