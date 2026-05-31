@@ -33,3 +33,6 @@
 - [x] Gráfico "Despesas por Categoria" agora filtra apenas categorias com valor negativo, mantendo RECEITAS fora
 - [x] RECEITAS no detalhamento ganhou ícone de cifrão verde (DollarSign + paleta emerald), prioridade no `getCategoryIconConfig`
 - [x] Ajustar layout dos botões de filtro rápido (tags): reduzido padding (px-2 sm:px-3, py-1 sm:py-1.5), gap (1 sm:2), fonte (text-xs sm:text-sm), label (text-xs sm:text-sm). `whitespace-nowrap` evita quebra de texto dentro dos botões. Responsivo em mobile.
+- [x] Remover botão "Importar XLS" (removido, apenas OFX permanece)
+- [x] Reduzir tamanho do botão "Importar OFX": size="sm", texto "OFX", ícone w-3 h-3, gap-1
+- [x] Reduzir caixas de data customizada pela metade: mudado para flex layout com max-w-xs, reduzindo largura real em ~50%. Mobile: coluna única. Desktop: lado a lado com botão OFX

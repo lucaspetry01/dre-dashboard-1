@@ -488,10 +488,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Datas Customizadas + Upload */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-200">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Data Inicial (Customizado)</label>
+            {/* Datas Customizadas + Upload OFX */}
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-4 border-t border-slate-200">
+              <div className="flex-1 min-w-0 max-w-xs">
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Data Inicial</label>
                 <Input
                   type="date"
                   value={startDate}
@@ -499,11 +499,11 @@ export default function Dashboard() {
                     setStartDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full"
+                  className="w-full text-sm"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Data Final (Customizado)</label>
+              <div className="flex-1 min-w-0 max-w-xs">
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Data Final</label>
                 <Input
                   type="date"
                   value={endDate}
@@ -511,52 +511,29 @@ export default function Dashboard() {
                     setEndDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full"
+                  className="w-full text-sm"
                 />
               </div>
-              <div className="flex items-end">
-                <label className="w-full">
-                  <Button
-                    disabled={isUploading}
-                    variant="outline"
-                    className="w-full gap-2 bg-white"
-                    asChild
-                  >
-                    <span>
-                      <Upload className="w-4 h-4" />
-                      {isUploading ? 'Importando...' : 'Importar XLS'}
-                    </span>
-                  </Button>
-                  <input
-                    type="file"
-                    accept=".xls,.xlsx"
-                    onChange={handleFileUpload}
-                    disabled={isUploading}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-              <div className="flex items-end">
-                <label className="w-full">
-                  <Button
-                    disabled={isUploading}
-                    className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700"
-                    asChild
-                  >
-                    <span>
-                      <Upload className="w-4 h-4" />
-                      {isUploading ? 'Importando...' : 'Importar OFX'}
-                    </span>
-                  </Button>
-                  <input
-                    type="file"
-                    accept=".ofx"
-                    onChange={handleOfxUpload}
-                    disabled={isUploading}
-                    className="hidden"
-                  />
-                </label>
-              </div>
+              <label className="flex-1 min-w-0 max-w-xs">
+                <Button
+                  disabled={isUploading}
+                  size="sm"
+                  className="w-full gap-1 bg-emerald-600 hover:bg-emerald-700 text-sm"
+                  asChild
+                >
+                  <span>
+                    <Upload className="w-3 h-3" />
+                    {isUploading ? 'Importando...' : 'OFX'}
+                  </span>
+                </Button>
+                <input
+                  type="file"
+                  accept=".ofx"
+                  onChange={handleOfxUpload}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </label>
             </div>
           </CardContent>
         </Card>
