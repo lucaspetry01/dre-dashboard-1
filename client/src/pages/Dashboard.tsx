@@ -476,7 +476,7 @@ export default function Dashboard() {
       return acc;
     }, {});
     
-    return Object.values(grouped);
+    return Object.values(grouped).sort((a, b) => Math.abs(b.valor) - Math.abs(a.valor));
   };
 
   return (
