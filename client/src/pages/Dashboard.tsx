@@ -68,6 +68,12 @@ export default function Dashboard() {
 
   // Aplicar filtro rápido baseado no último dia disponível
   const applyQuickFilter = (filterId: string) => {
+    // Validar REFERENCE_DATE
+    if (!REFERENCE_DATE) {
+      toast.error('Data de referência não disponível');
+      return;
+    }
+
     // Toggle: se já está selecionado, deseleciona (limpa o filtro)
     if (activeQuickFilter === filterId) {
       setIsFiltering(true);
