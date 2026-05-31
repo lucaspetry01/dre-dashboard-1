@@ -137,11 +137,13 @@ export interface ResumoAgregado {
       total: number;
       quantidade: number;
       registros: Array<{
+        id: number;
         data: string;
         descricao: string;
         documento: string;
         valor: number;
         saldo: number;
+        categoria: string;
       }>;
     }
   >;
@@ -175,6 +177,7 @@ function formatShort(d: Date): string {
 }
 
 interface AggregateRow {
+  id: number;
   data: string;
   dataTimestamp: Date;
   descricao: string;
@@ -222,11 +225,13 @@ export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
       total: number;
       quantidade: number;
       registros: Array<{
+        id: number;
         data: string;
         descricao: string;
         documento: string;
         valor: number;
         saldo: number;
+        categoria: string;
       }>;
     }
   > = {};
@@ -283,11 +288,13 @@ export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
     detalhesMap[categoria].total += valor;
     detalhesMap[categoria].quantidade++;
     detalhesMap[categoria].registros.push({
+      id: row.id,
       data: row.data,
       descricao: row.descricao,
       documento: row.documento || '',
       valor,
       saldo,
+      categoria: row.categoria,
     });
   }
 
@@ -363,4 +370,29 @@ export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
   }
   
   return resumo;
+}
+
+
+/**
+ * Atualiza a categoria de uma transação específica.
+ * Retorna true se bem-sucedido, false caso contrário.
+ */
+export async function updateTransacaoCategoria(
+  transacaoId: number,
+  novaCategoria: string
+): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+
+  try {
+    const result = await db
+      .update(transacoes)
+      .set({ categoria: novaCategoria })
+      .where(eq(transacoes.id, transacaoId));
+
+    return true;
+  } catch (error) {
+    console.error('Erro ao atualizar categoria:', error);
+    return false;
+  }
 }

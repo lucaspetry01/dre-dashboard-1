@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, MoreVertical } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { useLocation } from 'wouter';
 
 // Paleta usada pelo BarChartWithLabels (mantida para coerência visual futura)
@@ -610,6 +611,10 @@ export default function Dashboard() {
                         </label>
                         {groupRegistrosByDescription(items, groupByDescription).map((item: any, idx: number) => {
                           const isGrouped = item.count > 1;
+                          const transacaoId = item.id;
+                          const categoriaAtual = item.categoria;
+                          const podeMovimentar = ['OUTROS', 'PAGAMENTOS'].includes(categoriaAtual);
+                          
                           return (
                             <div key={idx} className="flex justify-between items-start text-xs gap-2">
                               <div className="flex-1 min-w-0">
@@ -621,7 +626,16 @@ export default function Dashboard() {
                                   <p className="text-slate-500 text-xs">{item.data || 'N/A'}</p>
                                 )}
                               </div>
-                              <span className="text-slate-100 font-semibold text-xs flex-shrink-0 whitespace-nowrap">{formatMoney(item.valor)}</span>
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                <span className="text-slate-100 font-semibold text-xs whitespace-nowrap">{formatMoney(item.valor)}</span>
+                                {podeMovimentar && !isGrouped && transacaoId && (
+                                  <MovimentarCategoriaButton
+                                    transacaoId={transacaoId}
+                                    categoriaAtual={categoriaAtual}
+                                    onSuccess={() => utils.ofx.resumoCompleto.invalidate()}
+                                  />
+                                )}
+                              </div>
                             </div>
                           );
                         })}
@@ -635,5 +649,62 @@ export default function Dashboard() {
         </Card>
       </div>
     </div>
+  );
+}
+
+
+/**
+ * Componente simples para mover transação entre categorias
+ */
+function MovimentarCategoriaButton({
+  transacaoId,
+  categoriaAtual,
+  onSuccess,
+}: {
+  transacaoId: number;
+  categoriaAtual: string;
+  onSuccess: () => void;
+}) {
+  const mutation = trpc.ofx.atualizarCategoria.useMutation();
+  const [open, setOpen] = useState(false);
+
+  const handleMover = useCallback(
+    (novaCategoria: 'OUTROS' | 'PAGAMENTOS') => {
+      if (novaCategoria === categoriaAtual) return;
+      
+      mutation.mutate(
+        { transacaoId, novaCategoria },
+        {
+          onSuccess: (result) => {
+            if (result.sucesso) {
+              toast.success(`Movido para ${novaCategoria}`);
+              setOpen(false);
+              onSuccess();
+            } else {
+              toast.error(result.mensagem || 'Erro ao mover');
+            }
+          },
+          onError: () => {
+            toast.error('Erro ao mover transação');
+          },
+        }
+      );
+    },
+    [transacaoId, categoriaAtual, mutation, onSuccess]
+  );
+
+  const outraCategoria: 'OUTROS' | 'PAGAMENTOS' = categoriaAtual === 'OUTROS' ? 'PAGAMENTOS' : 'OUTROS';
+
+  return (
+    <Select open={open} onOpenChange={setOpen}>
+      <SelectTrigger className="w-8 h-6 p-0 border-0 bg-slate-700 hover:bg-slate-600">
+        <MoreVertical className="w-3 h-3" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value={outraCategoria} onSelect={() => handleMover(outraCategoria)}>
+          Mover para {outraCategoria}
+        </SelectItem>
+      </SelectContent>
+    </Select>
   );
 }

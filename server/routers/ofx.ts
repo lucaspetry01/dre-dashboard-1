@@ -10,6 +10,7 @@ import {
   insertTransacoes,
   listTransacoes,
   listUploads,
+  updateTransacaoCategoria,
 } from '../db/transacoes';
 import type { InsertTransacao } from '../../drizzle/schema';
 
@@ -169,4 +170,19 @@ export const ofxRouter = router({
   resumoCompleto: publicProcedure.query(async () => {
     return await buildResumoAgregado();
   }),
+
+  atualizarCategoria: publicProcedure
+    .input(
+      z.object({
+        transacaoId: z.number().int().positive(),
+        novaCategoria: z.enum(['OUTROS', 'PAGAMENTOS']),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const sucesso = await updateTransacaoCategoria(input.transacaoId, input.novaCategoria);
+      return {
+        sucesso,
+        mensagem: sucesso ? 'Categoria atualizada com sucesso' : 'Erro ao atualizar categoria',
+      };
+    }),
 });
