@@ -261,12 +261,16 @@ export default function Dashboard() {
       .sort((a, b) => b.valor_abs - a.valor_abs);
   }, [categorias, detalhesFiltrados, startDate, endDate]);
 
-  // Preparar dados para gráficos
-  const categoriasChart = useMemo(() => 
-    categoriasFiltradas.map(cat => ({
-      ...cat,
-      valor_display: cat.valor_abs
-    })),
+  // Preparar dados para gráficos: o gráfico "Despesas por Categoria" mostra
+  // apenas categorias com valor negativo (despesas). Receitas operacionais
+  // permanecem no detalhamento abaixo (com ícone de cifrão verde).
+  const categoriasChart = useMemo(() =>
+    categoriasFiltradas
+      .filter(cat => cat.valor < 0)
+      .map(cat => ({
+        ...cat,
+        valor_display: cat.valor_abs,
+      })),
     [categoriasFiltradas]
   );
 

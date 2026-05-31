@@ -9,6 +9,7 @@ import {
   MapPin,
   Package,
   TrendingDown,
+  DollarSign,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -25,6 +26,16 @@ export interface CategoryIconConfig {
  */
 export function getCategoryIconConfig(categoryName: string): CategoryIconConfig {
   const name = categoryName.toUpperCase();
+
+  // Receitas operacionais (entrada de dinheiro) — cifrão verde para destacar entre as despesas
+  if (name.includes('RECEITA') || name === 'ENTRADAS' || name.includes('FATURAMENTO')) {
+    return {
+      icon: DollarSign,
+      bgColor: 'bg-emerald-100',
+      iconColor: 'text-emerald-700',
+      borderColor: 'border-emerald-300',
+    };
+  }
 
   // Impostos / Tributos / Outros (deve vir ANTES de Combustível pois 'IMPOSTOS' contém 'POSTO')
   if (name.includes('IMPOSTO') || name.includes('TRIBUTO') || name.includes('OUTROS')) {

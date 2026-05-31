@@ -30,3 +30,5 @@
 - [x] Remover filtro 'Hoje' pré-setado ao abrir o dashboard (agora abre limpo, mostrando todo o período disponível)
 - [x] Corrigir valores dos cards após aplicar filtro: cards e detalhamento agora compartilham a mesma fonte (transações individuais via `detalhesFiltrados`), eliminando divergência. Também corrigido o período anterior (`resumoAnterior`) para usar a mesma lógica.
 - [x] Remover abas 'Fluxo Diário' e 'Composição' do Dashboard. Detalhamento de Categorias agora aparece direto, sem `Tabs` wrapper. Imports não usados (recharts: Line/Pie/Cell/etc.) também foram removidos.
+- [x] Gráfico "Despesas por Categoria" agora filtra apenas categorias com valor negativo, mantendo RECEITAS fora
+- [x] RECEITAS no detalhamento ganhou ícone de cifrão verde (DollarSign + paleta emerald), prioridade no `getCategoryIconConfig`

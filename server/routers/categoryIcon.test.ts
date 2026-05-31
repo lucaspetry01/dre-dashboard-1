@@ -7,6 +7,8 @@ import { describe, expect, it } from 'vitest';
 function getCategoryKey(categoryName: string): string {
   const name = categoryName.toUpperCase();
 
+  // RECEITA tem prioridade máxima (cifrão verde)
+  if (name.includes('RECEITA') || name === 'ENTRADAS' || name.includes('FATURAMENTO')) return 'receita';
   // IMPOSTO antes de POSTO (pois 'IMPOSTOS' contém 'POSTO')
   if (name.includes('IMPOSTO') || name.includes('TRIBUTO') || name.includes('OUTROS')) return 'tax';
   if (name.includes('COMBUST') || name.includes('POSTO')) return 'fuel';
@@ -65,5 +67,12 @@ describe('CategoryIcon mapping', () => {
   it('é case-insensitive', () => {
     expect(getCategoryKey('combustível')).toBe('fuel');
     expect(getCategoryKey('Conta')).toBe('bill');
+  });
+
+  it('mapeia RECEITAS para ícone receita (cifrão verde)', () => {
+    expect(getCategoryKey('RECEITAS')).toBe('receita');
+    expect(getCategoryKey('RECEITA OPERACIONAL')).toBe('receita');
+    expect(getCategoryKey('Faturamento')).toBe('receita');
+    expect(getCategoryKey('ENTRADAS')).toBe('receita');
   });
 });
