@@ -121,7 +121,11 @@
     @apply bg-background text-foreground;
   }
   .dark body {
-    @apply bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950;
+    background: linear-gradient(to bottom right, rgb(3, 7, 18), rgb(15, 23, 42), rgb(3, 7, 18));
+  }
+  .dark #root {
+    background: linear-gradient(to bottom right, rgb(3, 7, 18), rgb(15, 23, 42), rgb(3, 7, 18));
+    min-height: 100vh;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),

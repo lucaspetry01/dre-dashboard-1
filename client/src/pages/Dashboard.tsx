@@ -488,20 +488,20 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
           {/* Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-wrap items-center gap-2 mb-1">
-            <h1 className="text-2xl sm:text-4xl font-bold text-slate-900">Dashboard Financeiro</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Dashboard Financeiro</h1>
             {usandoBanco && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
                 Banco de dados ({resumoBanco!.totalRegistros} registros)
               </span>
             )}
           </div>
-          <p className="text-sm sm:text-base text-slate-600">Transportes Moraes e Petry LTDA ME</p>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">Transportes Moraes e Petry LTDA ME</p>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             {(startDate && endDate) ? (
               <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
                 <Calendar className="w-3 h-3" />

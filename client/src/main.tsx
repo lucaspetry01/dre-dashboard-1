@@ -37,6 +37,11 @@ queryClient.getMutationCache().subscribe(event => {
   }
 });
 
+// Aplicar dark mode ao elemento html
+if (typeof document !== 'undefined') {
+  document.documentElement.classList.add('dark');
+}
+
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
