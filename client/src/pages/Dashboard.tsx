@@ -33,6 +33,10 @@ export default function Dashboard() {
 
   // Data de referência: último dia disponível (banco → JSON → hardcoded)
   const REFERENCE_DATE = (() => {
+    // Usar o último dia real do resumo (periodo_fim = último dia com dados)
+    if (usandoBanco && resumoBanco!.resumo.periodo_fim) {
+      return resumoBanco!.resumo.periodo_fim;
+    }
     if (usandoBanco && resumoBanco!.diario.length > 0) {
       return resumoBanco!.diario[resumoBanco!.diario.length - 1].data_full;
     }
