@@ -1,5 +1,5 @@
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer
 } from 'recharts';
 import { useMemo } from 'react';
 
@@ -115,17 +115,7 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
               );
             }}
           />
-          <Tooltip
-            formatter={(value: any) => formatMoney(Number(value))}
-            contentStyle={{
-              backgroundColor: '#1e293b',
-              border: '1px solid #475569',
-              borderRadius: '6px',
-              color: '#f1f5f9'
-            }}
-            cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
-            labelStyle={{ color: '#f1f5f9' }}
-          />
+
           <Bar
             dataKey="valor_display"
             fill="#3B82F6"
