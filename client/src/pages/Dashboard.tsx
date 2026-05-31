@@ -215,6 +215,8 @@ export default function Dashboard() {
       despesas: 0,
       lucro: 0,
       resultado: 0,
+      qtd_receitas: 0,
+      qtd_despesas: 0,
       periodo_inicio: resumo.periodo_inicio,
       periodo_fim: resumo.periodo_fim,
     };
@@ -222,8 +224,10 @@ export default function Dashboard() {
     filteredDiario.forEach(d => {
       if (d.valor > 0) {
         result.receitas += d.valor;
+        result.qtd_receitas += 1;
       } else if (d.valor < 0) {
         result.despesas += Math.abs(d.valor);
+        result.qtd_despesas += 1;
       }
     });
 
@@ -440,7 +444,7 @@ export default function Dashboard() {
               <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.receitas)}</div>
-            <div className="text-xs sm:text-sm opacity-90">{resumo.qtd_receitas} entradas</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
           </div>
 
           {/* Card Despesas */}
@@ -450,7 +454,7 @@ export default function Dashboard() {
               <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="text-lg sm:text-2xl font-bold mb-1">-{formatMoney(resumoFiltrado.despesas)}</div>
-            <div className="text-xs sm:text-sm opacity-90">{resumo.qtd_despesas} saídas</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
           </div>
         </div>
 
