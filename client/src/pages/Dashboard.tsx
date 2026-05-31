@@ -462,13 +462,13 @@ export default function Dashboard() {
           <CardContent>
             {/* Filtros Rápidos em Tags */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Filtros Rápidos</label>
-              <div className="flex flex-wrap gap-2">
+              <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-2">Filtros Rápidos</label>
+              <div className="flex flex-wrap gap-1 sm:gap-2">
                 {quickFilters.map((filter) => (
                   <button
                     key={filter.id}
                     onClick={() => applyQuickFilter(filter.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                       activeQuickFilter === filter.id
                         ? 'bg-blue-600 text-white shadow-md'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -480,7 +480,7 @@ export default function Dashboard() {
                 {(startDate || endDate) && (
                   <button
                     onClick={resetFilters}
-                    className="px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-all"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-all whitespace-nowrap"
                   >
                     ✕ Limpar
                   </button>

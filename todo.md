@@ -32,3 +32,4 @@
 - [x] Remover abas 'Fluxo Diário' e 'Composição' do Dashboard. Detalhamento de Categorias agora aparece direto, sem `Tabs` wrapper. Imports não usados (recharts: Line/Pie/Cell/etc.) também foram removidos.
 - [x] Gráfico "Despesas por Categoria" agora filtra apenas categorias com valor negativo, mantendo RECEITAS fora
 - [x] RECEITAS no detalhamento ganhou ícone de cifrão verde (DollarSign + paleta emerald), prioridade no `getCategoryIconConfig`
+- [x] Ajustar layout dos botões de filtro rápido (tags): reduzido padding (px-2 sm:px-3, py-1 sm:py-1.5), gap (1 sm:2), fonte (text-xs sm:text-sm), label (text-xs sm:text-sm). `whitespace-nowrap` evita quebra de texto dentro dos botões. Responsivo em mobile.
