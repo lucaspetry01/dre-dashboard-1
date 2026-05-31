@@ -500,15 +500,18 @@ export default function Dashboard() {
                 {/* Botão "Ontem" novo */}
                 <button
                   onClick={() => {
-                    const yesterday = new Date();
-                    yesterday.setDate(yesterday.getDate() - 1);
-                    const year = yesterday.getFullYear();
-                    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
-                    const day = String(yesterday.getDate()).padStart(2, '0');
-                    const dateStr = `${year}-${month}-${day}`;
-                    setStartDate(dateStr);
-                    setEndDate(dateStr);
-                    setActiveQuickFilter(null);
+                    setIsFiltering(true);
+                    setExpandedCategory(null);
+                    setTimeout(() => {
+                      const referenceDate = new Date(REFERENCE_DATE);
+                      const yesterdayDate = new Date(referenceDate);
+                      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+                      
+                      setStartDate(yesterdayDate.toISOString().split('T')[0]);
+                      setEndDate(yesterdayDate.toISOString().split('T')[0]);
+                      setActiveQuickFilter('yesterday');
+                      setTimeout(() => setIsFiltering(false), 200);
+                    }, 100);
                   }}
                   className="px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200"
                 >
