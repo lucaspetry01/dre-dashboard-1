@@ -33,10 +33,6 @@ export default function Dashboard() {
 
   // Data de referência: último dia disponível (banco → JSON → hardcoded)
   const REFERENCE_DATE = (() => {
-    // Usar o último dia real do resumo (periodo_fim = último dia com dados)
-    if (usandoBanco && resumoBanco!.resumo.periodo_fim) {
-      return resumoBanco!.resumo.periodo_fim;
-    }
     if (usandoBanco && resumoBanco!.diario.length > 0) {
       return resumoBanco!.diario[resumoBanco!.diario.length - 1].data_full;
     }
@@ -68,73 +64,18 @@ export default function Dashboard() {
 
   // Aplicar filtro rápido baseado no último dia disponível
   const applyQuickFilter = (filterId: string) => {
-    // Validar REFERENCE_DATE
-    if (!REFERENCE_DATE) {
-      toast.error('Data de referência não disponível');
-      return;
-    }
-
-    // Toggle: se já está selecionado, deseleciona (limpa o filtro)
-    if (activeQuickFilter === filterId) {
-      setIsFiltering(true);
-      setExpandedCategory(null);
-      setTimeout(() => {
-        setStartDate('');
-        setEndDate('');
-        setActiveQuickFilter(null);
-        setTimeout(() => setIsFiltering(false), 200);
-      }, 100);
-      return;
-    }
-
     setIsFiltering(true);
-    setExpandedCategory(null);
+    setExpandedCategory(null); // Fechar categoria expandida ao filtrar
     
     setTimeout(() => {
       if (filterId === 'all') {
         setStartDate('');
         setEndDate('');
         setActiveQuickFilter('all');
-      } else if (filterId === 'week') {
-        // Semana real: segunda a domingo
-        const referenceDate = new Date(REFERENCE_DATE);
-        if (isNaN(referenceDate.getTime())) {
-          toast.error('Data inválida para filtro de semana');
-          setIsFiltering(false);
-          return;
-        }
-        const dayOfWeek = referenceDate.getDay(); // 0=domingo, 1=segunda, ..., 6=sábado
-        
-        // Calcular segunda-feira da semana
-        const startOfWeek = new Date(referenceDate);
-        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Se domingo, volta 6 dias; senão volta (dia - 1)
-        startOfWeek.setDate(startOfWeek.getDate() - daysToMonday);
-        
-        setStartDate(startOfWeek.toISOString().split('T')[0]);
-        setEndDate(referenceDate.toISOString().split('T')[0]);
-        setActiveQuickFilter(filterId);
-      } else if (filterId === 'month') {
-        // Mês real: 1º dia do mês até o dia de referência
-        const referenceDate = new Date(REFERENCE_DATE);
-        if (isNaN(referenceDate.getTime())) {
-          toast.error('Data inválida para filtro de mês');
-          setIsFiltering(false);
-          return;
-        }
-        const startOfMonth = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1);
-        
-        setStartDate(startOfMonth.toISOString().split('T')[0]);
-        setEndDate(referenceDate.toISOString().split('T')[0]);
-        setActiveQuickFilter(filterId);
       } else {
         const filter = quickFilters.find(f => f.id === filterId);
         if (filter) {
           const referenceDate = new Date(REFERENCE_DATE);
-          if (isNaN(referenceDate.getTime())) {
-            toast.error('Data inválida para filtro');
-            setIsFiltering(false);
-            return;
-          }
           const endDateObj = referenceDate;
           const startDateObj = new Date(referenceDate);
           startDateObj.setDate(startDateObj.getDate() - filter.days + 1);
@@ -572,11 +513,7 @@ export default function Dashboard() {
                       setTimeout(() => setIsFiltering(false), 200);
                     }, 100);
                   }}
-                  className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap ${
-                    activeQuickFilter === 'yesterday'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
+                  className="px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200"
                 >
                   Ontem
                 </button>
