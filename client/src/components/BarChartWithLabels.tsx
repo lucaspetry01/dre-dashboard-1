@@ -1,5 +1,5 @@
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList
 } from 'recharts';
 import { useMemo } from 'react';
 
@@ -57,41 +57,35 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
     ];
   }, [data]);
 
-  const maxValue = Math.max(...processedData.map((d: any) => d.valor_display));
-  const totalGeral = processedData.reduce((sum, d) => sum + d.valor_display, 0);
-
   // Configuração responsiva baseada na largura da tela
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   
   const chartConfig = {
     mobile: {
       height: 320,
-      margin: { top: 20, right: 16, left: 0, bottom: 80 },
+      margin: { top: 40, right: 16, left: 0, bottom: 80 },
       xAxisFontSize: 10,
-      tooltipOnly: true
     },
     desktop: {
       height: 500,
       margin: { top: 60, right: 30, left: 0, bottom: 100 },
       xAxisFontSize: 11,
-      tooltipOnly: false
     }
   };
 
   const config = isMobile ? chartConfig.mobile : chartConfig.desktop;
 
-  // Renderizar label customizado com valor em moeda
+  // Renderizar label customizado com valor em moeda no topo
   const renderCustomLabel = (props: any) => {
     const { x, y, width, height, value } = props;
-    const isSmallBar = height < 50;
     
     return (
       <text
         x={x + width / 2}
-        y={isSmallBar ? y - 8 : y + height - 8}
+        y={y - 8}
         fill="#f1f5f9"
         textAnchor="middle"
-        fontSize={10}
+        fontSize={isMobile ? 9 : 10}
         fontWeight="bold"
       >
         {formatMoney(value)}
@@ -101,12 +95,6 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
 
   return (
     <div className="relative w-full overflow-x-hidden">
-      {/* Total Geral */}
-      <div className="mb-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
-        <p className="text-xs text-slate-400 mb-1">Total de Despesas</p>
-        <p className="text-lg font-bold text-white">{formatMoney(totalGeral)}</p>
-      </div>
-
       <ResponsiveContainer width="100%" height={config.height}>
         <BarChart 
           data={processedData} 
@@ -148,22 +136,10 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
             fill="#3B82F6" 
             radius={[0, 8, 8, 0]}
             isAnimationActive={true}
-            label={!isMobile ? renderCustomLabel : false}
+            label={renderCustomLabel}
           />
         </BarChart>
       </ResponsiveContainer>
-
-      {/* Labels apenas em mobile com valores em moeda */}
-      {isMobile && (
-        <div className="mt-4 space-y-2">
-          {processedData.map((item, idx) => (
-            <div key={idx} className="flex justify-between items-center p-2 bg-slate-800/30 rounded border border-slate-700">
-              <span className="text-xs font-medium text-slate-300">{item.nomeAbreviado}</span>
-              <span className="text-sm font-bold text-white">{formatMoney(item.valor_display)}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
