@@ -545,14 +545,14 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             {/* Filtros Rápidos em Tags */}
-            <div className="mb-4">
-              <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Filtros Rápidos</label>
-              <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-2.5">
+            <div className="mb-2">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Filtros</label>
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2">
                 {quickFilters.map((filter) => (
                   <button
                     key={filter.id}
                     onClick={() => applyQuickFilter(filter.id)}
-                    className={`btn-3d px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
+                    className={`btn-3d px-2 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
                       activeQuickFilter === filter.id
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
@@ -564,7 +564,7 @@ export default function Dashboard() {
                 {(startDate || endDate) && (
                   <button
                     onClick={resetFilters}
-                    className="btn-3d col-span-2 sm:col-span-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
+                    className="btn-3d col-span-2 sm:col-span-1 px-2 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
                   >
                     Limpar
                   </button>
@@ -573,9 +573,9 @@ export default function Dashboard() {
             </div>
 
             {/* Datas Customizadas lado a lado em mobile */}
-            <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-              <div className="flex-1 min-w-0 sm:max-w-[180px]">
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-1">Data Inicial</label>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+              <div className="flex-1 min-w-0 sm:max-w-[160px]">
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
                 <Input
                   type="date"
                   value={startDate}
@@ -583,11 +583,11 @@ export default function Dashboard() {
                     setStartDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full text-sm h-10 px-2 overflow-hidden"
+                  className="w-full text-xs h-8 px-2 overflow-hidden"
                 />
               </div>
-              <div className="flex-1 min-w-0 sm:max-w-[180px]">
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-1">Data Final</label>
+              <div className="flex-1 min-w-0 sm:max-w-[160px]">
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Fim</label>
                 <Input
                   type="date"
                   value={endDate}
@@ -595,7 +595,7 @@ export default function Dashboard() {
                     setEndDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full text-sm h-10 px-2 overflow-hidden"
+                  className="w-full text-xs h-8 px-2 overflow-hidden"
                 />
               </div>
             </div>
