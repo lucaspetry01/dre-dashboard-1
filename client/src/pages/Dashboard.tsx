@@ -64,7 +64,14 @@ export default function Dashboard() {
   ];
 
   // Aplicar filtro rápido baseado no último dia disponível
+  // Com toggle: clicar no mesmo filtro novamente limpa o filtro
   const applyQuickFilter = (filterId: string) => {
+    // Se o filtro já está ativo, limpar ao clicar novamente (toggle)
+    if (activeQuickFilter === filterId) {
+      resetFilters();
+      return;
+    }
+
     setIsFiltering(true);
     setExpandedCategory(null); // Fechar categoria expandida ao filtrar
     
@@ -551,9 +558,15 @@ export default function Dashboard() {
                 >
                   Hoje
                 </button>
-                {/* Botão "Ontem" novo */}
+                {/* Botão "Ontem" novo com toggle e estilo azul quando ativo */}
                 <button
                   onClick={() => {
+                    // Se já está selecionado, limpar ao clicar novamente (toggle)
+                    if (activeQuickFilter === 'yesterday') {
+                      resetFilters();
+                      return;
+                    }
+
                     setIsFiltering(true);
                     setExpandedCategory(null);
                     setTimeout(() => {
@@ -567,7 +580,11 @@ export default function Dashboard() {
                       setTimeout(() => setIsFiltering(false), 200);
                     }, 100);
                   }}
-                  className="px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold transition-all whitespace-nowrap ${
+                    activeQuickFilter === 'yesterday'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
                 >
                   Ontem
                 </button>
@@ -597,8 +614,8 @@ export default function Dashboard() {
             </div>
 
             {/* Datas Customizadas lado a lado em mobile */}
-            <div className="grid grid-cols-2 sm:flex sm:items-end gap-3 sm:gap-3 pt-4 border-t border-slate-200">
-              <div className="min-w-0 sm:max-w-[180px]">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-4 border-t border-slate-200">
+              <div className="flex-1 min-w-0 sm:max-w-[180px]">
                 <label className="block text-xs font-medium text-slate-700 mb-1">Data Inicial</label>
                 <Input
                   type="date"
@@ -607,10 +624,10 @@ export default function Dashboard() {
                     setStartDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full text-sm h-10 px-2"
+                  className="w-full text-sm h-10 px-2 overflow-hidden"
                 />
               </div>
-              <div className="min-w-0 sm:max-w-[180px]">
+              <div className="flex-1 min-w-0 sm:max-w-[180px]">
                 <label className="block text-xs font-medium text-slate-700 mb-1">Data Final</label>
                 <Input
                   type="date"
@@ -619,7 +636,7 @@ export default function Dashboard() {
                     setEndDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
-                  className="w-full text-sm h-10 px-2"
+                  className="w-full text-sm h-10 px-2 overflow-hidden"
                 />
               </div>
             </div>
