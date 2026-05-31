@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
 import { getDb } from '../db';
 import { transacoes, uploads, type InsertTransacao, type InsertUpload } from '../../drizzle/schema';
 
@@ -363,4 +363,89 @@ export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
   }
   
   return resumo;
+}
+
+
+/**
+ * Retorna histórico de saldos dos últimos uploads com dados comparativos.
+ * Agrupa por período (mês, trimestre, etc) conforme o filtro.
+ */
+export async function getHistoricoSaldos(periodoFiltro?: {
+  tipo: 'dia' | 'semana' | 'mes' | 'trimestre' | 'semestre' | 'ano';
+  dataInicio: string;
+  dataFim: string;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  // Buscar todos os uploads ordenados por data
+  const allUploads = await db
+    .select({
+      id: uploads.id,
+      periodoInicio: uploads.periodoInicio,
+      periodoFim: uploads.periodoFim,
+      saldoFinal: uploads.saldoFinal,
+      createdAt: uploads.createdAt,
+    })
+    .from(uploads)
+    .orderBy(asc(uploads.createdAt));
+
+  if (!allUploads.length) return [];
+
+  // Se não há filtro, retornar últimos 10 uploads
+  if (!periodoFiltro) {
+    return allUploads.slice(-10).map((u) => ({
+      periodo: u.periodoFim || u.createdAt?.toISOString().split('T')[0] || 'N/A',
+      saldo: Number(u.saldoFinal) || 0,
+      saldoAnterior: null,
+    }));
+  }
+
+  // Agrupar uploads por período
+  const uploadsPorPeriodo = new Map<string, any>();
+  
+  allUploads.forEach((u) => {
+    const dataFim = u.periodoFim || u.createdAt?.toISOString().split('T')[0] || '';
+    if (!uploadsPorPeriodo.has(dataFim)) {
+      uploadsPorPeriodo.set(dataFim, u);
+    }
+  });
+
+  // Converter para array e ordenar
+  const periodosOrdenados = Array.from(uploadsPorPeriodo.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([periodo, upload]) => ({
+      periodo,
+      saldo: Number(upload.saldoFinal) || 0,
+    }));
+
+  // Encontrar índice do período filtrado
+  const filtroInicio = periodoFiltro.dataInicio;
+  const filtroFim = periodoFiltro.dataFim;
+  
+  const indiceInicio = periodosOrdenados.findIndex((p) => p.periodo >= filtroInicio);
+  const indiceFim = periodosOrdenados.findIndex((p) => p.periodo >= filtroFim);
+
+  if (indiceInicio === -1) return periodosOrdenados.slice(-10);
+
+  // Retornar período filtrado com comparativo
+  const resultado = [];
+  
+  for (let i = indiceInicio; i <= indiceFim && i < periodosOrdenados.length; i++) {
+    const periodoPrincipal = periodosOrdenados[i];
+    
+    // Encontrar período anterior equivalente
+    let saldoAnterior = null;
+    if (i > 0) {
+      saldoAnterior = periodosOrdenados[i - 1].saldo;
+    }
+
+    resultado.push({
+      periodo: periodoPrincipal.periodo,
+      saldo: periodoPrincipal.saldo,
+      saldoAnterior,
+    });
+  }
+
+  return resultado;
 }
