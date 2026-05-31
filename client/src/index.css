@@ -202,8 +202,8 @@
 }
 
 .kpi-card-3d:hover {
-  transform: translateY(-8px) rotateX(3deg) rotateY(-3deg);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  transform: translateY(-8px) rotateX(3deg) rotateY(-3deg) !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
 }
 
 /* 3D effect for filter buttons */
@@ -213,8 +213,8 @@
 }
 
 .btn-3d:hover {
-  transform: translateY(-2px) rotateX(2deg);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px) rotateX(2deg) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
 .btn-3d:active {
