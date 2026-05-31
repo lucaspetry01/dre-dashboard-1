@@ -1,5 +1,5 @@
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
 import { useMemo } from 'react';
 
@@ -31,7 +31,8 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
     if (data.length <= 5) {
       return data.map(d => ({
         ...d,
-        nomeAbreviado: abbreviateName(d.nome)
+        nomeAbreviado: abbreviateName(d.nome),
+        total: d.valor_display
       }));
     }
 
@@ -44,17 +45,20 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
     return [
       ...top5.map(d => ({
         ...d,
-        nomeAbreviado: abbreviateName(d.nome)
+        nomeAbreviado: abbreviateName(d.nome),
+        total: d.valor_display
       })),
       {
         nome: 'Outros',
         nomeAbreviado: 'Outros',
-        valor_display: outrosTotal
+        valor_display: outrosTotal,
+        total: outrosTotal
       }
     ];
   }, [data]);
 
   const maxValue = Math.max(...processedData.map((d: any) => d.valor_display));
+  const totalGeral = processedData.reduce((sum, d) => sum + d.valor_display, 0);
 
   // Configuração responsiva baseada na largura da tela
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -63,16 +67,12 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
     mobile: {
       height: 320,
       margin: { top: 20, right: 16, left: 0, bottom: 80 },
-      xAxisHeight: 100,
-      xAxisAngle: -45,
       xAxisFontSize: 10,
       tooltipOnly: true
     },
     desktop: {
       height: 500,
       margin: { top: 60, right: 30, left: 0, bottom: 100 },
-      xAxisHeight: 120,
-      xAxisAngle: -45,
       xAxisFontSize: 11,
       tooltipOnly: false
     }
@@ -80,8 +80,33 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
 
   const config = isMobile ? chartConfig.mobile : chartConfig.desktop;
 
+  // Renderizar label customizado com valor em moeda
+  const renderCustomLabel = (props: any) => {
+    const { x, y, width, height, value } = props;
+    const isSmallBar = height < 50;
+    
+    return (
+      <text
+        x={x + width / 2}
+        y={isSmallBar ? y - 8 : y + height - 8}
+        fill="#f1f5f9"
+        textAnchor="middle"
+        fontSize={10}
+        fontWeight="bold"
+      >
+        {formatMoney(value)}
+      </text>
+    );
+  };
+
   return (
     <div className="relative w-full overflow-x-hidden">
+      {/* Total Geral */}
+      <div className="mb-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+        <p className="text-xs text-slate-400 mb-1">Total de Despesas</p>
+        <p className="text-lg font-bold text-white">{formatMoney(totalGeral)}</p>
+      </div>
+
       <ResponsiveContainer width="100%" height={config.height}>
         <BarChart 
           data={processedData} 
@@ -90,20 +115,21 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
           className="sm:static"
         >
           <CartesianGrid 
-            strokeDasharray="3 3" 
-            stroke="#e2e8f0"
+            strokeDasharray="0"
+            stroke="transparent"
             vertical={false}
           />
           <XAxis 
             type="number"
-            tick={{ fontSize: config.xAxisFontSize }}
-            stroke="#94a3b8"
+            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
+            stroke="#475569"
+            tickFormatter={(value) => formatMoney(value)}
           />
           <YAxis 
             type="category"
             dataKey="nomeAbreviado"
-            tick={{ fontSize: config.xAxisFontSize }}
-            stroke="#94a3b8"
+            tick={{ fontSize: config.xAxisFontSize, fill: '#f1f5f9' }}
+            stroke="#475569"
             width={isMobile ? 60 : 80}
           />
           <Tooltip 
@@ -115,41 +141,27 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
               color: '#f1f5f9'
             }}
             cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
+            labelStyle={{ color: '#f1f5f9' }}
           />
           <Bar 
             dataKey="valor_display" 
             fill="#3B82F6" 
             radius={[0, 8, 8, 0]}
             isAnimationActive={true}
+            label={!isMobile ? renderCustomLabel : false}
           />
         </BarChart>
       </ResponsiveContainer>
 
-      {/* Labels apenas em desktop */}
-      {!isMobile && (
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none flex items-end justify-around px-8 pb-28">
-          {processedData.map((item, idx) => {
-            const barHeight = (item.valor_display / maxValue) * 380;
-            const isSmallBar = barHeight < 50;
-            
-            return (
-              <div 
-                key={idx}
-                className="flex flex-col items-center text-xs font-bold"
-                style={{ 
-                  height: `${barHeight}px`,
-                  minWidth: '45px',
-                  justifyContent: isSmallBar ? 'flex-start' : 'flex-end',
-                  paddingBottom: isSmallBar ? '4px' : '6px',
-                  paddingTop: isSmallBar ? '2px' : '0px'
-                }}
-              >
-                <div className="whitespace-nowrap text-gray-700 bg-white px-1 rounded text-[10px]">
-                  {formatMoney(item.valor_display)}
-                </div>
-              </div>
-            );
-          })}
+      {/* Labels apenas em mobile com valores em moeda */}
+      {isMobile && (
+        <div className="mt-4 space-y-2">
+          {processedData.map((item, idx) => (
+            <div key={idx} className="flex justify-between items-center p-2 bg-slate-800/30 rounded border border-slate-700">
+              <span className="text-xs font-medium text-slate-300">{item.nomeAbreviado}</span>
+              <span className="text-sm font-bold text-white">{formatMoney(item.valor_display)}</span>
+            </div>
+          ))}
         </div>
       )}
     </div>

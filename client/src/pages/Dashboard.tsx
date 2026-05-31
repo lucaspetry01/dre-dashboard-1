@@ -431,7 +431,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <BarChartWithLabels
-              data={categorias
+              data={categoriasComDados
                 .filter(cat => cat.valor < 0)
                 .map(cat => ({
                   nome: cat.nome,
