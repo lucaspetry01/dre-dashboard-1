@@ -77,14 +77,16 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
 
   // Renderizar label customizado com valor em moeda no topo
   const renderCustomLabel = (props: any) => {
-    const { x, y, width, height, value } = props;
+    const { x, y, width, height, value, index } = props;
+    
+    const isFirst = index === 0;
     
     return (
       <text
-        x={x + width + 8}
-        y={y - 12}
+        x={isFirst ? x + width / 2 : x + width + 8}
+        y={isFirst ? y - 20 : y - 12}
         fill="#f1f5f9"
-        textAnchor="start"
+        textAnchor={isFirst ? "middle" : "start"}
         fontSize={isMobile ? 10 : 11}
         fontWeight="600"
         dominantBaseline="middle"
