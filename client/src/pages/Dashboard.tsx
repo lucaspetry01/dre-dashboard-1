@@ -35,6 +35,24 @@ const extractNomeProprio = (descricao: string): string => {
   return descricao;
 };
 
+// Simplificar nomes de categorias para exibição
+const simplifyCategoriName = (name: string): string => {
+  const mappings: Record<string, string> = {
+    'RECEITAS OPERACIONAIS': 'Receita',
+    'CONTA / BOLETO': 'Boleto',
+    'COMBUSTÍVEL / POSTO': 'Combustível',
+    'PAGAMENTOS': 'Pagamentos',
+    'IMPOSTOS / TRIBUTOS / OUTROS': 'Impostos',
+    'CHAPA / OPERACIONAL PF': 'Chapa',
+    'PRÓ-LABORE / SOCIETÁRIO': 'Pró-labore',
+    'MECÂNICA / MANUTENÇÃO': 'Mecânica',
+    'SAÍDAS NÃO CATEGORIZADAS': 'Outros',
+    'PEDAGIOS / ESTACIONAMENTOS': 'Pedágios',
+    'CUSTO OPERACIONAL ESPECÍFICO': 'Custo Op'
+  };
+  return mappings[name] || name;
+};
+
 // Agrupar registros por descricao
 const groupRegistrosByDescription = (registros: any[], groupByDescription: boolean) => {
   if (!groupByDescription) return registros;
@@ -463,7 +481,7 @@ export default function Dashboard() {
                     >
                       <div className="flex items-center gap-2 flex-1 min-w-0">
                         <CategoryIcon categoryName={categoria.nome} />
-                        <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate">{categoria.nome}</span>
+                        <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate">{simplifyCategoriName(categoria.nome)}</span>
                         <span className="text-xs text-slate-400 flex-shrink-0">({items.length})</span>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
