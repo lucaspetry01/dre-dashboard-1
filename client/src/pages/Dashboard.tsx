@@ -585,38 +585,38 @@ export default function Dashboard() {
               <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-white" />
             </div>
 
-            <CardContent className="relative p-6 sm:p-8">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <CardContent className="relative p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`p-2 rounded-lg ${isLucro ? 'bg-emerald-400/30' : 'bg-rose-400/30'}`}>
-                      {isLucro ? <TrendingUp className="w-5 h-5 text-white" /> : <TrendingDown className="w-5 h-5 text-white" />}
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className={`p-1 rounded-lg ${isLucro ? 'bg-emerald-400/30' : 'bg-rose-400/30'}`}>
+                      {isLucro ? <TrendingUp className="w-3 h-3 text-white" /> : <TrendingDown className="w-3 h-3 text-white" />}
                     </div>
-                    <p className="text-white/90 text-sm font-medium uppercase tracking-wider">
+                    <p className="text-white/90 text-xs font-medium uppercase tracking-wider">
                       {isLucro ? 'Lucro Líquido' : 'Prejuízo do Período'}
                     </p>
                   </div>
-                  <div className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-2 tracking-tight">
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-1 tracking-tight">
                     {formatMoney(resumoFiltrado.resultado)}
                   </div>
                   {variacaoResultado && (
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-semibold">
-                      {variacaoResultado.positivo ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold">
+                      {variacaoResultado.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       <span>{variacaoResultado.positivo ? '+' : '-'}{variacaoResultado.valor.toFixed(1)}%</span>
                       <span className="text-white/70 text-xs">vs. anterior</span>
                     </div>
                   )}
                 </div>
 
-                <div className="hidden sm:block w-px h-24 bg-white/20" />
+                <div className="hidden sm:block w-px h-12 bg-white/20" />
 
                 <div className="sm:text-right">
-                  <p className="text-white/70 text-xs uppercase tracking-wider mb-1">Status</p>
-                  <div className="text-2xl sm:text-3xl font-bold text-white">
+                  <p className="text-white/70 text-xs uppercase tracking-wider mb-0.5">Status</p>
+                  <div className="text-lg sm:text-xl font-bold text-white">
                     {isLucro ? 'POSITIVO' : 'NEGATIVO'}
                   </div>
                   {resumoAnterior && (
-                    <p className="text-white/70 text-xs mt-2">
+                    <p className="text-white/70 text-xs mt-1">
                       Anterior: {formatMoney(resumoAnterior.resultado)}
                     </p>
                   )}
@@ -629,55 +629,55 @@ export default function Dashboard() {
         {/* KPIs Secundários: Receitas e Despesas */}
         <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
           <Card className="bg-white border-l-4 border-l-emerald-500 hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-emerald-50 rounded-lg">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <CardContent className="p-3">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 bg-emerald-50 rounded-lg">
+                    <TrendingUp className="w-3 h-3 text-emerald-600" />
                   </div>
-                  <p className="text-sm font-medium text-slate-600">Receitas</p>
+                  <p className="text-xs font-medium text-slate-600">Receitas</p>
                 </div>
                 {variacaoReceitas && (
-                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                  <div className={`flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-full ${
                     variacaoReceitas.positivo ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
                   }`}>
                     {variacaoReceitas.positivo ? '↑' : '↓'} {variacaoReceitas.valor.toFixed(1)}%
                   </div>
                 )}
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-emerald-700 mb-1">
+              <div className="text-lg sm:text-xl font-bold text-emerald-700 mb-0.5">
                 {formatMoney(resumoFiltrado.total_receitas)}
               </div>
               <p className="text-xs text-slate-500">
                 {qtdEntradas} entradas
-                {resumoAnterior && <span className="ml-2 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_receitas)}</span>}
+                {resumoAnterior && <span className="ml-1 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_receitas)}</span>}
               </p>
             </CardContent>
           </Card>
 
           <Card className="bg-white border-l-4 border-l-rose-500 hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-rose-50 rounded-lg">
-                    <TrendingDown className="w-4 h-4 text-rose-600" />
+            <CardContent className="p-3">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 bg-rose-50 rounded-lg">
+                    <TrendingDown className="w-3 h-3 text-rose-600" />
                   </div>
-                  <p className="text-sm font-medium text-slate-600">Despesas</p>
+                  <p className="text-xs font-medium text-slate-600">Despesas</p>
                 </div>
                 {variacaoDespesas && (
-                  <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                  <div className={`flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-full ${
                     variacaoDespesas.positivo ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
                   }`}>
                     {variacaoDespesas.positivo ? '↑' : '↓'} {variacaoDespesas.valor.toFixed(1)}%
                   </div>
                 )}
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-rose-700 mb-1">
+              <div className="text-lg sm:text-xl font-bold text-rose-700 mb-0.5">
                 {formatMoney(resumoFiltrado.total_despesas)}
               </div>
               <p className="text-xs text-slate-500">
                 {qtdSaidas} saídas
-                {resumoAnterior && <span className="ml-2 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_despesas)}</span>}
+                {resumoAnterior && <span className="ml-1 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_despesas)}</span>}
               </p>
             </CardContent>
           </Card>
