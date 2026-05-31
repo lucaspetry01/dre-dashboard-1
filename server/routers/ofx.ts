@@ -1,9 +1,7 @@
 import { z } from 'zod';
-import { eq } from 'drizzle-orm';
 import { publicProcedure, router } from '../_core/trpc';
 import { parseOfx } from '../lib/parseOfx';
 import { categorizarDinamico } from '../lib/categorizarDinamico';
-import { getDb } from '../db';
 import {
   buildResumoAgregado,
   countTransacoes,
@@ -13,7 +11,6 @@ import {
   listTransacoes,
   listUploads,
 } from '../db/transacoes';
-import { transacoes } from '../../drizzle/schema';
 import type { InsertTransacao } from '../../drizzle/schema';
 
 /**
@@ -172,50 +169,4 @@ export const ofxRouter = router({
   resumoCompleto: publicProcedure.query(async () => {
     return await buildResumoAgregado();
   }),
-
-  /**
-   * Atualiza a categoria de uma transação específica.
-   * Validação básica: verifica se a transação existe e se a categoria é válida.
-   */
-  atualizarCategoria: publicProcedure
-    .input(
-      z.object({
-        transacaoId: z.number().int().positive(),
-        novaCategoria: z.string().min(1),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const db = await getDb();
-      if (!db) {
-        return {
-          success: false,
-          mensagem: 'Banco de dados indisponível',
-        };
-      }
-
-      // Validar se a transação existe
-      const transacao = await db
-        .select()
-        .from(transacoes)
-        .where(eq(transacoes.id, input.transacaoId))
-        .limit(1);
-
-      if (transacao.length === 0) {
-        return {
-          success: false,
-          mensagem: 'Transação não encontrada',
-        };
-      }
-
-      // Atualizar categoria
-      await db
-        .update(transacoes)
-        .set({ categoria: input.novaCategoria })
-        .where(eq(transacoes.id, input.transacaoId));
-
-      return {
-        success: true,
-        mensagem: 'Categoria atualizada com sucesso',
-      };
-    }),
 });
