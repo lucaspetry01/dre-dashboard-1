@@ -98,6 +98,11 @@ export default function Dashboard() {
       } else if (filterId === 'week') {
         // Semana real: segunda a domingo
         const referenceDate = new Date(REFERENCE_DATE);
+        if (isNaN(referenceDate.getTime())) {
+          toast.error('Data inválida para filtro de semana');
+          setIsFiltering(false);
+          return;
+        }
         const dayOfWeek = referenceDate.getDay(); // 0=domingo, 1=segunda, ..., 6=sábado
         
         // Calcular segunda-feira da semana
@@ -111,6 +116,11 @@ export default function Dashboard() {
       } else if (filterId === 'month') {
         // Mês real: 1º dia do mês até o dia de referência
         const referenceDate = new Date(REFERENCE_DATE);
+        if (isNaN(referenceDate.getTime())) {
+          toast.error('Data inválida para filtro de mês');
+          setIsFiltering(false);
+          return;
+        }
         const startOfMonth = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1);
         
         setStartDate(startOfMonth.toISOString().split('T')[0]);
@@ -120,6 +130,11 @@ export default function Dashboard() {
         const filter = quickFilters.find(f => f.id === filterId);
         if (filter) {
           const referenceDate = new Date(REFERENCE_DATE);
+          if (isNaN(referenceDate.getTime())) {
+            toast.error('Data inválida para filtro');
+            setIsFiltering(false);
+            return;
+          }
           const endDateObj = referenceDate;
           const startDateObj = new Date(referenceDate);
           startDateObj.setDate(startDateObj.getDate() - filter.days + 1);
