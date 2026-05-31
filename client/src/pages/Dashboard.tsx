@@ -256,8 +256,25 @@ export default function Dashboard() {
 
   // Categorias com dados
   const categoriasComDados = useMemo(() => {
-    return categorias.filter(cat => cat.valor_abs > 0);
-  }, [categorias]);
+    if (!startDate && !endDate) {
+      return categorias.filter(cat => cat.valor_abs > 0);
+    }
+    const categoriaMap: Record<string, any> = {};
+    Object.entries(detalhes).forEach(([categoryName, categoryData]: [string, any]) => {
+      const items = categoryData?.registros || [];
+      let totalValor = 0;
+      items.forEach((item: any) => {
+        const itemDate = item.data_full || item.data;
+        if (startDate && itemDate < startDate) return;
+        if (endDate && itemDate > endDate) return;
+        totalValor += Number(item.valor);
+      });
+      if (totalValor !== 0) {
+        categoriaMap[categoryName] = { nome: categoryName, valor: totalValor, valor_abs: Math.abs(totalValor) };
+      }
+    });
+    return Object.values(categoriaMap).filter(cat => cat.valor_abs > 0);
+  }, [categorias, detalhes, startDate, endDate]);
 
   // Upload OFX
   const uploadMutation = trpc.ofx.processOFX.useMutation();
@@ -516,7 +533,15 @@ export default function Dashboard() {
             <div className="space-y-2">
               {categoriasComDados.map((categoria) => {
                 const categoryData = detalhes[categoria.nome];
-                const items = categoryData?.registros || [];
+                let items = categoryData?.registros || [];
+                if (startDate || endDate) {
+                  items = items.filter((item: any) => {
+                    const itemDate = item.data_full || item.data;
+                    if (startDate && itemDate < startDate) return false;
+                    if (endDate && itemDate > endDate) return false;
+                    return true;
+                  });
+                }
                 const isExpanded = expandedCategory === categoria.nome;
 
                 return (
