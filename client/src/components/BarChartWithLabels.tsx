@@ -81,10 +81,10 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
     
     return (
       <text
-        x={x + width / 2}
+        x={x + width + 8}
         y={y - 12}
         fill="#f1f5f9"
-        textAnchor="middle"
+        textAnchor="start"
         fontSize={isMobile ? 10 : 11}
         fontWeight="600"
         dominantBaseline="middle"
