@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel } from 'lucide-react';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
 import { toast } from 'sonner';
@@ -263,8 +263,17 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 sm:mb-8 entrance-fade delay-0">
-          <div className="flex flex-wrap items-center gap-2 mb-1">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
             <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Dashboard Financeiro</h1>
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-amber-400 transition-colors"
+              title="Combustível (em desenvolvimento)"
+              onClick={() => toast.info('Funcionalidade em desenvolvimento')}
+            >
+              <Fuel className="w-5 h-5" />
+            </Button>
             {usandoBanco && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
                 Banco de dados ({resumoBanco!.totalRegistros} registros)
