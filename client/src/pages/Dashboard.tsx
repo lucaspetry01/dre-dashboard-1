@@ -780,9 +780,6 @@ export default function Dashboard() {
                                   </div>
                                   <div className="text-right whitespace-nowrap">
                                     <p className="font-bold text-slate-900">{formatMoney(item.valor)}</p>
-                                    {!groupByDescription && item.saldo !== undefined && (
-                                      <p className="text-xs text-slate-500">{formatMoney(item.saldo)}</p>
-                                    )}
                                   </div>
                                 </div>
                               </div>
