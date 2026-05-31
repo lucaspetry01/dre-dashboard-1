@@ -101,14 +101,14 @@ export default function Combustivel() {
   return (
     <div className="flex h-screen bg-slate-900">
       {/* Sidebar com pastas */}
-      <div className="w-48 bg-slate-800 border-r border-slate-700 p-4 overflow-y-auto">
-        <h2 className="text-lg font-bold text-white mb-4">Pastas</h2>
-        <div className="space-y-2">
+      <div className="w-32 bg-slate-800 border-r border-slate-700 p-2 overflow-y-auto">
+        <h2 className="text-xs font-bold text-white mb-2">Pastas</h2>
+        <div className="space-y-1">
           {PASTAS.map((pasta) => (
             <button
               key={pasta}
               onClick={() => setSelectedPasta(pasta)}
-              className={`w-full text-left px-4 py-2 rounded-md transition-colors ${
+              className={`w-full text-left px-2 py-1 text-xs rounded-md transition-colors ${
                 selectedPasta === pasta
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-700 text-slate-200 hover:bg-slate-600'
@@ -121,76 +121,76 @@ export default function Combustivel() {
       </div>
 
       {/* Conteúdo principal */}
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-3 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-white">Combustível - {selectedPasta}</h1>
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-xl font-bold text-white">Combustível - {selectedPasta}</h1>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Novo Abastecimento
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-xs h-7">
+                  <Plus className="w-3 h-3 mr-1" />
+                  Novo
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-slate-800 border-slate-700">
+              <DialogContent className="bg-slate-800 border-slate-700 max-w-sm">
                 <DialogHeader>
-                  <DialogTitle className="text-white">{editingId ? 'Editar Abastecimento' : 'Registrar Abastecimento'}</DialogTitle>
+                  <DialogTitle className="text-sm text-white">{editingId ? 'Editar' : 'Novo Abastecimento'}</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-2">
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Data</label>
+                    <label className="block text-xs font-medium text-slate-300 mb-0.5">Data</label>
                     <Input
                       type="date"
                       value={formData.data}
                       onChange={(e) => setFormData({ ...formData, data: e.target.value })}
-                      className="bg-slate-700 border-slate-600 text-white"
+                      className="bg-slate-700 border-slate-600 text-white h-7 text-xs"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Placa</label>
+                    <label className="block text-xs font-medium text-slate-300 mb-0.5">Placa</label>
                     <Input
                       type="text"
                       placeholder="ABC-1234"
                       value={formData.placa}
                       onChange={(e) => setFormData({ ...formData, placa: e.target.value })}
-                      className="bg-slate-700 border-slate-600 text-white"
+                      className="bg-slate-700 border-slate-600 text-white h-7 text-xs"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Rota</label>
+                    <label className="block text-xs font-medium text-slate-300 mb-0.5">Rota</label>
                     <Input
                       type="text"
-                      placeholder="São Paulo - Rio de Janeiro"
+                      placeholder="São Paulo - Rio"
                       value={formData.rota}
                       onChange={(e) => setFormData({ ...formData, rota: e.target.value })}
-                      className="bg-slate-700 border-slate-600 text-white"
+                      className="bg-slate-700 border-slate-600 text-white h-7 text-xs"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Motorista</label>
+                    <label className="block text-xs font-medium text-slate-300 mb-0.5">Motorista</label>
                     <Input
                       type="text"
-                      placeholder="Nome do motorista"
+                      placeholder="Nome"
                       value={formData.motorista}
                       onChange={(e) => setFormData({ ...formData, motorista: e.target.value })}
-                      className="bg-slate-700 border-slate-600 text-white"
+                      className="bg-slate-700 border-slate-600 text-white h-7 text-xs"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Protocolo</label>
+                    <label className="block text-xs font-medium text-slate-300 mb-0.5">Protocolo</label>
                     <Input
                       type="text"
-                      placeholder="Número do protocolo"
+                      placeholder="Número"
                       value={formData.protocolo}
                       onChange={(e) => setFormData({ ...formData, protocolo: e.target.value })}
-                      className="bg-slate-700 border-slate-600 text-white"
+                      className="bg-slate-700 border-slate-600 text-white h-7 text-xs"
                     />
                   </div>
-                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={createMutation.isPending}>
-                    {createMutation.isPending ? 'Registrando...' : 'Registrar'}
+                  <Button type="submit" size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs h-7" disabled={createMutation.isPending}>
+                    {createMutation.isPending ? 'Salvando...' : 'Salvar'}
                   </Button>
                 </form>
               </DialogContent>
@@ -199,47 +199,47 @@ export default function Combustivel() {
 
           {/* Tabela de abastecimentos */}
           <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white">Abastecimentos</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-white">Abastecimentos</CardTitle>
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="text-center text-slate-400">Carregando...</div>
+                <div className="text-center text-slate-400 text-xs">Carregando...</div>
               ) : abastecimentos && abastecimentos.length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-slate-300">
+                  <table className="w-full text-xs text-slate-300">
                     <thead className="bg-slate-700 text-slate-200">
                       <tr>
-                        <th className="px-4 py-2 text-left">Data</th>
-                        <th className="px-4 py-2 text-left">Placa</th>
-                        <th className="px-4 py-2 text-left">Rota</th>
-                        <th className="px-4 py-2 text-left">Motorista</th>
-                        <th className="px-4 py-2 text-left">Protocolo</th>
-                        <th className="px-4 py-2 text-center">Ações</th>
+                        <th className="px-2 py-1 text-left">Data</th>
+                        <th className="px-2 py-1 text-left">Placa</th>
+                        <th className="px-2 py-1 text-left">Rota</th>
+                        <th className="px-2 py-1 text-left">Motorista</th>
+                        <th className="px-2 py-1 text-left">Protocolo</th>
+                        <th className="px-2 py-1 text-center">Ações</th>
                       </tr>
                     </thead>
                     <tbody>
                       {abastecimentos.map((abastecimento) => (
                         <tr key={abastecimento.id} className="border-t border-slate-700 hover:bg-slate-700">
-                          <td className="px-4 py-2">{formatDate(abastecimento.data)}</td>
-                          <td className="px-4 py-2 font-semibold">{abastecimento.placa}</td>
-                          <td className="px-4 py-2">{abastecimento.rota || '-'}</td>
-                          <td className="px-4 py-2">{abastecimento.motorista || '-'}</td>
-                          <td className="px-4 py-2">{abastecimento.protocolo || '-'}</td>
-                          <td className="px-4 py-2 text-center flex gap-2 justify-center">
+                          <td className="px-2 py-1">{formatDate(abastecimento.data)}</td>
+                          <td className="px-2 py-1 font-semibold">{abastecimento.placa}</td>
+                          <td className="px-2 py-1">{abastecimento.rota || '-'}</td>
+                          <td className="px-2 py-1">{abastecimento.motorista || '-'}</td>
+                          <td className="px-2 py-1">{abastecimento.protocolo || '-'}</td>
+                          <td className="px-2 py-1 text-center flex gap-1 justify-center">
                             <button
                               onClick={() => handleEdit(abastecimento)}
                               className="text-blue-400 hover:text-blue-300 transition-colors"
                               title="Editar"
                             >
-                              <Edit2 className="w-4 h-4" />
+                              <Edit2 className="w-3 h-3" />
                             </button>
                             <button
                               onClick={() => handleDelete(abastecimento.id)}
                               className="text-red-400 hover:text-red-300 transition-colors"
                               title="Deletar"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-3 h-3" />
                             </button>
                           </td>
                         </tr>
@@ -248,7 +248,7 @@ export default function Combustivel() {
                   </table>
                 </div>
               ) : (
-                <div className="text-center text-slate-400 py-8">Nenhum abastecimento registrado nesta pasta</div>
+                <div className="text-center text-slate-400 py-4 text-xs">Nenhum abastecimento registrado nesta pasta</div>
               )}
             </CardContent>
           </Card>
