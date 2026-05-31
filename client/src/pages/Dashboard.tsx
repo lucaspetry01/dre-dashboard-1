@@ -135,6 +135,24 @@ export default function Dashboard() {
     
     setActiveQuickFilter(filterId);
     
+    // Se é filtro de semana (id === 'sem'), calcular semana anterior (domingo a sábado)
+    if (filterId === 'sem') {
+      const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
+      const dayOfWeek = refDate.getDay(); // 0 = domingo, 6 = sábado
+      
+      // Calcular o domingo e sábado da semana anterior
+      const daysToSaturday = dayOfWeek === 0 ? 1 : 7 - dayOfWeek;
+      const saturdayLastWeek = new Date(refDate);
+      saturdayLastWeek.setDate(saturdayLastWeek.getDate() - daysToSaturday - 1);
+      
+      const sundayLastWeek = new Date(saturdayLastWeek);
+      sundayLastWeek.setDate(sundayLastWeek.getDate() - 6);
+      
+      setStartDate(sundayLastWeek.toISOString().split('T')[0]);
+      setEndDate(saturdayLastWeek.toISOString().split('T')[0]);
+      return;
+    }
+    
     // Se é filtro de ano (daysFromNow), calcular a partir do ano atual
     if ((filter as any).daysFromNow) {
       const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
@@ -348,7 +366,7 @@ export default function Dashboard() {
                   <button
                     key={filter.id}
                     onClick={() => applyQuickFilter(filter.id)}
-                    className={`btn-3d px-3 py-2 rounded-md text-sm font-bold transition-all whitespace-nowrap entrance-animate ${
+                    className={`btn-3d px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
                       activeQuickFilter === filter.id
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
