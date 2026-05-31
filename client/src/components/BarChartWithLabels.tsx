@@ -45,22 +45,36 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
     yAxisFontSize: isMobile ? 10 : 11,
   };
 
-  // Renderizar label customizado com valor centralizado na coluna
+  // Renderizar label customizado com valor e percentual
   const renderCustomLabel = (props: any) => {
-    const { x, y, width, height, value } = props;
+    const { x, y, width, height, value, payload } = props;
+    const percentual = payload?.percentual || 0;
 
     return (
-      <text
-        x={x + width + 6}
-        y={y + height / 2}
-        fill="#f1f5f9"
-        textAnchor="start"
-        fontSize={isMobile ? 10 : 11}
-        fontWeight="600"
-        dominantBaseline="middle"
-      >
-        {formatMoney(value)}
-      </text>
+      <g>
+        <text
+          x={x + width + 6}
+          y={y + height / 2 - 6}
+          fill="#f1f5f9"
+          textAnchor="start"
+          fontSize={isMobile ? 9 : 10}
+          fontWeight="600"
+          dominantBaseline="middle"
+        >
+          {formatMoney(value)}
+        </text>
+        <text
+          x={x + width + 6}
+          y={y + height / 2 + 6}
+          fill="#cbd5e1"
+          textAnchor="start"
+          fontSize={isMobile ? 8 : 9}
+          fontWeight="500"
+          dominantBaseline="middle"
+        >
+          {percentual.toFixed(1)}%
+        </text>
+      </g>
     );
   };
 

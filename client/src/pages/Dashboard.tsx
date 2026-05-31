@@ -535,11 +535,18 @@ export default function Dashboard() {
             <BarChartWithLabels
               data={categoriasComDados
                 .filter(cat => cat.valor < 0)
-                .map(cat => ({
-                  nome: simplifyCategoriName(cat.nome),
-                  nomeOriginal: cat.nome,
-                  valor_display: cat.valor_abs
-                }))}
+                .map(cat => {
+                  const totalDespesas = categoriasComDados
+                    .filter(c => c.valor < 0)
+                    .reduce((sum, c) => sum + c.valor_abs, 0);
+                  const percentual = totalDespesas > 0 ? (cat.valor_abs / totalDespesas) * 100 : 0;
+                  return {
+                    nome: simplifyCategoriName(cat.nome),
+                    nomeOriginal: cat.nome,
+                    valor_display: cat.valor_abs,
+                    percentual: percentual
+                  };
+                })}
               formatMoney={formatMoney}
               onCategoryClick={(_nome: string, item: any) => {
                 const original = item?.nomeOriginal;
