@@ -32,14 +32,14 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   // Altura dinâmica - mais compacta
-  const rowHeight = isMobile ? 32 : 38;
-  const dynamicHeight = Math.max(240, processedData.length * rowHeight + 60);
+  const rowHeight = isMobile ? 28 : 34;
+  const dynamicHeight = Math.max(200, processedData.length * rowHeight + 30);
 
   const config = {
     height: dynamicHeight,
     margin: isMobile
-      ? { top: 20, right: 80, left: 12, bottom: 20 }
-      : { top: 24, right: 100, left: 16, bottom: 24 },
+      ? { top: 4, right: 80, left: 4, bottom: 4 }
+      : { top: 6, right: 100, left: 8, bottom: 6 },
     xAxisFontSize: isMobile ? 9 : 11,
     yAxisFontSize: isMobile ? 10 : 11,
   };
