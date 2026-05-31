@@ -506,7 +506,7 @@ export default function Dashboard() {
         </div>
 
         {/* Controles de Filtro e Upload */}
-        <Card className="mb-6 bg-white border-slate-200">
+        <Card className="mb-2 bg-white border-slate-200">
           <CardHeader>
             <CardTitle className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -627,7 +627,7 @@ export default function Dashboard() {
         </Card>
 
         {/* KPI HERO: Lucro Líquido em Destaque */}
-        <div className={`mb-6 sm:mb-8 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+        <div className={`mb-2 sm:mb-3 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
           <Card className={`relative overflow-hidden border-2 shadow-xl transition-all duration-500 ${
             isLucro
               ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 border-emerald-400'
@@ -681,7 +681,7 @@ export default function Dashboard() {
         </div>
 
         {/* KPIs Secundários: Receitas e Despesas */}
-        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mb-2 sm:mb-3 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
           <Card className="bg-white border-l-4 border-l-emerald-500 hover:shadow-md transition-shadow">
             <CardContent className="p-3">
               <div className="flex items-start justify-between mb-2">
@@ -752,7 +752,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Detalhamento de Categorias */}
-            <Card className="mt-6 bg-white border-slate-200">
+            <Card className="mt-2 bg-white border-slate-200">
               <CardHeader>
                 <CardTitle>Detalhamento de Categorias</CardTitle>
               </CardHeader>
