@@ -64,14 +64,48 @@ export default function Dashboard() {
 
   // Aplicar filtro rápido baseado no último dia disponível
   const applyQuickFilter = (filterId: string) => {
+    // Toggle: se já está selecionado, deseleciona (limpa o filtro)
+    if (activeQuickFilter === filterId) {
+      setIsFiltering(true);
+      setExpandedCategory(null);
+      setTimeout(() => {
+        setStartDate('');
+        setEndDate('');
+        setActiveQuickFilter(null);
+        setTimeout(() => setIsFiltering(false), 200);
+      }, 100);
+      return;
+    }
+
     setIsFiltering(true);
-    setExpandedCategory(null); // Fechar categoria expandida ao filtrar
+    setExpandedCategory(null);
     
     setTimeout(() => {
       if (filterId === 'all') {
         setStartDate('');
         setEndDate('');
         setActiveQuickFilter('all');
+      } else if (filterId === 'week') {
+        // Semana real: segunda a domingo
+        const referenceDate = new Date(REFERENCE_DATE);
+        const dayOfWeek = referenceDate.getDay(); // 0=domingo, 1=segunda, ..., 6=sábado
+        
+        // Calcular segunda-feira da semana
+        const startOfWeek = new Date(referenceDate);
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Se domingo, volta 6 dias; senão volta (dia - 1)
+        startOfWeek.setDate(startOfWeek.getDate() - daysToMonday);
+        
+        setStartDate(startOfWeek.toISOString().split('T')[0]);
+        setEndDate(referenceDate.toISOString().split('T')[0]);
+        setActiveQuickFilter(filterId);
+      } else if (filterId === 'month') {
+        // Mês real: 1º dia do mês até o dia de referência
+        const referenceDate = new Date(REFERENCE_DATE);
+        const startOfMonth = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1);
+        
+        setStartDate(startOfMonth.toISOString().split('T')[0]);
+        setEndDate(referenceDate.toISOString().split('T')[0]);
+        setActiveQuickFilter(filterId);
       } else {
         const filter = quickFilters.find(f => f.id === filterId);
         if (filter) {
