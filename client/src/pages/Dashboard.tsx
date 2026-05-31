@@ -266,11 +266,31 @@ export default function Dashboard() {
 
         {/* Filtros e Importação */}
         <Card className="border-slate-700 bg-slate-900/50 mb-6 entrance-animate delay-1" style={{ animationDelay: '0.1s' }}>
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-3 flex flex-row items-center justify-between">
             <CardTitle className="text-sm sm:text-base text-slate-100 flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               Filtros e Importação
             </CardTitle>
+            <div className="flex gap-1.5">
+              <Button
+                onClick={() => setSearchOpen(true)}
+                className="btn-3d bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 px-2 flex-shrink-0"
+              >
+                <Search className="w-3 h-3 sm:mr-1" />
+                <span className="hidden sm:inline">Buscar</span>
+              </Button>
+              <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8 px-2 rounded-md font-semibold cursor-pointer flex items-center gap-1 flex-shrink-0">
+                <Upload className="w-3 h-3 sm:mr-1" />
+                <span className="hidden sm:inline">OFX</span>
+                <input
+                  type="file"
+                  accept=".ofx,.OFX"
+                  onChange={handleOfxUpload}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </CardHeader>
           <CardContent className="pt-2">
             {/* Filtros Rápidos em Tags */}
@@ -327,26 +347,7 @@ export default function Dashboard() {
                   className="w-full text-xs h-8 px-2 overflow-hidden"
                 />
               </div>
-              <div className="flex gap-1.5 pt-5 sm:pt-0">
-                <Button
-                  onClick={() => setSearchOpen(true)}
-                  className="btn-3d bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 px-2 flex-shrink-0"
-                >
-                  <Search className="w-3 h-3 sm:mr-1" />
-                  <span className="hidden sm:inline">Buscar</span>
-                </Button>
-                <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8 px-2 rounded-md font-semibold cursor-pointer flex items-center gap-1 flex-shrink-0">
-                  <Upload className="w-3 h-3 sm:mr-1" />
-                  <span className="hidden sm:inline">OFX</span>
-                  <input
-                    type="file"
-                    accept=".ofx,.OFX"
-                    onChange={handleOfxUpload}
-                    disabled={isUploading}
-                    className="hidden"
-                  />
-                </label>
-              </div>
+
             </div>
           </CardContent>
         </Card>
