@@ -46,8 +46,12 @@ export default function BarChartWithLabels({ data, formatMoney, onCategoryClick 
   };
 
   // Renderizar label customizado com valor centralizado na coluna
-  const renderCustomLabel = (props: any) => {
+  const renderCustomLabel = (props: any): any => {
     const { x, y, width, height, value } = props;
+
+    if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(width) || !Number.isFinite(height)) {
+      return null;
+    }
 
     return (
       <text
