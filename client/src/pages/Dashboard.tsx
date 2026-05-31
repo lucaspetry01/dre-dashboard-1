@@ -333,6 +333,7 @@ export default function Dashboard() {
               );
               // Atualizar dados do banco sem reload
               await utils.ofx.resumoCompleto.invalidate();
+              await utils.ofx.temDados.invalidate();
             } else {
               toast.warning(data.mensagem || 'Nenhuma transação encontrada.');
             }

@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { publicProcedure, router } from '../_core/trpc';
 import { parseOfx } from '../lib/parseOfx';
 import { categorizar } from '../lib/categorizar';
@@ -11,7 +12,6 @@ import {
   listUploads,
 } from '../db/transacoes';
 import type { InsertTransacao } from '../../drizzle/schema';
-import { z } from 'zod';
 
 /**
  * Cria o hash único da transação. Quando houver FITID (vindo do OFX),
@@ -63,8 +63,6 @@ export const ofxRouter = router({
       const novosRegistros: InsertTransacao[] = [];
       let duplicatas = 0;
 
-      // Filtrar apenas transações não-duplicadas
-      const transacoesNaodup = [];
       for (let i = 0; i < parsed.transactions.length; i++) {
         const t = parsed.transactions[i];
         const hashUnico = hashes[i];
@@ -74,30 +72,19 @@ export const ofxRouter = router({
           continue;
         }
 
-        transacoesNaodup.push({ t, hashUnico });
-      }
-
-      // Calcular saldos acumulados de trás para frente
-      // Começamos com o saldoFinal e subtraímos cada transação
-      let saldoAtual = parsed.saldoFinal || 0;
-      for (let i = transacoesNaodup.length - 1; i >= 0; i--) {
-        const { t, hashUnico } = transacoesNaodup[i];
         const categoria = categorizar(t.descricao, t.valor);
 
-        novosRegistros.unshift({
+        novosRegistros.push({
           data: t.data,
           dataTimestamp: t.dataTimestamp,
           descricao: t.descricao,
           documento: t.fitId,
           valor: t.valor.toFixed(2),
-          saldo: saldoAtual.toFixed(2),
+          saldo: '0',
           tipo: t.tipo,
           categoria,
           hashUnico,
         });
-
-        // Subtrair o valor da transação para obter o saldo anterior
-        saldoAtual -= t.valor;
       }
 
       // Criar registro de upload
@@ -111,35 +98,66 @@ export const ofxRouter = router({
         saldoFinal: parsed.saldoFinal ? parsed.saldoFinal.toFixed(2) : '0',
       });
 
-      if (!uploadId) {
-        return {
-          success: false,
-          totalProcessado: 0,
-          totalNovos: 0,
-          totalDuplicatas: 0,
-          mensagem: 'Erro ao criar registro de upload.',
-        };
-      }
-
-      // Adicionar uploadId a cada transação
-      for (const reg of novosRegistros) {
-        reg.uploadId = uploadId;
+      // Associar uploadId aos novos registros
+      if (uploadId !== null) {
+        novosRegistros.forEach((r) => {
+          r.uploadId = uploadId;
+        });
       }
 
       // Inserir em lote
-      const inserted = await insertTransacoes(novosRegistros);
+      await insertTransacoes(novosRegistros);
 
       return {
         success: true,
         totalProcessado: parsed.transactions.length,
-        totalNovos: inserted,
+        totalNovos: novosRegistros.length,
         totalDuplicatas: duplicatas,
-        mensagem: `${inserted} transações inseridas, ${duplicatas} duplicatas ignoradas.`,
+        periodoInicio: parsed.periodoInicio,
+        periodoFim: parsed.periodoFim,
+        saldoFinal: parsed.saldoFinal ? parsed.saldoFinal.toFixed(2) : '0',
+        mensagem: `${novosRegistros.length} transações importadas, ${duplicatas} duplicatas ignoradas.`,
       };
     }),
 
   /**
-   * Retorna o resumo completo (receitas, despesas, categorias, diário, saldo final).
+   * Lista todas as transações do banco com filtros opcionais.
+   */
+  listar: publicProcedure
+    .input(
+      z
+        .object({
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          categoria: z.string().optional(),
+        })
+        .optional()
+    )
+    .query(async ({ input }) => {
+      return await listTransacoes({
+        startDate: input?.startDate ? new Date(input.startDate) : undefined,
+        endDate: input?.endDate ? new Date(input.endDate) : undefined,
+        categoria: input?.categoria,
+      });
+    }),
+
+  /**
+   * Retorna se o banco tem dados (para decidir entre JSON estático ou banco).
+   */
+  temDados: publicProcedure.query(async () => {
+    const total = await countTransacoes();
+    return { total, temDados: total > 0 };
+  }),
+
+  /**
+   * Histórico de uploads.
+   */
+  historicoUploads: publicProcedure.query(async () => {
+    return await listUploads();
+  }),
+
+  /**
+   * Retorna resumo agregado no mesmo formato de dashboard.json.
    * O frontend usa essa fonte quando o banco tem dados, e cai para JSON estático
    * quando está vazio (primeiro acesso ou DB indisponível).
    */
