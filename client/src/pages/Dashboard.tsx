@@ -64,6 +64,7 @@ const groupRegistrosByDescription = (registros: any[], groupByDescription: boole
     if (!acc[key]) {
       acc[key] = {
         ...item,
+        descricao: key, // Usar nome próprio como descrição do grupo
         valor: 0,
         count: 0,
         originalItems: []
@@ -520,7 +521,7 @@ export default function Dashboard() {
                           return (
                             <div key={idx} className="flex justify-between items-start text-xs gap-2">
                               <div className="flex-1 min-w-0">
-                                <p className="text-slate-200 font-medium text-xs truncate">{item.descricao}</p>
+                                <p className="text-slate-200 font-medium text-xs break-words">{item.descricao}</p>
                                 {isGrouped && (
                                   <p className="text-slate-500 text-xs">Agrupado: {item.count} transacoes</p>
                                 )}
