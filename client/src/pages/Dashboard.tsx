@@ -427,11 +427,41 @@ export default function Dashboard() {
   const isLucro = resumoFiltrado.resultado >= 0;
 
   // Agrupar registros por descricao completa
+  // Extrair nome proprio da descricao (ultima parte apos numeros/CPF)
+  const extractNomeProprio = (descricao: string): string => {
+    const parts = descricao.trim().split(/\s+/);
+    
+    // Procura por padrao de CPF (11 digitos) ou CNPJ (14 digitos)
+    let cpfCnpjIndex = -1;
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i].replace(/[^0-9]/g, '');
+      if (part.length === 11 || part.length === 14) {
+        cpfCnpjIndex = i;
+        break;
+      }
+    }
+    
+    // Se encontrou CPF/CNPJ, retorna tudo apos ele
+    if (cpfCnpjIndex !== -1 && cpfCnpjIndex < parts.length - 1) {
+      return parts.slice(cpfCnpjIndex + 1).join(' ');
+    }
+    
+    // Se nao encontrou, retorna a descricao completa
+    return descricao;
+  };
+
   const groupRegistrosByDescription = (registros: any[]) => {
     if (!groupByDescription) return registros;
     
     const grouped = registros.reduce((acc: Record<string, any>, item: any) => {
-      const key = item.descricao;
+      // Tenta agrupar por nome proprio primeiro
+      let key = extractNomeProprio(item.descricao);
+      
+      // Se o nome proprio eh muito curto ou vazio, usa a descricao completa
+      if (!key || key.trim().length < 3) {
+        key = item.descricao;
+      }
+      
       if (!acc[key]) {
         acc[key] = {
           ...item,
