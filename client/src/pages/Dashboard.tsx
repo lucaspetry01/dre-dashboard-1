@@ -644,8 +644,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* KPI HERO: Lucro Líquido e Saldo da Conta lado a lado */}
-        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mb-2 sm:mb-3 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+        {/* KPI HERO: 4 Cards em Grid 2x2 */}
+        <div className={`grid grid-cols-2 gap-1.5 sm:gap-2 mb-2 sm:mb-3 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
           {/* Card Lucro Líquido */}
           <Card className={`relative overflow-hidden border-2 shadow-xl transition-all duration-500 ${
             isLucro
@@ -656,26 +656,26 @@ export default function Dashboard() {
               <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-white" />
               <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-white" />
             </div>
-            <CardContent className="relative p-3 sm:p-4">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <div className={`p-1 rounded-lg ${isLucro ? 'bg-emerald-400/30' : 'bg-rose-400/30'}`}>
-                    {isLucro ? <TrendingUp className="w-3 h-3 text-white" /> : <TrendingDown className="w-3 h-3 text-white" />}
+            <CardContent className="relative p-2 sm:p-3">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-1.5">
+                  <div className={`p-0.5 rounded-lg ${isLucro ? 'bg-emerald-400/30' : 'bg-rose-400/30'}`}>
+                    {isLucro ? <TrendingUp className="w-2.5 h-2.5 text-white" /> : <TrendingDown className="w-2.5 h-2.5 text-white" />}
                   </div>
                   <p className="text-white/90 text-xs font-medium uppercase tracking-wider">
-                    {isLucro ? 'Lucro Líquido' : 'Prejuízo'}
+                    {isLucro ? 'Lucro' : 'Prejuízo'}
                   </p>
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                <div className="text-lg sm:text-2xl font-extrabold text-white tracking-tight">
                   {formatMoney(resumoFiltrado.resultado)}
                 </div>
                 {variacaoResultado && (
-                  <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold w-fit">
-                    {variacaoResultado.positivo ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                  <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold w-fit">
+                    {variacaoResultado.positivo ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
                     <span>{variacaoResultado.positivo ? '+' : '-'}{variacaoResultado.valor.toFixed(1)}%</span>
                   </div>
                 )}
-                <p className="text-white/70 text-xs mt-1">Status: {isLucro ? 'POSITIVO' : 'NEGATIVO'}</p>
+                <p className="text-white/70 text-xs">{isLucro ? 'POSITIVO' : 'NEGATIVO'}</p>
               </div>
             </CardContent>
           </Card>
@@ -683,78 +683,75 @@ export default function Dashboard() {
           {/* Card Saldo da Conta */}
           <Card className="relative overflow-hidden border-2 shadow-lg bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 border-blue-400">
             <div className="absolute inset-0 opacity-10">
-              <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-white" />
-              <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-white" />
+              <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white" />
+              <div className="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-white" />
             </div>
-            <CardContent className="relative p-3 sm:p-4">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1 rounded-lg bg-blue-400/30">
-                    <TrendingUp className="w-3 h-3 text-white" />
+            <CardContent className="relative p-2 sm:p-3">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-0.5 rounded-lg bg-blue-400/30">
+                    <TrendingUp className="w-2.5 h-2.5 text-white" />
                   </div>
-                  <p className="text-white/90 text-xs font-medium uppercase tracking-wider">Saldo da Conta</p>
+                  <p className="text-white/90 text-xs font-medium uppercase tracking-wider">Saldo</p>
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                <div className="text-lg sm:text-2xl font-extrabold text-white tracking-tight">
                   {formatMoney(saldoFinal ?? 0)}
                 </div>
-                <p className="text-white/70 text-xs">Último OFX importado</p>
+                <p className="text-white/70 text-xs">Último OFX</p>
               </div>
             </CardContent>
           </Card>
-        </div>
 
-        {/* KPIs Secundários: Receitas e Despesas */}
-        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mb-2 sm:mb-3 transition-opacity duration-300 ${isFiltering ? 'opacity-50' : 'opacity-100'}`}>
+          {/* Card Receitas */}
           <Card className="bg-white border-l-4 border-l-emerald-500 hover:shadow-md transition-shadow">
-            <CardContent className="p-3">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-1.5">
-                  <div className="p-1 bg-emerald-50 rounded-lg">
-                    <TrendingUp className="w-3 h-3 text-emerald-600" />
+            <CardContent className="p-2 sm:p-3">
+              <div className="flex items-start justify-between mb-1.5">
+                <div className="flex items-center gap-1">
+                  <div className="p-0.5 bg-emerald-50 rounded-lg">
+                    <TrendingUp className="w-2.5 h-2.5 text-emerald-600" />
                   </div>
                   <p className="text-xs font-medium text-slate-600">Receitas</p>
                 </div>
                 {variacaoReceitas && (
-                  <div className={`flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-full ${
+                  <div className={`flex items-center gap-0.5 text-xs font-semibold px-1 py-0.5 rounded-full ${
                     variacaoReceitas.positivo ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
                   }`}>
                     {variacaoReceitas.positivo ? '↑' : '↓'} {variacaoReceitas.valor.toFixed(1)}%
                   </div>
                 )}
               </div>
-              <div className="text-lg sm:text-xl font-bold text-emerald-700 mb-0.5">
+              <div className="text-base sm:text-lg font-bold text-emerald-700 mb-0.5">
                 {formatMoney(resumoFiltrado.total_receitas)}
               </div>
               <p className="text-xs text-slate-500">
                 {qtdEntradas} entradas
-                {resumoAnterior && <span className="ml-1 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_receitas)}</span>}
               </p>
             </CardContent>
           </Card>
 
+          {/* Card Despesas */}
           <Card className="bg-white border-l-4 border-l-rose-500 hover:shadow-md transition-shadow">
-            <CardContent className="p-3">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-1.5">
-                  <div className="p-1 bg-rose-50 rounded-lg">
-                    <TrendingDown className="w-3 h-3 text-rose-600" />
+            <CardContent className="p-2 sm:p-3">
+              <div className="flex items-start justify-between mb-1.5">
+                <div className="flex items-center gap-1">
+                  <div className="p-0.5 bg-rose-50 rounded-lg">
+                    <TrendingDown className="w-2.5 h-2.5 text-rose-600" />
                   </div>
                   <p className="text-xs font-medium text-slate-600">Despesas</p>
                 </div>
                 {variacaoDespesas && (
-                  <div className={`flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-full ${
+                  <div className={`flex items-center gap-0.5 text-xs font-semibold px-1 py-0.5 rounded-full ${
                     variacaoDespesas.positivo ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
                   }`}>
                     {variacaoDespesas.positivo ? '↑' : '↓'} {variacaoDespesas.valor.toFixed(1)}%
                   </div>
                 )}
               </div>
-              <div className="text-lg sm:text-xl font-bold text-rose-700 mb-0.5">
+              <div className="text-base sm:text-lg font-bold text-rose-700 mb-0.5">
                 {formatMoney(resumoFiltrado.total_despesas)}
               </div>
               <p className="text-xs text-slate-500">
                 {qtdSaidas} saídas
-                {resumoAnterior && <span className="ml-1 text-slate-400">• anterior: {formatMoney(resumoAnterior.total_despesas)}</span>}
               </p>
             </CardContent>
           </Card>
