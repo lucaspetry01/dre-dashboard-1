@@ -456,7 +456,18 @@ export default function Dashboard() {
       {/* Detalhamento por Categoria */}
       <Card className="border-slate-700 bg-slate-900/50 kpi-card-3d entrance-animate" style={{ animationDelay: '0.4s' }}>
         <CardHeader>
-          <CardTitle className="text-base sm:text-lg text-slate-100">Detalhamento de Categorias</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base sm:text-lg text-slate-100">Detalhamento de Categorias</CardTitle>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={groupByDescription}
+                onChange={(e) => setGroupByDescription(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-400 bg-slate-800 cursor-pointer"
+              />
+              <span className="text-xs sm:text-sm text-slate-300 whitespace-nowrap">Agrupar por descrição</span>
+            </label>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
