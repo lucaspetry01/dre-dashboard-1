@@ -26,36 +26,17 @@ const abbreviateName = (name: string): string => {
 };
 
 export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLabelsProps) {
-  // Processar dados: top 5 + "Outros"
+  // Processar dados: mostrar todas as categorias
   const processedData = useMemo(() => {
-    if (data.length <= 5) {
-      return data.map(d => ({
-        ...d,
-        nomeAbreviado: abbreviateName(d.nome),
-        total: d.valor_display
-      }));
-    }
-
-    const sorted = [...data].sort((a, b) => b.valor_display - a.valor_display);
-    const top5 = sorted.slice(0, 5);
-    const outros = sorted.slice(5);
-    
-    const outrosTotal = outros.reduce((sum, item) => sum + item.valor_display, 0);
-    
-    return [
-      ...top5.map(d => ({
-        ...d,
-        nomeAbreviado: abbreviateName(d.nome),
-        total: d.valor_display
-      })),
-      {
-        nome: 'Outros',
-        nomeAbreviado: 'Outros',
-        valor_display: outrosTotal,
-        total: outrosTotal
-      }
-    ];
+    return data.map(d => ({
+      ...d,
+      nomeAbreviado: abbreviateName(d.nome),
+      total: d.valor_display
+    }));
   }, [data]);
+  
+  // Calcular altura dinâmica baseada no número de categorias
+  const dynamicHeight = Math.max(320, processedData.length * 45 + 100);
 
   // Configuração responsiva baseada na largura da tela
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -73,7 +54,8 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
     }
   };
 
-  const config = isMobile ? chartConfig.mobile : chartConfig.desktop;
+  const baseConfig = isMobile ? chartConfig.mobile : chartConfig.desktop;
+  const config = { ...baseConfig, height: dynamicHeight };
 
   // Renderizar label customizado com valor em moeda no topo
   const renderCustomLabel = (props: any) => {
