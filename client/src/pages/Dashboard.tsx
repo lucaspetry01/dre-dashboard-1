@@ -426,10 +426,10 @@ export default function Dashboard() {
 
         {/* Gráfico de Despesas por Categoria */}
         <Card className="border-slate-700 bg-slate-900/50 mb-6 kpi-card-3d entrance-animate" style={{ animationDelay: '0.3s' }}>
-          <CardHeader>
+          <CardHeader className="pb-2 pt-4">
             <CardTitle className="text-base sm:text-lg text-slate-100">Despesas por Categoria</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0 pb-3">
             <BarChartWithLabels
               data={categoriasComDados
                 .filter(cat => cat.valor < 0)
