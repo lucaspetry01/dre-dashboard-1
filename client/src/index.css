@@ -182,3 +182,42 @@
     }
   }
 }
+
+
+/* 3D Card Effects */
+.card-3d {
+  perspective: 1000px;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.card-3d:hover {
+  transform: rotateX(5deg) rotateY(-5deg) translateZ(20px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Subtle 3D effect for KPI cards */
+.kpi-card-3d {
+  perspective: 1000px;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.kpi-card-3d:hover {
+  transform: translateY(-8px) rotateX(3deg) rotateY(-3deg);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* 3D effect for filter buttons */
+.btn-3d {
+  perspective: 1000px;
+  transition: all 0.2s ease-out;
+}
+
+.btn-3d:hover {
+  transform: translateY(-2px) rotateX(2deg);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.btn-3d:active {
+  transform: translateY(0) rotateX(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
