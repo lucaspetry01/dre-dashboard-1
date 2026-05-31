@@ -454,9 +454,19 @@ export default function Dashboard() {
                 .filter(cat => cat.valor < 0)
                 .map(cat => ({
                   nome: simplifyCategoriName(cat.nome),
+                  nomeOriginal: cat.nome,
                   valor_display: cat.valor_abs
                 }))}
               formatMoney={formatMoney}
+              onCategoryClick={(_nome: string, item: any) => {
+                const original = item?.nomeOriginal;
+                if (!original) return;
+                setExpandedCategory(original);
+                setTimeout(() => {
+                  const element = document.getElementById(`category-${original}`);
+                  element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+              }}
             />
           </CardContent>
         </Card>

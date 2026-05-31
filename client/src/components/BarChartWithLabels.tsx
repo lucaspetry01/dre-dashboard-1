@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 interface BarChartWithLabelsProps {
   data: any[];
   formatMoney: (value: number) => string;
+  onCategoryClick?: (nome: string, item: any) => void;
 }
 
 // Limpar nome: remover "/" e textos após barra
@@ -16,7 +17,7 @@ const cleanName = (name: string): string => {
   return cleaned;
 };
 
-export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLabelsProps) {
+export default function BarChartWithLabels({ data, formatMoney, onCategoryClick }: BarChartWithLabelsProps) {
   // Processar dados: filtrar categorias sem valor e limpar nomes
   const processedData = useMemo(() => {
     return data
@@ -132,6 +133,12 @@ export default function BarChartWithLabels({ data, formatMoney }: BarChartWithLa
             isAnimationActive={true}
             label={renderCustomLabel}
             barSize={isMobile ? 18 : 24}
+            cursor={onCategoryClick ? 'pointer' : 'default'}
+            onClick={(d: any) => {
+              if (onCategoryClick && d?.nome) {
+                onCategoryClick(d.nome, d);
+              }
+            }}
           />
         </BarChart>
       </ResponsiveContainer>
