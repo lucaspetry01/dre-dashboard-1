@@ -234,7 +234,7 @@ export default function Combustivel() {
                 <img
                   src="/manus-storage/pasted_file_vIHW2R_image_62640b07.png"
                   alt="Placa DAJ"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
             )}
