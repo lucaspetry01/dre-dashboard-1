@@ -395,11 +395,11 @@ export default function Cargas() {
               <p className="text-lg">Selecione uma placa para visualizar</p>
             </div>
           ) : (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center w-full h-full">
               <img
                 src="/manus-storage/pasted_file_9QIUXp_image_0d61aab3.png"
                 alt="TR.PETRY Logística e Transporte"
-                className="max-w-xs h-auto"
+                className="w-full h-full object-contain"
               />
             </div>
           )}
