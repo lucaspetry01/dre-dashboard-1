@@ -500,23 +500,27 @@ export default function Cargas() {
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-slate-600">
                       <span className="text-slate-300">Lucro:</span>
-                      <span className={`font-semibold ${
-                        Number(formData.valorFrete || 0) - (
-                          Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
-                          Number(formData.manutencao || 0) + 
-                          Number(formData.custoOutros || 0) + 
-                          370
-                        ) >= 0 ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        R$ {(
+                      {Number(formData.valorFrete || 0) === 0 ? (
+                        <span className="text-slate-400 text-sm">Preencha o Frete</span>
+                      ) : (
+                        <span className={`font-semibold ${
                           Number(formData.valorFrete || 0) - (
                             Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
                             Number(formData.manutencao || 0) + 
                             Number(formData.custoOutros || 0) + 
                             370
-                          )
-                        ).toFixed(2)}
-                      </span>
+                          ) >= 0 ? 'text-green-400' : 'text-red-400'
+                        }`}>
+                          R$ {(
+                            Number(formData.valorFrete || 0) - (
+                              Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
+                              Number(formData.manutencao || 0) + 
+                              Number(formData.custoOutros || 0) + 
+                              370
+                            )
+                          ).toFixed(2)}
+                        </span>
+                      )}
                     </div>
                   </div>
 
