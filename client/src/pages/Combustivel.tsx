@@ -216,7 +216,7 @@ export default function Combustivel() {
                 <img
                   src="/manus-storage/placa_mff_no_bg_eb502184.png"
                   alt="Placa MFF"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
             )}
@@ -225,7 +225,7 @@ export default function Combustivel() {
                 <img
                   src="/manus-storage/placa_ijd_no_bg_0c6c2266.png"
                   alt="Placa IJD"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
             )}
