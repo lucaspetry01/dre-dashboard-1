@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, ArrowLeft, Truck } from 'lucide-react';
+import { Plus, ArrowLeft, Truck, Pencil } from 'lucide-react';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
 
@@ -81,23 +81,76 @@ export default function Cargas() {
     },
   });
 
+  const updateMutation = trpc.cargas.atualizar.useMutation({
+    onSuccess: () => {
+      utils.cargas.listarPorPasta.invalidate(selectedPasta);
+      handleCloseDialog();
+      console.log('Carga atualizada com sucesso!');
+    },
+    onError: (error: any) => {
+      console.error('Erro ao atualizar carga:', error.message);
+    },
+  });
+
+  const handleEditCarga = (carga: any) => {
+    const rotasPadrao = ['GRAMADO', 'CAXIAS', 'FAZENDA', 'CD'];
+    const rotaEhPadrao = rotasPadrao.includes(carga.rota);
+    const valorComb = Number(carga.valorCombustivel) || 0;
+    const litros = Number(carga.litrosCombustivel) || 0;
+    const valorLitro = litros > 0 ? (valorComb / litros).toFixed(2) : '';
+
+    setEditingId(carga.id);
+    setFormData({
+      data: carga.data || '',
+      rota: rotaEhPadrao ? carga.rota : 'OUTROS',
+      rotaCustom: rotaEhPadrao ? '' : (carga.rota || ''),
+      motorista: carga.motorista || '',
+      valorLitroDiesel: valorLitro,
+      litrosCombustivel: litros.toString(),
+      chapa1: carga.chapa1 || '',
+      chapa2: carga.chapa2 || '',
+      custoOutros: (Number(carga.custoOutros) || 0).toString(),
+      manutencao: (Number(carga.manutencao) || 0).toString(),
+      numeroProtocolo: carga.numeroProtocolo || '',
+      valorFrete: (Number(carga.valorFrete) || 0).toString(),
+    });
+    setIsDialogOpen(true);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const rotaFinal = formData.rota === 'OUTROS' ? formData.rotaCustom : formData.rota;
-    createMutation.mutate({
-      pasta: selectedPasta,
-      data: formData.data,
-      rota: rotaFinal,
-      motorista: formData.motorista,
-      valorCombustivel: valorCombustivelCalculado,
-      litrosCombustivel: parseFloat(formData.litrosCombustivel) || 0,
-      chapa1: formData.chapa1,
-      chapa2: formData.chapa2,
-      custoOutros: parseFloat(formData.custoOutros) || 0,
-      manutencao: parseFloat(formData.manutencao) || 0,
-      numeroProtocolo: formData.numeroProtocolo,
-      valorFrete: parseFloat(formData.valorFrete) || 0,
-    });
+
+    if (editingId) {
+      updateMutation.mutate({
+        id: editingId,
+        rota: rotaFinal,
+        motorista: formData.motorista,
+        valorCombustivel: valorCombustivelCalculado,
+        litrosCombustivel: parseFloat(formData.litrosCombustivel) || 0,
+        chapa1: formData.chapa1,
+        chapa2: formData.chapa2,
+        custoOutros: parseFloat(formData.custoOutros) || 0,
+        manutencao: parseFloat(formData.manutencao) || 0,
+        numeroProtocolo: formData.numeroProtocolo,
+        valorFrete: parseFloat(formData.valorFrete) || 0,
+      });
+    } else {
+      createMutation.mutate({
+        pasta: selectedPasta,
+        data: formData.data,
+        rota: rotaFinal,
+        motorista: formData.motorista,
+        valorCombustivel: valorCombustivelCalculado,
+        litrosCombustivel: parseFloat(formData.litrosCombustivel) || 0,
+        chapa1: formData.chapa1,
+        chapa2: formData.chapa2,
+        custoOutros: parseFloat(formData.custoOutros) || 0,
+        manutencao: parseFloat(formData.manutencao) || 0,
+        numeroProtocolo: formData.numeroProtocolo,
+        valorFrete: parseFloat(formData.valorFrete) || 0,
+      });
+    }
   };
 
   const handleCloseDialog = () => {
@@ -430,6 +483,7 @@ export default function Cargas() {
                       <th className="text-right py-2 px-2">Frete (R$)</th>
                       <th className="text-right py-2 px-2">Custo Total (R$)</th>
                       <th className="text-right py-2 px-2">Lucro (R$)</th>
+                      <th className="text-center py-2 px-2 w-20">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -450,6 +504,18 @@ export default function Cargas() {
                         <td className="text-right py-2 px-2">R$ {Number(carga.custoTotal || 0).toFixed(2)}</td>
                         <td className={`text-right py-2 px-2 font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                           R$ {Number(carga.lucro || 0).toFixed(2)}
+                        </td>
+                        <td className="text-center py-2 px-2">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditCarga(carga)}
+                            className="text-blue-400 hover:text-blue-300 hover:bg-slate-700"
+                            title="Editar carga"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
                         </td>
                       </tr>
                     ))}
