@@ -115,9 +115,9 @@ export default function Cargas() {
       </div>
 
       {/* Layout: Pastas 30% esquerda, Imagem 70% direita */}
-      <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mb-8">
         {/* Coluna Esquerda: Pastas (30% = 3 colunas de 10) */}
-        <div className="lg:col-span-3 flex flex-col gap-2">
+        <div className="md:col-span-3 flex flex-col gap-2">
           {PASTAS.map((pasta) => (
             <Button
               key={pasta}
@@ -135,7 +135,7 @@ export default function Cargas() {
         </div>
 
         {/* Coluna Direita: Imagem (70% = 7 colunas de 10) */}
-        <div className="lg:col-span-7 flex items-center justify-center">
+        <div className="md:col-span-7 flex items-center justify-center">
           <Card className="w-full bg-slate-800 border-slate-700">
             <CardContent className="p-6">
               <img
