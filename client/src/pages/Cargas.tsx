@@ -800,7 +800,7 @@ export default function Cargas() {
         </Card>
 
         {/* Card de Totalizador Geral */}
-        {filteredCargas && filteredCargas.length > 0 && (
+        {filteredCargas && filteredCargas.length > 0 && !selectedPasta && (
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader>
               <CardTitle className="text-white text-base">Total Geral</CardTitle>
