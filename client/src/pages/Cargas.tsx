@@ -491,7 +491,7 @@ export default function Cargas() {
                         Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
                         Number(formData.manutencao || 0) + 
                         Number(formData.custoOutros || 0) + 
-                        370
+                        520
                       ).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -508,7 +508,7 @@ export default function Cargas() {
                             Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
                             Number(formData.manutencao || 0) + 
                             Number(formData.custoOutros || 0) + 
-                            370
+                            520
                           ) >= 0 ? 'text-green-400' : 'text-red-400'
                         }`}>
                           R$ {(
@@ -516,7 +516,7 @@ export default function Cargas() {
                               Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
                               Number(formData.manutencao || 0) + 
                               Number(formData.custoOutros || 0) + 
-                              370
+                              520
                             )
                           ).toFixed(2)}
                         </span>

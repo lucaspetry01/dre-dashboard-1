@@ -23,8 +23,8 @@ export async function criarCarga(data: {
   if (!db) throw new Error('Database connection failed');
 
   // Calcular custo total e lucro
-  // Custos fixos: chapa R$ 150 + motorista R$ 220 = R$ 370
-  const custoFixo = 150 + 220; // chapa + motorista
+  // Custos fixos: chapa1 R$ 150 + chapa2 R$ 150 + motorista R$ 220 = R$ 520
+  const custoFixo = 150 + 150 + 220; // chapa1 + chapa2 + motorista
   const custoTotal = data.valorCombustivel + data.manutencao + data.custoOutros + custoFixo;
   const lucro = data.valorFrete - custoTotal;
 
@@ -89,8 +89,8 @@ export async function atualizarCarga(
   const valorFrete = data.valorFrete ?? Number(c.valorFrete);
 
   // Recalcular
-  // Custos fixos: chapa R$ 150 + motorista R$ 220 = R$ 370
-  const custoFixo = 150 + 220; // chapa + motorista
+  // Custos fixos: chapa1 R$ 150 + chapa2 R$ 150 + motorista R$ 220 = R$ 520
+  const custoFixo = 150 + 150 + 220; // chapa1 + chapa2 + motorista
   const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
   const lucro = valorFrete - custoTotal;
 
