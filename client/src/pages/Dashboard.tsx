@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, MoreVertical } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, MoreVertical, Truck } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
@@ -337,11 +337,11 @@ export default function Dashboard() {
             <Button
               variant="outline"
               size="icon"
-              className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-amber-400 transition-colors"
-              title="Combustível"
+              className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-blue-400 transition-colors"
+              title="Cargas"
               onClick={() => setLocation('/cargas')}
             >
-              <Fuel className="w-5 h-5" />
+              <Truck className="w-8 h-8" />
             </Button>
             {usandoBanco && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
