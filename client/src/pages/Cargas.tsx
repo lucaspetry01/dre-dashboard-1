@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, ArrowLeft, Truck, Pencil } from 'lucide-react';
+import { Plus, ArrowLeft, Truck, Pencil, Eye, Trash2 } from 'lucide-react';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
 
@@ -50,6 +50,7 @@ export default function Cargas() {
     (parseFloat(formData.valorLitroDiesel) || 0) *
     (parseFloat(formData.litrosCombustivel) || 0);
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   const utils = trpc.useUtils();
 
@@ -248,10 +249,18 @@ export default function Cargas() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-white">Cargas - {selectedPasta}</CardTitle>
             <div className="flex gap-2">
+              <Button
+                size="sm"
+                className="bg-purple-600 hover:bg-purple-700 text-white w-28"
+                onClick={() => setIsViewDialogOpen(true)}
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Visualizar
+              </Button>
               {selectedForDelete.size === 1 && (
                 <Button
                   size="sm"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-28"
                   onClick={() => {
                     const id = Array.from(selectedForDelete)[0];
                     const carga = cargas?.find((c: any) => c.id === id);
@@ -268,9 +277,10 @@ export default function Cargas() {
               {selectedForDelete.size > 0 ? (
                 <Button
                   size="sm"
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  className="bg-red-600 hover:bg-red-700 text-white w-28"
                   onClick={handleDeleteSelected}
                 >
+                  <Trash2 className="w-4 h-4 mr-2" />
                   Excluir
                 </Button>
               ) : null}
@@ -481,6 +491,44 @@ export default function Cargas() {
                   </Button>
                 </form>
               </DialogContent>
+              </Dialog>
+
+              {/* Dialog de Visualização - Resumo Totais */}
+              <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+                <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-white flex items-center gap-2">
+                      <Eye className="w-5 h-5 text-purple-400" />
+                      Resumo - {selectedPasta}
+                    </DialogTitle>
+                  </DialogHeader>
+                  {(() => {
+                    const totalFaturado = cargas?.reduce((acc: number, c: any) => acc + Number(c.valorFrete || 0), 0) || 0;
+                    const totalCusto = cargas?.reduce((acc: number, c: any) => acc + Number(c.custoTotal || 0), 0) || 0;
+                    const totalLucro = cargas?.reduce((acc: number, c: any) => acc + Number(c.lucro || 0), 0) || 0;
+                    const qtdCargas = cargas?.length || 0;
+                    return (
+                      <div className="space-y-4 py-4">
+                        <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                          <p className="text-slate-400 text-xs uppercase tracking-wide">Total de Cargas</p>
+                          <p className="text-white text-2xl font-bold mt-1">{qtdCargas}</p>
+                        </div>
+                        <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-700/50">
+                          <p className="text-blue-300 text-xs uppercase tracking-wide">Total Faturado</p>
+                          <p className="text-white text-2xl font-bold mt-1">R$ {totalFaturado.toFixed(2)}</p>
+                        </div>
+                        <div className="bg-red-900/30 rounded-lg p-4 border border-red-700/50">
+                          <p className="text-red-300 text-xs uppercase tracking-wide">Total Custo</p>
+                          <p className="text-white text-2xl font-bold mt-1">R$ {totalCusto.toFixed(2)}</p>
+                        </div>
+                        <div className={`rounded-lg p-4 border ${totalLucro >= 0 ? 'bg-green-900/30 border-green-700/50' : 'bg-red-900/40 border-red-700/50'}`}>
+                          <p className={`text-xs uppercase tracking-wide ${totalLucro >= 0 ? 'text-green-300' : 'text-red-300'}`}>Total Lucro</p>
+                          <p className={`text-2xl font-bold mt-1 ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>R$ {totalLucro.toFixed(2)}</p>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </DialogContent>
               </Dialog>
             </div>
           </CardHeader>
