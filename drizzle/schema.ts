@@ -176,3 +176,61 @@ export const abastecimentos = mysqlTable(
 
 export type Abastecimento = typeof abastecimentos.$inferSelect;
 export type InsertAbastecimento = typeof abastecimentos.$inferInsert;
+
+/**
+ * Tabela de cargas por rota.
+ * Registra custos e receitas de cada carga transportada.
+ * Permite gestão de lucro por rota e motorista.
+ */
+export const cargas = mysqlTable(
+  "cargas",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    /** Pasta/categoria: IES, IJD, DAJ, MFF, IGU */
+    pasta: mysqlEnum("pasta", ["IES", "IJD", "DAJ", "MFF", "IGU"]).notNull(),
+    /** Data da carga no formato YYYY-MM-DD */
+    data: date("data").notNull(),
+    /** Nome da rota/trajeto */
+    rota: varchar("rota", { length: 100 }),
+    /** Nome do motorista responsável */
+    motorista: varchar("motorista", { length: 100 }),
+    
+    /** Combustível - valor gasto */
+    valorCombustivel: decimal("valorCombustivel", { precision: 10, scale: 2 }).default("0"),
+    /** Combustível - litros abastecidos */
+    litrosCombustivel: decimal("litrosCombustivel", { precision: 10, scale: 2 }).default("0"),
+    
+    /** Placa do primeiro veículo */
+    chapa1: varchar("chapa1", { length: 20 }),
+    /** Placa do segundo veículo (opcional) */
+    chapa2: varchar("chapa2", { length: 20 }),
+    
+    /** Custo de manutenção */
+    manutencao: decimal("manutencao", { precision: 10, scale: 2 }).default("0"),
+    /** Outros custos */
+    custoOutros: decimal("custoOutros", { precision: 10, scale: 2 }).default("0"),
+    
+    /** Valor do frete/receita */
+    valorFrete: decimal("valorFrete", { precision: 10, scale: 2 }).default("0"),
+    
+    /** Número do protocolo/comprovante */
+    numeroProtocolo: varchar("numeroProtocolo", { length: 50 }),
+    
+    /** Custo total calculado: combustível + manutenção + custoOutros */
+    custoTotal: decimal("custoTotal", { precision: 10, scale: 2 }).default("0"),
+    /** Lucro calculado: valorFrete - custoTotal */
+    lucro: decimal("lucro", { precision: 10, scale: 2 }).default("0"),
+    
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => ({
+    pastaIdx: index("cargas_pasta_idx").on(table.pasta),
+    dataIdx: index("cargas_data_idx").on(table.data),
+    rotaIdx: index("cargas_rota_idx").on(table.rota),
+    motoristaIdx: index("cargas_motorista_idx").on(table.motorista),
+  })
+);
+
+export type Carga = typeof cargas.$inferSelect;
+export type InsertCarga = typeof cargas.$inferInsert;

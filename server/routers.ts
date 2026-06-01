@@ -5,6 +5,7 @@ import { publicProcedure, router } from "./_core/trpc";
 import { uploadRouter } from "./routers/upload";
 import { ofxRouter } from "./routers/ofx";
 import { abastecimentosRouter } from "./routers/abastecimentos";
+import { cargasRouter } from "./routers/cargas";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -22,6 +23,7 @@ export const appRouter = router({
   upload: uploadRouter,
   ofx: ofxRouter,
   abastecimentos: abastecimentosRouter,
+  cargas: cargasRouter,
 
   // TODO: add feature routers here, e.g.
   // todo: router({
