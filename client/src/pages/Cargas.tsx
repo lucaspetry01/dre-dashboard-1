@@ -47,6 +47,11 @@ export default function Cargas() {
   const MOTORISTAS = ['FRED', 'CESAR', 'DOUGLAS', 'ALEX'];
   const CHAPAS = ['DOUGLAS', 'DJOE', 'LUCAS', 'PABLO', 'ALEX'];
 
+  // Função de formatação de moeda brasileira
+  const formatBRL = (value: number): string => {
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
   // Funções de filtro por período
   const getDateRange = (period: 'semana' | 'mes' | 'semestre' | null) => {
     if (!period) return { start: null, end: null };
@@ -152,7 +157,7 @@ export default function Cargas() {
     const rotaEhPadrao = rotasPadrao.includes(carga.rota);
     const valorComb = Number(carga.valorCombustivel) || 0;
     const litros = Number(carga.litrosCombustivel) || 0;
-    const valorLitro = litros > 0 ? (valorComb / litros).toFixed(2) : '';
+    const valorLitro = litros > 0 ? formatBRL(valorComb / litros) : '';
 
     setEditingId(carga.id);
     // Converter data para string se for Date object
@@ -517,7 +522,7 @@ export default function Cargas() {
                     </label>
                     <Input
                       type="text"
-                      value={`R$ ${valorCombustivelCalculado.toFixed(2)}`}
+                      value={`R$ ${formatBRL(valorCombustivelCalculado)}`}
                       readOnly
                       disabled
                       className="bg-slate-800 border-slate-600 text-green-400 font-semibold cursor-not-allowed"
@@ -610,11 +615,11 @@ export default function Cargas() {
                   <div className="bg-slate-700/50 rounded-lg p-4 space-y-3 mb-4">
                     <div className="flex justify-between items-center">
                       <span className="text-slate-300">Custo Total:</span>
-                      <span className="text-white font-semibold">R$ {custoTotalCalculado.toFixed(2)}</span>
+                      <span className="text-white font-semibold">R$ {formatBRL(custoTotalCalculado)}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-300">Valor Total Frete:</span>
-                      <span className="text-blue-400 font-semibold">R$ {Number(formData.valorFrete || 0).toFixed(2)}</span>
+                      <span className="text-blue-400 font-semibold">R$ {formatBRL(Number(formData.valorFrete || 0))}</span>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-slate-600">
                       <span className="text-slate-300">Lucro:</span>
@@ -622,7 +627,7 @@ export default function Cargas() {
                         <span className="text-slate-400 text-sm">Preencha o Frete</span>
                       ) : (
                         <span className={`font-semibold ${lucroCalculado >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          R$ {lucroCalculado.toFixed(2)}
+                          R$ {formatBRL(lucroCalculado)}
                         </span>
                       )}
                     </div>
@@ -662,15 +667,15 @@ export default function Cargas() {
                         </div>
                         <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-700/50">
                           <p className="text-blue-300 text-xs uppercase tracking-wide">Total Faturado</p>
-                          <p className="text-white text-2xl font-bold mt-1">R$ {totalFaturado.toFixed(2)}</p>
+                          <p className="text-white text-2xl font-bold mt-1">R$ {formatBRL(totalFaturado)}</p>
                         </div>
                         <div className="bg-red-900/30 rounded-lg p-4 border border-red-700/50">
                           <p className="text-red-300 text-xs uppercase tracking-wide">Total Custo</p>
-                          <p className="text-white text-2xl font-bold mt-1">R$ {totalCusto.toFixed(2)}</p>
+                          <p className="text-white text-2xl font-bold mt-1">R$ {formatBRL(totalCusto)}</p>
                         </div>
                         <div className={`rounded-lg p-4 border ${totalLucro >= 0 ? 'bg-green-900/30 border-green-700/50' : 'bg-red-900/40 border-red-700/50'}`}>
                           <p className={`text-xs uppercase tracking-wide ${totalLucro >= 0 ? 'text-green-300' : 'text-red-300'}`}>Total Lucro</p>
-                          <p className={`text-2xl font-bold mt-1 ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>R$ {totalLucro.toFixed(2)}</p>
+                          <p className={`text-2xl font-bold mt-1 ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>R$ {formatBRL(totalLucro)}</p>
                         </div>
                       </div>
                     );
@@ -714,10 +719,10 @@ export default function Cargas() {
                         <td className="py-1 px-1 text-xs">{dataEncurtada}</td>
                         <td className="py-1 px-1 text-xs">{carga.rota}</td>
                         <td className="py-1 px-1 text-xs">{carga.motorista}</td>
-                        <td className="text-right py-1 px-1 text-xs">R$ {Number(carga.valorFrete || 0).toFixed(2)}</td>
-                        <td className="text-right py-1 px-1 text-xs">R$ {Number(carga.custoTotal || 0).toFixed(2)}</td>
+                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
+                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.custoTotal || 0))}</td>
                         <td className={`text-right py-1 px-1 text-xs font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          R$ {Number(carga.lucro || 0).toFixed(2)}
+                          R$ {formatBRL(Number(carga.lucro || 0))}
                         </td>
                       </tr>
                     );
@@ -730,10 +735,10 @@ export default function Cargas() {
                         <td className="py-2 px-1 text-xs">TOTAL</td>
                         <td className="py-2 px-1 text-xs">({qtdCargas})</td>
                         <td className="py-2 px-1 text-xs"></td>
-                        <td className="text-right py-2 px-1 text-xs text-blue-400">R$ {totalFaturado.toFixed(2)}</td>
-                        <td className="text-right py-2 px-1 text-xs text-red-400">R$ {totalCusto.toFixed(2)}</td>
+                        <td className="text-right py-2 px-1 text-xs text-blue-400">R$ {formatBRL(totalFaturado)}</td>
+                        <td className="text-right py-2 px-1 text-xs text-red-400">R$ {formatBRL(totalCusto)}</td>
                         <td className={`text-right py-2 px-1 text-xs ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          R$ {totalLucro.toFixed(2)}
+                          R$ {formatBRL(totalLucro)}
                         </td>
                       </tr>
                     </tfoot>
@@ -758,16 +763,16 @@ export default function Cargas() {
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-slate-700/50 rounded-lg p-2 text-center">
                   <p className="text-slate-400 text-xs mb-1">Faturado</p>
-                  <p className="text-blue-400 font-bold text-base">R$ {totalFaturado.toFixed(2)}</p>
+                  <p className="text-blue-400 font-bold text-base">R$ {formatBRL(totalFaturado)}</p>
                 </div>
                 <div className="bg-slate-700/50 rounded-lg p-2 text-center">
                   <p className="text-slate-400 text-xs mb-1">Custo</p>
-                  <p className="text-red-400 font-bold text-base">R$ {totalCusto.toFixed(2)}</p>
+                  <p className="text-red-400 font-bold text-base">R$ {formatBRL(totalCusto)}</p>
                 </div>
                 <div className="bg-slate-700/50 rounded-lg p-2 text-center">
                   <p className="text-slate-400 text-xs mb-1">Lucro</p>
                   <p className={`font-bold text-base ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    R$ {totalLucro.toFixed(2)}
+                    R$ {formatBRL(totalLucro)}
                   </p>
                 </div>
               </div>
