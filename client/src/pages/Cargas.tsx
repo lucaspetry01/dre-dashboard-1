@@ -334,7 +334,7 @@ export default function Cargas() {
         </div>
 
         {/* Card de Resultado de Filtros ou Imagem de Boas-vindas */}
-        {(filterPeriod || filterRota || selectedPasta) ? (
+        {(filterPeriod || filterRota || selectedPasta) && (
           <Card className="bg-slate-700/50 border-slate-600 mt-2">
             <CardContent className="p-3">
               <div className="grid grid-cols-3 gap-2 text-center">
@@ -355,14 +355,6 @@ export default function Cargas() {
               </div>
             </CardContent>
           </Card>
-        ) : (
-          <div className="flex justify-center items-center mt-6 py-8">
-            <img
-              src="/manus-storage/pasted_file_9QIUXp_image_0d61aab3.png"
-              alt="TR.PETRY Logística e Transporte"
-              className="max-w-xs h-auto md:max-w-sm"
-            />
-          </div>
         )}
       </div>
 
@@ -398,9 +390,17 @@ export default function Cargas() {
                 />
               </CardContent>
             </Card>
-          ) : (
+          ) : filterPeriod || filterRota ? (
             <div className="text-center text-slate-400">
               <p className="text-lg">Selecione uma placa para visualizar</p>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center">
+              <img
+                src="/manus-storage/pasted_file_9QIUXp_image_0d61aab3.png"
+                alt="TR.PETRY Logística e Transporte"
+                className="max-w-sm h-auto"
+              />
             </div>
           )}
         </div>
