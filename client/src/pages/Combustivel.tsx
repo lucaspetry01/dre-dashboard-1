@@ -220,9 +220,18 @@ export default function Combustivel() {
                 />
               </div>
             )}
+            {selectedPasta === 'IJD' && (
+              <div className="col-span-1 lg:col-span-1 rounded-lg overflow-hidden bg-slate-700 p-3 flex items-center justify-center h-48 lg:h-auto">
+                <img
+                  src="/manus-storage/placa_ijd_no_bg_0c6c2266.png"
+                  alt="Placa IJD"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
 
             {/* Tabela: 100% em mobile, 70% em desktop */}
-            <div className={selectedPasta === 'MFF' ? 'col-span-1 lg:col-span-2' : 'col-span-1 lg:col-span-3'}>
+            <div className={['MFF', 'IJD'].includes(selectedPasta) ? 'col-span-1 lg:col-span-2' : 'col-span-1 lg:col-span-3'}>
               <Card className="bg-slate-800 border-slate-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-white">Abastecimentos</CardTitle>
