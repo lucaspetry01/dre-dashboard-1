@@ -339,7 +339,7 @@ export default function Dashboard() {
               size="icon"
               className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-amber-400 transition-colors"
               title="Combustível"
-              onClick={() => setLocation('/combustivel')}
+              onClick={() => setLocation('/cargas')}
             >
               <Fuel className="w-5 h-5" />
             </Button>
