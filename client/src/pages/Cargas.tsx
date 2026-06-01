@@ -127,6 +127,7 @@ export default function Cargas() {
       if (selectedPasta) utils.cargas.listarPorPasta.invalidate(selectedPasta);
       handleCloseDialog();
       console.log('Carga registrada com sucesso!');
+      setTimeout(() => window.location.reload(), 500);
     },
     onError: (error: any) => {
       console.error('Erro ao registrar carga:', error.message);
@@ -138,6 +139,7 @@ export default function Cargas() {
       if (selectedPasta) utils.cargas.listarPorPasta.invalidate(selectedPasta);
       setSelectedForDelete(new Set());
       console.log('Carga deletada com sucesso!');
+      setTimeout(() => window.location.reload(), 500);
     },
     onError: (error: any) => {
       console.error('Erro ao deletar carga:', error.message);
@@ -149,6 +151,7 @@ export default function Cargas() {
       if (selectedPasta) utils.cargas.listarPorPasta.invalidate(selectedPasta);
       handleCloseDialog();
       console.log('Carga atualizada com sucesso!');
+      setTimeout(() => window.location.reload(), 500);
     },
     onError: (error: any) => {
       console.error('Erro ao atualizar carga:', error.message);
