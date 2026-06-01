@@ -211,6 +211,15 @@ export default function Combustivel() {
           {/* Layout responsivo: Imagem em cima (mobile) ou lado a lado (desktop) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
             {/* Imagem: 100% em mobile, 30% em desktop */}
+            {selectedPasta === 'IES' && (
+              <div className="col-span-1 lg:col-span-1 rounded-lg overflow-hidden bg-slate-700 p-3 flex items-center justify-center h-48 lg:h-auto">
+                <img
+                  src="/manus-storage/pasted_file_ofnWe9_image_aeac23d2.png"
+                  alt="Placa IES"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             {selectedPasta === 'MFF' && (
               <div className="col-span-1 lg:col-span-1 rounded-lg overflow-hidden bg-slate-700 p-3 flex items-center justify-center h-48 lg:h-auto">
                 <img
@@ -249,7 +258,7 @@ export default function Combustivel() {
             )}
 
             {/* Tabela: 100% em mobile, 70% em desktop */}
-            <div className={['MFF', 'IJD', 'DAJ', 'IGU'].includes(selectedPasta) ? 'col-span-1 lg:col-span-2' : 'col-span-1 lg:col-span-3'}>
+            <div className={['IES', 'MFF', 'IJD', 'DAJ', 'IGU'].includes(selectedPasta) ? 'col-span-1 lg:col-span-2' : 'col-span-1 lg:col-span-3'}>
               <Card className="bg-slate-800 border-slate-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-white">Abastecimentos</CardTitle>
