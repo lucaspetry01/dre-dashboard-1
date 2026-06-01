@@ -315,7 +315,7 @@ export default function Cargas() {
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Data */}
+                  {/* Data - Bloqueada ao editar em mobile */}
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Data</label>
                     <Input
@@ -324,12 +324,21 @@ export default function Cargas() {
                       onChange={(e) => setFormData({ ...formData, data: e.target.value })}
                       className="bg-slate-700 border-slate-600 text-white"
                       autoFocus={true}
+                      disabled={editingId ? true : false}
                       required
                     />
                   </div>
 
+                  {/* Mostrar apenas data ao editar em mobile */}
+                  {editingId && (
+                    <div className="md:hidden bg-blue-900/30 border border-blue-700 rounded-lg p-3 text-center">
+                      <p className="text-sm text-slate-300">Editando registro de <span className="font-semibold text-white">{formData.data}</span></p>
+                      <p className="text-xs text-slate-400 mt-1">Edite os valores abaixo</p>
+                    </div>
+                  )}
+
                   {/* Rota - Select com opções pré-definidas */}
-                  <div>
+                  <div className={editingId ? 'hidden md:block' : ''}>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Rota</label>
                     <select
                       value={formData.rota}
@@ -355,7 +364,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Motorista - Select */}
-                  <div>
+                  <div className={editingId ? 'hidden md:block' : ''}>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Motorista</label>
                     <select
                       value={formData.motorista}
@@ -371,7 +380,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Combustível - Cálculo automático */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className={`grid grid-cols-2 gap-4 ${editingId ? 'hidden md:grid' : ''}`}>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Valor Litro Diesel (R$)</label>
                       <Input
@@ -397,7 +406,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Valor Combustível Calculado (somente leitura) */}
-                  <div>
+                  <div className={editingId ? 'hidden md:block' : ''}>
                     <label className="block text-sm font-medium text-slate-300 mb-1">
                       Valor Combustível (calculado automaticamente)
                     </label>
@@ -411,7 +420,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Chapas - Selects */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className={`grid grid-cols-2 gap-4 ${editingId ? 'hidden md:grid' : ''}`}>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 1 {formData.chapa1 && formData.chapa1.trim() !== '' && <span className="text-green-400 text-xs">(+R$ 150)</span>}</label>
                       <select
@@ -441,7 +450,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Custos */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className={`grid grid-cols-2 gap-4 ${editingId ? 'hidden md:grid' : ''}`}>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Manutenção (R$)</label>
                       <Input
@@ -467,7 +476,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Protocolo e Frete */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className={`grid grid-cols-2 gap-4 ${editingId ? 'hidden md:grid' : ''}`}>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Número Protocolo</label>
                       <Input
@@ -493,7 +502,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Resumo de Custos */}
-                  <div className="bg-slate-700/50 rounded-lg p-4 space-y-3 mb-4">
+                  <div className={`bg-slate-700/50 rounded-lg p-4 space-y-3 mb-4 ${editingId ? 'hidden md:block' : ''}`}>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-300">Custo Total:</span>
                       <span className="text-white font-semibold">R$ {custoTotalCalculado.toFixed(2)}</span>
@@ -518,9 +527,9 @@ export default function Cargas() {
                   <Button
                     type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-                    disabled={createMutation.isPending}
+                    disabled={createMutation.isPending || updateMutation.isPending}
                   >
-                    {createMutation.isPending ? 'Salvando...' : 'Salvar Carga'}
+                    {createMutation.isPending || updateMutation.isPending ? 'Salvando...' : editingId ? 'Atualizar Carga' : 'Salvar Carga'}
                   </Button>
                 </form>
               </DialogContent>
