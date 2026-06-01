@@ -115,15 +115,15 @@ export default function Cargas() {
       </div>
 
       {/* Layout: Pastas 30% esquerda, Imagem 70% direita */}
-      <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mb-8 h-80">
         {/* Coluna Esquerda: Pastas (30% = 3 colunas de 10) */}
-        <div className="md:col-span-3 flex flex-col gap-2">
+        <div className="md:col-span-3 flex flex-col gap-3">
           {PASTAS.map((pasta) => (
             <Button
               key={pasta}
               onClick={() => setSelectedPasta(pasta)}
               variant={selectedPasta === pasta ? 'default' : 'outline'}
-              className={`py-4 text-base font-semibold transition-all ${
+              className={`flex-1 text-base font-semibold transition-all ${
                 selectedPasta === pasta
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
