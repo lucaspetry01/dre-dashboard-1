@@ -654,7 +654,7 @@ export default function Dashboard() {
 
 
 /**
- * Componente simples para mover transação entre categorias
+ * Componente para mover transação entre categorias
  */
 function MovimentarCategoriaButton({
   transacaoId,
@@ -668,8 +668,24 @@ function MovimentarCategoriaButton({
   const mutation = trpc.ofx.atualizarCategoria.useMutation();
   const [open, setOpen] = useState(false);
 
+  // Lista de todas as categorias disponíveis
+  const categoriasDisponiveis = [
+    'RECEITAS OPERACIONAIS',
+    'COMBUSTÍVEL / POSTO',
+    'CHAPA / OPERACIONAL PF',
+    'PRÓ-LABORE / SOCIETÁRIO',
+    'MECÂNICA / MANUTENÇÃO',
+    'PEDÁGIOS / TAGS',
+    'IMPOSTOS / TRIBUTOS / OUTROS',
+    'CONTA / BOLETO',
+    'CONSÓRCIO / FINANCIAMENTO',
+    'CUSTO OPERACIONAL ESPECÍFICO',
+    'PAGAMENTOS',
+    'SAÍDAS NÃO CATEGORIZADAS',
+  ];
+
   const handleMover = useCallback(
-    (novaCategoria: 'OUTROS' | 'PAGAMENTOS') => {
+    (novaCategoria: string) => {
       if (novaCategoria === categoriaAtual) return;
       
       mutation.mutate(
@@ -693,17 +709,19 @@ function MovimentarCategoriaButton({
     [transacaoId, categoriaAtual, mutation, onSuccess]
   );
 
-  const outraCategoria: 'OUTROS' | 'PAGAMENTOS' = categoriaAtual === 'OUTROS' ? 'PAGAMENTOS' : 'OUTROS';
-
   return (
     <Select open={open} onOpenChange={setOpen}>
       <SelectTrigger className="w-8 h-6 p-0 border-0 bg-slate-700 hover:bg-slate-600">
         <MoreVertical className="w-3 h-3" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value={outraCategoria} onSelect={() => handleMover(outraCategoria)}>
-          Mover para {outraCategoria}
-        </SelectItem>
+        {categoriasDisponiveis
+          .filter(cat => cat !== categoriaAtual)
+          .map(cat => (
+            <SelectItem key={cat} value={cat} onSelect={() => handleMover(cat)}>
+              {cat}
+            </SelectItem>
+          ))}
       </SelectContent>
     </Select>
   );

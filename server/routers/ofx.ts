@@ -175,7 +175,7 @@ export const ofxRouter = router({
     .input(
       z.object({
         transacaoId: z.number().int().positive(),
-        novaCategoria: z.enum(['OUTROS', 'PAGAMENTOS']),
+        novaCategoria: z.string().min(1),
       })
     )
     .mutation(async ({ input }) => {
