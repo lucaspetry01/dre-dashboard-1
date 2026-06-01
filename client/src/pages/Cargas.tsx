@@ -106,17 +106,21 @@ export default function Cargas() {
   const utils = trpc.useUtils();
 
   // Queries
-  const { data: cargas, isLoading } = trpc.cargas.listarPorPasta.useQuery(
-    selectedPasta || 'IES'
+  const { data: cargasPorPasta, isLoading: isLoadingPorPasta } = trpc.cargas.listarPorPasta.useQuery(
+    selectedPasta || 'IES',
+    { enabled: !!selectedPasta }
   );
-
-  // Se nenhuma pasta selecionada, mostrar array vazio para exibir totais gerais
-  const cargasExibidas = selectedPasta ? cargas : [];
   
-  // Usar cargasExibidas se pasta selecionada, senão usar array vazio
-  const cargasParaFiltrar = selectedPasta ? cargas : [];
+  const { data: cargasTodas, isLoading: isLoadingTodas } = trpc.cargas.listarTodas.useQuery(
+    undefined,
+    { enabled: !selectedPasta }
+  );
+  
+  // Usar cargas por pasta se selecionada, senão usar todas as cargas
+  const cargas = selectedPasta ? cargasPorPasta : cargasTodas;
+  const isLoading = selectedPasta ? isLoadingPorPasta : isLoadingTodas;
 
-  const filteredCargas = filterCargasByRota(filterCargasByPeriod(cargasParaFiltrar));
+  const filteredCargas = filterCargasByRota(filterCargasByPeriod(cargas));
 
   // Totalizadores
   const totalFaturado = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.valorFrete || 0), 0) || 0;
@@ -767,7 +771,7 @@ export default function Cargas() {
                         <td className="py-1 px-1 text-xs">{dataEncurtada}</td>
                         <td className="py-1 px-1 text-xs">{carga.rota}</td>
                         <td className="py-1 px-1 text-xs">{carga.motorista}</td>
-                        <td className="py-1 px-1 text-xs font-semibold text-blue-400">{selectedPasta}</td>
+                        <td className="py-1 px-1 text-xs font-semibold text-blue-400">{carga.pasta}</td>
                         <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
                         <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.custoTotal || 0))}</td>
                         <td className={`text-right py-1 px-1 text-xs font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>

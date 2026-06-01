@@ -180,3 +180,15 @@ export async function resumoCargasPorPasta(pasta: 'IES' | 'IJD' | 'DAJ' | 'MFF' 
     margemMedia: quantidade > 0 ? ((totalLucro / totalFrete) * 100).toFixed(2) : '0',
   };
 }
+
+/**
+ * Lista todas as cargas de todas as pastas
+ */
+export async function listarTodasCargas() {
+  const db = await getDb();
+  if (!db) throw new Error('Database connection failed');
+  return await db
+    .select()
+    .from(cargas)
+    .orderBy(cargas.data);
+}

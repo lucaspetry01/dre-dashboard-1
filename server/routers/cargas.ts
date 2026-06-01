@@ -4,6 +4,7 @@ import {
   criarCarga,
   atualizarCarga,
   listarCargasPorPasta,
+  listarTodasCargas,
   buscarCargaPorId,
   deletarCarga,
   resumoCargasPorPasta,
@@ -83,6 +84,14 @@ export const cargasRouter = router({
     .input(z.number())
     .mutation(async ({ input }) => {
       return deletarCarga(input);
+    }),
+
+  /**
+   * Lista todas as cargas de todas as pastas
+   */
+  listarTodas: publicProcedure
+    .query(async () => {
+      return listarTodasCargas();
     }),
 
   /**
