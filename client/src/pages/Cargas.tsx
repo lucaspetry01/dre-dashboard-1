@@ -332,6 +332,30 @@ export default function Cargas() {
             </Button>
           )}
         </div>
+
+        {/* Card de Resultado de Filtros */}
+        {(filterPeriod || filterRota || selectedPasta) && (
+          <Card className="bg-slate-700/50 border-slate-600 mt-2">
+            <CardContent className="p-3">
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <p className="text-slate-400 text-xs mb-1">Faturado</p>
+                  <p className="text-blue-400 font-semibold text-sm">R$ {formatBRL(totalFaturado)}</p>
+                </div>
+                <div>
+                  <p className="text-slate-400 text-xs mb-1">Custo</p>
+                  <p className="text-red-400 font-semibold text-sm">R$ {formatBRL(totalCusto)}</p>
+                </div>
+                <div>
+                  <p className="text-slate-400 text-xs mb-1">Lucro</p>
+                  <p className={`font-semibold text-sm ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    R$ {formatBRL(totalLucro)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Layout: Pastas 30% esquerda, Imagem 70% direita */}
