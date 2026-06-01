@@ -286,7 +286,7 @@ export default function Cargas() {
       {/* Filtros - Sem títulos, uma linha cada */}
       <div className="mb-6 space-y-2">
         {/* Filtros por Período */}
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-1 flex-wrap items-center">
           {(['semana', 'mes', 'semestre'] as const).map((period) => (
             <Button
               key={period}
@@ -311,6 +311,13 @@ export default function Cargas() {
             >
               ✕
             </Button>
+          )}
+          {filterPeriod && (
+            <span className="text-xs text-slate-400 ml-2">
+              {filterPeriod === 'semana' && `Semana de ${new Date().toLocaleDateString('pt-BR', { weekday: 'short', month: 'short', day: 'numeric' })}`}
+              {filterPeriod === 'mes' && `${new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}`}
+              {filterPeriod === 'semestre' && `${new Date().getMonth() < 6 ? '1º' : '2º'} semestre de ${new Date().getFullYear()}`}
+            </span>
           )}
         </div>
 
@@ -771,7 +778,7 @@ export default function Cargas() {
                         <td className="py-1 px-1 text-xs">{dataEncurtada}</td>
                         <td className="py-1 px-1 text-xs">{carga.rota}</td>
                         <td className="py-1 px-1 text-xs">{carga.motorista}</td>
-                        <td className="py-1 px-1 text-xs font-semibold text-blue-400">{carga.pasta}</td>
+                        <td className="py-1 px-1 text-xs font-semibold">{carga.pasta}</td>
                         <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
                         <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.custoTotal || 0))}</td>
                         <td className={`text-right py-1 px-1 text-xs font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
