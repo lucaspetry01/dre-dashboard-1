@@ -25,6 +25,7 @@ export default function Cargas() {
   const [selectedPasta, setSelectedPasta] = useState<Pasta>('IES');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [showFormInMobile, setShowFormInMobile] = useState(false);
   const [formData, setFormData] = useState({
     data: '',
     rota: '',
@@ -167,6 +168,7 @@ export default function Cargas() {
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setEditingId(null);
+    setShowFormInMobile(false);
     setFormData({
       data: '',
       rota: '',
@@ -331,16 +333,23 @@ export default function Cargas() {
                     />
                   </div>
 
-                  {/* Mostrar apenas data ao editar em mobile */}
-                  {editingId && (
+                  {/* Mostrar apenas data ao editar em mobile (antes de confirmar) */}
+                  {editingId && !showFormInMobile && (
                     <div className="md:hidden bg-blue-900/30 border border-blue-700 rounded-lg p-3 text-center">
                       <p className="text-sm text-slate-300">Editando registro de <span className="font-semibold text-white">{String(formData.data)}</span></p>
-                      <p className="text-xs text-slate-400 mt-1">Edite os valores abaixo</p>
+                      <p className="text-xs text-slate-400 mt-1">Confirme a data para editar os valores</p>
+                    </div>
+                  )}
+
+                  {/* Mostrar formulário completo ao editar em mobile (após confirmar) */}
+                  {editingId && showFormInMobile && (
+                    <div className="md:hidden bg-green-900/20 border border-green-700 rounded-lg p-3 text-center mb-2">
+                      <p className="text-sm text-green-300">✓ Data confirmada. Edite os valores abaixo</p>
                     </div>
                   )}
 
                   {/* Rota - Select com opções pré-definidas */}
-                  <div className={editingId ? 'hidden md:block' : ''}>
+                  <div className={editingId && !showFormInMobile ? 'hidden' : ''}>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Rota</label>
                     <select
                       value={formData.rota}
@@ -366,7 +375,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Motorista - Select */}
-                  <div className={editingId ? 'hidden md:block' : ''}>
+                  <div className={editingId && !showFormInMobile ? 'hidden' : ''}>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Motorista</label>
                     <select
                       value={formData.motorista}
@@ -382,7 +391,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Combustível - Cálculo automático */}
-                  <div className={`grid grid-cols-2 gap-4 ${editingId ? 'hidden md:grid' : ''}`}>
+                  <div className={`grid grid-cols-2 gap-4 ${editingId && !showFormInMobile ? 'hidden' : ''}`}>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Valor Litro Diesel (R$)</label>
                       <Input
@@ -408,7 +417,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Valor Combustível Calculado (somente leitura) */}
-                  <div className={editingId ? 'hidden md:block' : ''}>
+                  <div className={editingId && !showFormInMobile ? 'hidden' : ''}>
                     <label className="block text-sm font-medium text-slate-300 mb-1">
                       Valor Combustível (calculado automaticamente)
                     </label>
@@ -422,7 +431,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Chapas - Selects */}
-                  <div className={`grid grid-cols-2 gap-4 ${editingId ? 'hidden md:grid' : ''}`}>
+                  <div className={`grid grid-cols-2 gap-4 ${editingId && !showFormInMobile ? 'hidden' : ''}`}>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 1 {formData.chapa1 && formData.chapa1.trim() !== '' && <span className="text-green-400 text-xs">(+R$ 150)</span>}</label>
                       <select
@@ -452,7 +461,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Custos */}
-                  <div className={`grid grid-cols-2 gap-4 ${editingId ? 'hidden md:grid' : ''}`}>
+                  <div className={`grid grid-cols-2 gap-4 ${editingId && !showFormInMobile ? 'hidden' : ''}`}>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Manutenção (R$)</label>
                       <Input
@@ -478,7 +487,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Protocolo e Frete */}
-                  <div className={`grid grid-cols-2 gap-4 ${editingId ? 'hidden md:grid' : ''}`}>
+                  <div className={`grid grid-cols-2 gap-4 ${editingId && !showFormInMobile ? 'hidden' : ''}`}>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Número Protocolo</label>
                       <Input
@@ -504,7 +513,7 @@ export default function Cargas() {
                   </div>
 
                   {/* Resumo de Custos */}
-                  <div className={`bg-slate-700/50 rounded-lg p-4 space-y-3 mb-4 ${editingId ? 'hidden md:block' : ''}`}>
+                  <div className={`bg-slate-700/50 rounded-lg p-4 space-y-3 mb-4 ${editingId && !showFormInMobile ? 'hidden' : ''}`}>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-300">Custo Total:</span>
                       <span className="text-white font-semibold">R$ {custoTotalCalculado.toFixed(2)}</span>
@@ -525,14 +534,24 @@ export default function Cargas() {
                     </div>
                   </div>
 
-                  {/* Botão Salvar */}
-                  <Button
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                  >
-                    {createMutation.isPending || updateMutation.isPending ? 'Salvando...' : editingId ? 'Atualizar Carga' : 'Salvar Carga'}
-                  </Button>
+                  {/* Botão Salvar/Confirmar */}
+                  {editingId && !showFormInMobile ? (
+                    <Button
+                      type="button"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold md:hidden"
+                      onClick={() => setShowFormInMobile(true)}
+                    >
+                      Confirmar Data
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
+                      {createMutation.isPending || updateMutation.isPending ? 'Salvando...' : editingId ? 'Atualizar Carga' : 'Salvar Carga'}
+                    </Button>
+                  )}
                 </form>
               </DialogContent>
               </Dialog>
