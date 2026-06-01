@@ -747,6 +747,33 @@ export default function Cargas() {
             )}
           </CardContent>
         </Card>
+
+        {/* Card de Totalizador Geral */}
+        {filteredCargas && filteredCargas.length > 0 && (
+          <Card className="bg-slate-800 border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-white">Total Geral</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-slate-700/50 rounded-lg p-4 text-center">
+                  <p className="text-slate-400 text-sm mb-2">Faturado</p>
+                  <p className="text-blue-400 font-bold text-2xl">R$ {totalFaturado.toFixed(2)}</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 text-center">
+                  <p className="text-slate-400 text-sm mb-2">Custo</p>
+                  <p className="text-red-400 font-bold text-2xl">R$ {totalCusto.toFixed(2)}</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 text-center">
+                  <p className="text-slate-400 text-sm mb-2">Lucro</p>
+                  <p className={`font-bold text-2xl ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    R$ {totalLucro.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
