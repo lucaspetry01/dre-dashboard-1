@@ -248,26 +248,28 @@ export default function Cargas() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-white">Cargas - {selectedPasta}</CardTitle>
             <div className="flex gap-2">
-              {selectedForDelete.size > 0 && (
+              {selectedForDelete.size > 0 ? (
                 <Button
                   size="sm"
                   className="bg-red-600 hover:bg-red-700 text-white"
                   onClick={handleDeleteSelected}
                 >
-                  Excluir {selectedForDelete.size} Selecionada{selectedForDelete.size > 1 ? 's' : ''}
+                  Excluir
                 </Button>
-              )}
+              ) : null}
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    size="sm"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                    onClick={() => handleCloseDialog()}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Nova Carga
-                  </Button>
-                </DialogTrigger>
+                {selectedForDelete.size === 0 && (
+                  <DialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      onClick={() => handleCloseDialog()}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Nova Carga
+                    </Button>
+                  </DialogTrigger>
+                )}
               <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-white">
