@@ -788,21 +788,7 @@ export default function Cargas() {
                     );
                     })}
                   </tbody>
-                  {filteredCargas && filteredCargas.length > 0 && (
-                    <tfoot>
-                      <tr className="border-t-2 border-slate-600 bg-slate-700/50 font-semibold">
-                        <td className="py-2 px-1"></td>
-                        <td className="py-2 px-1 text-xs">TOTAL</td>
-                        <td className="py-2 px-1 text-xs">({qtdCargas})</td>
-                        <td className="py-2 px-1 text-xs"></td>
-                        <td className="text-right py-2 px-1 text-xs text-blue-400">R$ {formatBRL(totalFaturado)}</td>
-                        <td className="text-right py-2 px-1 text-xs text-red-400">R$ {formatBRL(totalCusto)}</td>
-                        <td className={`text-right py-2 px-1 text-xs ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          R$ {formatBRL(totalLucro)}
-                        </td>
-                      </tr>
-                    </tfoot>
-                  )}
+
                 </table>
               </div>
             ) : (
