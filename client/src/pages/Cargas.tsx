@@ -102,7 +102,7 @@ export default function Cargas() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setLocation('/dashboard')}
+            onClick={() => setLocation('/')}
             className="text-slate-400 hover:text-slate-200"
           >
             <ArrowLeft className="w-5 h-5" />
