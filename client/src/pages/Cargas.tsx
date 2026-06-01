@@ -487,7 +487,7 @@ export default function Cargas() {
                 </>
               )}
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                {selectedForDelete.size === 0 && (
+                {selectedForDelete.size === 0 && selectedPasta && (
                   <DialogTrigger asChild>
                     <Button
                       size="sm"
@@ -507,6 +507,17 @@ export default function Cargas() {
                       Nova Carga
                     </Button>
                   </DialogTrigger>
+                )}
+                {selectedForDelete.size === 0 && !selectedPasta && (
+                  <Button
+                    size="sm"
+                    className="bg-slate-600 text-slate-400 cursor-not-allowed"
+                    disabled
+                    title="Selecione uma placa para criar nova carga"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nova Carga
+                  </Button>
                 )}
               <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
