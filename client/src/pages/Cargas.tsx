@@ -111,9 +111,12 @@ export default function Cargas() {
   );
 
   // Se nenhuma pasta selecionada, mostrar array vazio para exibir totais gerais
-  const cargasExibidas = selectedPasta ? cargas : []
+  const cargasExibidas = selectedPasta ? cargas : [];
+  
+  // Usar cargasExibidas se pasta selecionada, senão usar array vazio
+  const cargasParaFiltrar = selectedPasta ? cargas : [];
 
-  const filteredCargas = filterCargasByRota(filterCargasByPeriod(cargas));
+  const filteredCargas = filterCargasByRota(filterCargasByPeriod(cargasParaFiltrar));
 
   // Totalizadores
   const totalFaturado = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.valorFrete || 0), 0) || 0;
@@ -741,6 +744,7 @@ export default function Cargas() {
                       <th className="text-left py-1 px-1 text-xs">Data</th>
                       <th className="text-left py-1 px-1 text-xs">Rota</th>
                       <th className="text-left py-1 px-1 text-xs">Motorista</th>
+                      <th className="text-left py-1 px-1 text-xs">Placa</th>
                       <th className="text-right py-1 px-1 text-xs">Frete</th>
                       <th className="text-right py-1 px-1 text-xs">Custo</th>
                       <th className="text-right py-1 px-1 text-xs">Lucro</th>
@@ -763,6 +767,7 @@ export default function Cargas() {
                         <td className="py-1 px-1 text-xs">{dataEncurtada}</td>
                         <td className="py-1 px-1 text-xs">{carga.rota}</td>
                         <td className="py-1 px-1 text-xs">{carga.motorista}</td>
+                        <td className="py-1 px-1 text-xs font-semibold text-blue-400">{selectedPasta}</td>
                         <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
                         <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.custoTotal || 0))}</td>
                         <td className={`text-right py-1 px-1 text-xs font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
