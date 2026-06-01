@@ -25,7 +25,7 @@ export default function Cargas() {
   const [selectedPasta, setSelectedPasta] = useState<Pasta | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [filterPeriod, setFilterPeriod] = useState<'semana' | 'mes' | 'semestre' | null>(null);
+  const [filterPeriod, setFilterPeriod] = useState<'semana' | 'mes' | 'mesAnterior' | 'semestre' | null>(null);
   const [filterRota, setFilterRota] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     data: '',
@@ -53,7 +53,7 @@ export default function Cargas() {
   }
 
   // Funções de filtro por período
-  const getDateRange = (period: 'semana' | 'mes' | 'semestre' | null) => {
+  const getDateRange = (period: 'semana' | 'mes' | 'mesAnterior' | 'semestre' | null) => {
     if (!period) return { start: null, end: null };
     const today = new Date();
     const start = new Date();
@@ -62,6 +62,11 @@ export default function Cargas() {
       start.setDate(today.getDate() - today.getDay());
     } else if (period === 'mes') {
       start.setDate(1);
+    } else if (period === 'mesAnterior') {
+      start.setMonth(today.getMonth() - 1);
+      start.setDate(1);
+      const endOfPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+      return { start, end: endOfPreviousMonth };
     } else if (period === 'semestre') {
       start.setMonth(today.getMonth() < 6 ? 0 : 6);
       start.setDate(1);
@@ -287,7 +292,7 @@ export default function Cargas() {
       <div className="mb-6 space-y-2">
         {/* Filtros por Período */}
         <div className="flex gap-1 flex-wrap items-center">
-          {(['semana', 'mes', 'semestre'] as const).map((period) => (
+          {(['semana', 'mes', 'mesAnterior', 'semestre'] as const).map((period) => (
             <Button
               key={period}
               onClick={() => setFilterPeriod(filterPeriod === period ? null : period)}
@@ -299,7 +304,7 @@ export default function Cargas() {
                   : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
               }`}
             >
-              {period === 'semana' ? 'Semana' : period === 'mes' ? 'Mês' : 'Semestre'}
+              {period === 'semana' ? 'Semana' : period === 'mes' ? 'Mês Atual' : period === 'mesAnterior' ? 'Mês Anterior' : 'Semestre'}
             </Button>
           ))}
           {filterPeriod && (
@@ -316,6 +321,11 @@ export default function Cargas() {
             <span className="text-xs text-slate-400 ml-2">
               {filterPeriod === 'semana' && `Semana de ${new Date().toLocaleDateString('pt-BR', { weekday: 'short', month: 'short', day: 'numeric' })}`}
               {filterPeriod === 'mes' && `${new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}`}
+              {filterPeriod === 'mesAnterior' && (() => {
+                const prevMonth = new Date();
+                prevMonth.setMonth(prevMonth.getMonth() - 1);
+                return prevMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+              })()}
               {filterPeriod === 'semestre' && `${new Date().getMonth() < 6 ? '1º' : '2º'} semestre de ${new Date().getFullYear()}`}
             </span>
           )}
