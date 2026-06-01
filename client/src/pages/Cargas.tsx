@@ -56,23 +56,26 @@ export default function Cargas() {
   const getDateRange = (period: 'semana' | 'mes' | 'mesAnterior' | 'semestre' | null) => {
     if (!period) return { start: null, end: null };
     const today = new Date();
-    const start = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(today);
     
     if (period === 'semana') {
       start.setDate(today.getDate() - today.getDay());
     } else if (period === 'mes') {
       start.setDate(1);
     } else if (period === 'mesAnterior') {
-      start.setMonth(today.getMonth() - 1);
-      start.setDate(1);
-      const endOfPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-      return { start, end: endOfPreviousMonth };
+      const prevMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      const prevMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+      prevMonthEnd.setHours(23, 59, 59, 999);
+      return { start: prevMonthStart, end: prevMonthEnd };
     } else if (period === 'semestre') {
       start.setMonth(today.getMonth() < 6 ? 0 : 6);
       start.setDate(1);
     }
     
-    return { start, end: today };
+    const end = new Date(today);
+    end.setHours(23, 59, 59, 999);
+    return { start, end };
   };
 
   const filterCargasByPeriod = (cargasData: any[] | undefined) => {
