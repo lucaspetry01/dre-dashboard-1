@@ -300,7 +300,7 @@ export default function Cargas() {
       <div className="mb-6 space-y-2">
         {/* Filtros por Período */}
         <div className="flex gap-1 flex-wrap items-center">
-          {(['semana'] as const).map((period) => (
+          {(['semana', 'mes', 'mesAnterior', 'semestre'] as const).map((period) => (
             <Button
               key={period}
               onClick={() => setFilterPeriod(filterPeriod === period ? null : period)}
