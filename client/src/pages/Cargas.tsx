@@ -323,6 +323,7 @@ export default function Cargas() {
                       value={formData.data}
                       onChange={(e) => setFormData({ ...formData, data: e.target.value })}
                       className="bg-slate-700 border-slate-600 text-white"
+                      autoFocus={!editingId}
                       required
                     />
                   </div>
