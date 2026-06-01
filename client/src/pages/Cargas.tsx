@@ -43,7 +43,7 @@ export default function Cargas() {
   });
 
   // Opções pré-definidas
-  const ROTAS = ['GRAMADO', 'CAXIAS', 'FAZENDA', 'CD', 'OUTROS'];
+  const ROTAS = ['GRAMADO', 'CAXIAS', 'FAZENDA', 'CD', 'POA', 'OUTROS'];
   const MOTORISTAS = ['FRED', 'CESAR', 'DOUGLAS', 'ALEX'];
   const CHAPAS = ['DOUGLAS', 'DJOE', 'LUCAS', 'PABLO', 'ALEX'];
 
@@ -297,14 +297,14 @@ export default function Cargas() {
         </div>
 
         {/* Filtros por Rota */}
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-0.5 flex-nowrap overflow-x-auto">
           {ROTAS.map((rota) => (
             <Button
               key={rota}
               onClick={() => setFilterRota(filterRota === rota ? null : rota)}
               variant={filterRota === rota ? 'default' : 'outline'}
               size="sm"
-              className={`text-xs py-1 px-2 h-auto ${
+              className={`text-xs py-1 px-1.5 h-auto whitespace-nowrap ${
                 filterRota === rota
                   ? 'bg-green-600 hover:bg-green-700 text-white'
                   : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
@@ -752,21 +752,21 @@ export default function Cargas() {
         {filteredCargas && filteredCargas.length > 0 && (
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader>
-              <CardTitle className="text-white">Total Geral</CardTitle>
+              <CardTitle className="text-white text-base">Total Geral</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-slate-700/50 rounded-lg p-4 text-center">
-                  <p className="text-slate-400 text-sm mb-2">Faturado</p>
-                  <p className="text-blue-400 font-bold text-2xl">R$ {totalFaturado.toFixed(2)}</p>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-slate-700/50 rounded-lg p-2 text-center">
+                  <p className="text-slate-400 text-xs mb-1">Faturado</p>
+                  <p className="text-blue-400 font-bold text-base">R$ {totalFaturado.toFixed(2)}</p>
                 </div>
-                <div className="bg-slate-700/50 rounded-lg p-4 text-center">
-                  <p className="text-slate-400 text-sm mb-2">Custo</p>
-                  <p className="text-red-400 font-bold text-2xl">R$ {totalCusto.toFixed(2)}</p>
+                <div className="bg-slate-700/50 rounded-lg p-2 text-center">
+                  <p className="text-slate-400 text-xs mb-1">Custo</p>
+                  <p className="text-red-400 font-bold text-base">R$ {totalCusto.toFixed(2)}</p>
                 </div>
-                <div className="bg-slate-700/50 rounded-lg p-4 text-center">
-                  <p className="text-slate-400 text-sm mb-2">Lucro</p>
-                  <p className={`font-bold text-2xl ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <div className="bg-slate-700/50 rounded-lg p-2 text-center">
+                  <p className="text-slate-400 text-xs mb-1">Lucro</p>
+                  <p className={`font-bold text-base ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                     R$ {totalLucro.toFixed(2)}
                   </p>
                 </div>
