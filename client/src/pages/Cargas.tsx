@@ -483,6 +483,43 @@ export default function Cargas() {
                     </div>
                   </div>
 
+                  {/* Resumo de Custos */}
+                  <div className="bg-slate-700/50 rounded-lg p-4 space-y-3 mb-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Custo Total:</span>
+                      <span className="text-white font-semibold">R$ {(
+                        Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
+                        Number(formData.manutencao || 0) + 
+                        Number(formData.custoOutros || 0) + 
+                        370
+                      ).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Valor Total Frete:</span>
+                      <span className="text-blue-400 font-semibold">R$ {Number(formData.valorFrete || 0).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-600">
+                      <span className="text-slate-300">Lucro:</span>
+                      <span className={`font-semibold ${
+                        Number(formData.valorFrete || 0) - (
+                          Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
+                          Number(formData.manutencao || 0) + 
+                          Number(formData.custoOutros || 0) + 
+                          370
+                        ) >= 0 ? 'text-green-400' : 'text-red-400'
+                      }`}>
+                        R$ {(
+                          Number(formData.valorFrete || 0) - (
+                            Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
+                            Number(formData.manutencao || 0) + 
+                            Number(formData.custoOutros || 0) + 
+                            370
+                          )
+                        ).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
                   {/* Botão Salvar */}
                   <Button
                     type="submit"
