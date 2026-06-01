@@ -28,8 +28,9 @@ export default function Cargas() {
   const [formData, setFormData] = useState({
     data: '',
     rota: '',
+    rotaCustom: '',
     motorista: '',
-    valorCombustivel: '',
+    valorLitroDiesel: '',
     litrosCombustivel: '',
     chapa1: '',
     chapa2: '',
@@ -38,6 +39,16 @@ export default function Cargas() {
     numeroProtocolo: '',
     valorFrete: '',
   });
+
+  // Opções pré-definidas
+  const ROTAS = ['GRAMADO', 'CAXIAS', 'FAZENDA', 'CD', 'OUTROS'];
+  const MOTORISTAS = ['FRED', 'CESAR', 'DOUGLAS', 'ALEX'];
+  const CHAPAS = ['DOUGLAS', 'DJOE', 'LUCAS', 'PABLO', 'ALEX'];
+
+  // Cálculo automático do valor do combustível
+  const valorCombustivelCalculado =
+    (parseFloat(formData.valorLitroDiesel) || 0) *
+    (parseFloat(formData.litrosCombustivel) || 0);
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
 
   const utils = trpc.useUtils();
@@ -72,12 +83,13 @@ export default function Cargas() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const rotaFinal = formData.rota === 'OUTROS' ? formData.rotaCustom : formData.rota;
     createMutation.mutate({
       pasta: selectedPasta,
       data: formData.data,
-      rota: formData.rota,
+      rota: rotaFinal,
       motorista: formData.motorista,
-      valorCombustivel: parseFloat(formData.valorCombustivel) || 0,
+      valorCombustivel: valorCombustivelCalculado,
       litrosCombustivel: parseFloat(formData.litrosCombustivel) || 0,
       chapa1: formData.chapa1,
       chapa2: formData.chapa2,
@@ -94,8 +106,9 @@ export default function Cargas() {
     setFormData({
       data: '',
       rota: '',
+      rotaCustom: '',
       motorista: '',
-      valorCombustivel: '',
+      valorLitroDiesel: '',
       litrosCombustivel: '',
       chapa1: '',
       chapa2: '',
@@ -222,42 +235,58 @@ export default function Cargas() {
                     />
                   </div>
 
-                  {/* Rota */}
+                  {/* Rota - Select com opções pré-definidas */}
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Rota</label>
-                    <Input
-                      type="text"
-                      placeholder="Ex: São Paulo - Gramado"
+                    <select
                       value={formData.rota}
                       onChange={(e) => setFormData({ ...formData, rota: e.target.value })}
-                      className="bg-slate-700 border-slate-600 text-white"
+                      className="w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2 h-10"
                       required
-                    />
+                    >
+                      <option value="">Selecione a rota</option>
+                      {ROTAS.map((r) => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                    {formData.rota === 'OUTROS' && (
+                      <Input
+                        type="text"
+                        placeholder="Digite a rota personalizada"
+                        value={formData.rotaCustom}
+                        onChange={(e) => setFormData({ ...formData, rotaCustom: e.target.value })}
+                        className="bg-slate-700 border-slate-600 text-white mt-2"
+                        required
+                      />
+                    )}
                   </div>
 
-                  {/* Motorista */}
+                  {/* Motorista - Select */}
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Motorista</label>
-                    <Input
-                      type="text"
-                      placeholder="Nome do motorista"
+                    <select
                       value={formData.motorista}
                       onChange={(e) => setFormData({ ...formData, motorista: e.target.value })}
-                      className="bg-slate-700 border-slate-600 text-white"
+                      className="w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2 h-10"
                       required
-                    />
+                    >
+                      <option value="">Selecione o motorista</option>
+                      {MOTORISTAS.map((m) => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
                   </div>
 
-                  {/* Combustível */}
+                  {/* Combustível - Cálculo automático */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1">Valor Combustível (R$)</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Valor Litro Diesel (R$)</label>
                       <Input
                         type="number"
                         step="0.01"
                         placeholder="0.00"
-                        value={formData.valorCombustivel}
-                        onChange={(e) => setFormData({ ...formData, valorCombustivel: e.target.value })}
+                        value={formData.valorLitroDiesel}
+                        onChange={(e) => setFormData({ ...formData, valorLitroDiesel: e.target.value })}
                         className="bg-slate-700 border-slate-600 text-white"
                       />
                     </div>
@@ -274,27 +303,47 @@ export default function Cargas() {
                     </div>
                   </div>
 
-                  {/* Chapas */}
+                  {/* Valor Combustível Calculado (somente leitura) */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">
+                      Valor Combustível (calculado automaticamente)
+                    </label>
+                    <Input
+                      type="text"
+                      value={`R$ ${valorCombustivelCalculado.toFixed(2)}`}
+                      readOnly
+                      disabled
+                      className="bg-slate-800 border-slate-600 text-green-400 font-semibold cursor-not-allowed"
+                    />
+                  </div>
+
+                  {/* Chapas - Selects */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 1</label>
-                      <Input
-                        type="text"
-                        placeholder="Ex: ABC-1234"
+                      <select
                         value={formData.chapa1}
                         onChange={(e) => setFormData({ ...formData, chapa1: e.target.value })}
-                        className="bg-slate-700 border-slate-600 text-white"
-                      />
+                        className="w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2 h-10"
+                      >
+                        <option value="">Selecione Chapa 1</option>
+                        {CHAPAS.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 2</label>
-                      <Input
-                        type="text"
-                        placeholder="Ex: XYZ-5678"
+                      <select
                         value={formData.chapa2}
                         onChange={(e) => setFormData({ ...formData, chapa2: e.target.value })}
-                        className="bg-slate-700 border-slate-600 text-white"
-                      />
+                        className="w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2 h-10"
+                      >
+                        <option value="">Selecione Chapa 2</option>
+                        {CHAPAS.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
