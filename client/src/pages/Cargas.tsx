@@ -38,6 +38,7 @@ export default function Cargas() {
     numeroProtocolo: '',
     valorFrete: '',
   });
+  const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
 
   const utils = trpc.useUtils();
 
@@ -55,6 +56,17 @@ export default function Cargas() {
     },
     onError: (error: any) => {
       console.error('Erro ao registrar carga:', error.message);
+    },
+  });
+
+  const deleteMutation = trpc.cargas.deletar.useMutation({
+    onSuccess: () => {
+      utils.cargas.listarPorPasta.invalidate(selectedPasta);
+      setSelectedForDelete(new Set());
+      console.log('Carga deletada com sucesso!');
+    },
+    onError: (error: any) => {
+      console.error('Erro ao deletar carga:', error.message);
     },
   });
 
@@ -91,6 +103,22 @@ export default function Cargas() {
       manutencao: '',
       numeroProtocolo: '',
       valorFrete: '',
+    });
+  };
+
+  const handleToggleCheckbox = (id: number) => {
+    const newSet = new Set(selectedForDelete);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSelectedForDelete(newSet);
+  };
+
+  const handleDeleteSelected = () => {
+    selectedForDelete.forEach(id => {
+      deleteMutation.mutate(id);
     });
   };
 
@@ -153,17 +181,27 @@ export default function Cargas() {
         <Card className="bg-slate-800 border-slate-700 flex flex-col flex-1">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-white">Cargas - {selectedPasta}</CardTitle>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
+            <div className="flex gap-2">
+              {selectedForDelete.size > 0 && (
                 <Button
                   size="sm"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                  onClick={() => handleCloseDialog()}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  onClick={handleDeleteSelected}
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Nova Carga
+                  Excluir {selectedForDelete.size} Selecionada{selectedForDelete.size > 1 ? 's' : ''}
                 </Button>
-              </DialogTrigger>
+              )}
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => handleCloseDialog()}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nova Carga
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-white">
@@ -322,7 +360,8 @@ export default function Cargas() {
                   </Button>
                 </form>
               </DialogContent>
-            </Dialog>
+              </Dialog>
+            </div>
           </CardHeader>
 
           <CardContent className="p-4">
@@ -333,6 +372,9 @@ export default function Cargas() {
                 <table className="w-full text-sm text-slate-300">
                   <thead className="border-b border-slate-700">
                     <tr>
+                      <th className="text-left py-2 px-2 w-8">
+                        <input type="checkbox" className="w-4 h-4" />
+                      </th>
                       <th className="text-left py-2 px-2">Data</th>
                       <th className="text-left py-2 px-2">Rota</th>
                       <th className="text-left py-2 px-2">Motorista</th>
@@ -344,6 +386,14 @@ export default function Cargas() {
                   <tbody>
                     {cargas?.map((carga: any) => (
                       <tr key={carga.id} className="border-b border-slate-700 hover:bg-slate-700/50">
+                        <td className="py-2 px-2">
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4"
+                            checked={selectedForDelete.has(carga.id)}
+                            onChange={() => handleToggleCheckbox(carga.id)}
+                          />
+                        </td>
                         <td className="py-2 px-2">{new Date(carga.data).toLocaleDateString('pt-BR')}</td>
                         <td className="py-2 px-2">{carga.rota}</td>
                         <td className="py-2 px-2">{carga.motorista}</td>
