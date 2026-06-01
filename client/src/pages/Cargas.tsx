@@ -25,6 +25,8 @@ export default function Cargas() {
   const [selectedPasta, setSelectedPasta] = useState<Pasta>('IES');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [filterPeriod, setFilterPeriod] = useState<'semana' | 'mes' | 'semestre' | null>(null);
+  const [filterRota, setFilterRota] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     data: '',
     rota: '',
@@ -44,6 +46,42 @@ export default function Cargas() {
   const ROTAS = ['GRAMADO', 'CAXIAS', 'FAZENDA', 'CD', 'OUTROS'];
   const MOTORISTAS = ['FRED', 'CESAR', 'DOUGLAS', 'ALEX'];
   const CHAPAS = ['DOUGLAS', 'DJOE', 'LUCAS', 'PABLO', 'ALEX'];
+
+  // Funções de filtro por período
+  const getDateRange = (period: 'semana' | 'mes' | 'semestre' | null) => {
+    if (!period) return { start: null, end: null };
+    const today = new Date();
+    const start = new Date();
+    
+    if (period === 'semana') {
+      start.setDate(today.getDate() - today.getDay());
+    } else if (period === 'mes') {
+      start.setDate(1);
+    } else if (period === 'semestre') {
+      start.setMonth(today.getMonth() < 6 ? 0 : 6);
+      start.setDate(1);
+    }
+    
+    return { start, end: today };
+  };
+
+  const filterCargasByPeriod = (cargasData: any[] | undefined) => {
+    if (!cargasData) return [];
+    if (!filterPeriod) return cargasData;
+    
+    const { start, end } = getDateRange(filterPeriod);
+    if (!start || !end) return cargasData;
+    
+    return cargasData.filter(carga => {
+      const cargaDate = new Date(carga.data);
+      return cargaDate >= start && cargaDate <= end;
+    });
+  };
+
+  const filterCargasByRota = (cargasData: any[]) => {
+    if (!filterRota) return cargasData;
+    return cargasData.filter(carga => carga.rota === filterRota);
+  };
 
   // Cálculo automático do valor do combustível
   const valorCombustivelCalculado =
@@ -66,6 +104,14 @@ export default function Cargas() {
   const { data: cargas, isLoading } = trpc.cargas.listarPorPasta.useQuery(
     selectedPasta
   );
+
+  const filteredCargas = filterCargasByRota(filterCargasByPeriod(cargas));
+
+  // Totalizadores
+  const totalFaturado = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.valorFrete || 0), 0) || 0;
+  const totalCusto = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.custoTotal || 0), 0) || 0;
+  const totalLucro = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.lucro || 0), 0) || 0;
+  const qtdCargas = filteredCargas?.length || 0;
 
   // Mutations
   const createMutation = trpc.cargas.criar.useMutation({
@@ -253,11 +299,80 @@ export default function Cargas() {
         </div>
       </div>
 
+      {/* Filtros */}
+      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6">
+        <div className="space-y-4">
+          {/* Filtros por Período */}
+          <div>
+            <p className="text-sm font-semibold text-slate-300 mb-2">Período</p>
+            <div className="flex gap-2 flex-wrap">
+              {(['semana', 'mes', 'semestre'] as const).map((period) => (
+                <Button
+                  key={period}
+                  onClick={() => setFilterPeriod(filterPeriod === period ? null : period)}
+                  variant={filterPeriod === period ? 'default' : 'outline'}
+                  size="sm"
+                  className={`capitalize ${
+                    filterPeriod === period
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                      : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                  }`}
+                >
+                  {period === 'semana' ? 'Esta Semana' : period === 'mes' ? 'Este Mês' : 'Este Semestre'}
+                </Button>
+              ))}
+              {filterPeriod && (
+                <Button
+                  onClick={() => setFilterPeriod(null)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-400 hover:text-slate-200"
+                >
+                  ✕ Limpar
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Filtros por Rota */}
+          <div>
+            <p className="text-sm font-semibold text-slate-300 mb-2">Rota</p>
+            <div className="flex gap-2 flex-wrap">
+              {ROTAS.map((rota) => (
+                <Button
+                  key={rota}
+                  onClick={() => setFilterRota(filterRota === rota ? null : rota)}
+                  variant={filterRota === rota ? 'default' : 'outline'}
+                  size="sm"
+                  className={`${
+                    filterRota === rota
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                  }`}
+                >
+                  {rota}
+                </Button>
+              ))}
+              {filterRota && (
+                <Button
+                  onClick={() => setFilterRota(null)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-400 hover:text-slate-200"
+                >
+                  ✕ Limpar
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Formulário e Tabela de Cargas - Ocupando todo o espaço */}
       <div className="grid grid-cols-1 gap-6 flex-1 min-h-[500px]">
         <Card className="bg-slate-800 border-slate-700 flex flex-col flex-1">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-white">Cargas - {selectedPasta}</CardTitle>
+            <CardTitle className="text-white">Cargas - {selectedPasta} {filterPeriod && `(${filterPeriod === 'semana' ? 'Semana' : filterPeriod === 'mes' ? 'Mês' : 'Semestre'})`} {filterRota && `- ${filterRota}`}</CardTitle>
             <div className="flex gap-2">
               {selectedForDelete.size > 0 && (
                 <>
@@ -589,7 +704,7 @@ export default function Cargas() {
                     </tr>
                   </thead>
                   <tbody>
-                    {cargas?.map((carga: any) => {
+                    {filteredCargas?.map((carga: any) => {
                       const dateParts = new Date(carga.data).toLocaleDateString('pt-BR').split('/');
                       const dataEncurtada = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]?.slice(-2)}`;
                       return (
@@ -614,11 +729,26 @@ export default function Cargas() {
                     );
                     })}
                   </tbody>
+                  {filteredCargas && filteredCargas.length > 0 && (
+                    <tfoot>
+                      <tr className="border-t-2 border-slate-600 bg-slate-700/50 font-semibold">
+                        <td className="py-2 px-1"></td>
+                        <td className="py-2 px-1 text-xs">TOTAL</td>
+                        <td className="py-2 px-1 text-xs">({qtdCargas})</td>
+                        <td className="py-2 px-1 text-xs"></td>
+                        <td className="text-right py-2 px-1 text-xs text-blue-400">R$ {totalFaturado.toFixed(2)}</td>
+                        <td className="text-right py-2 px-1 text-xs text-red-400">R$ {totalCusto.toFixed(2)}</td>
+                        <td className={`text-right py-2 px-1 text-xs ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          R$ {totalLucro.toFixed(2)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  )}
                 </table>
               </div>
             ) : (
               <div className="text-center text-slate-400 py-8">
-                Nenhuma carga registrada nesta pasta
+                {cargas && cargas.length === 0 ? 'Nenhuma carga registrada nesta pasta' : 'Nenhuma carga encontrada com os filtros selecionados'}
               </div>
             )}
           </CardContent>
