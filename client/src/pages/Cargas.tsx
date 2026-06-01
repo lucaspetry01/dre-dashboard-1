@@ -359,7 +359,7 @@ export default function Cargas() {
       </div>
 
       {/* Layout: Pastas 30% esquerda, Imagem 70% direita */}
-      <div className="grid grid-cols-10 gap-6 mb-6 h-screen">
+      <div className="grid grid-cols-10 gap-6 mb-6 h-80">
         {/* Coluna Esquerda: Pastas (30% = 3 colunas de 10) */}
         <div className="col-span-3 flex flex-col gap-3">
           {PASTAS.map((pasta) => (
