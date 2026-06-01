@@ -118,6 +118,7 @@ export interface ResumoAgregado {
     qtd_despesas: number;
   };
   saldoFinal?: number; // Saldo final da conta do último OFX importado
+  lastImportDate?: Date; // Data e hora do último import de OFX
   categorias: Array<{
     nome: string;
     valor: number;
@@ -366,6 +367,20 @@ export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
     const ultimoDia = resumo.diario[resumo.diario.length - 1];
     if (ultimoDia && ultimoDia.saldo) {
       resumo.saldoFinal = ultimoDia.saldo;
+    }
+  }
+
+  // Buscar data do último import
+  const db = await getDb();
+  if (db && resumo) {
+    const lastUpload = await db
+      .select({ createdAt: uploads.createdAt })
+      .from(uploads)
+      .orderBy(desc(uploads.createdAt))
+      .limit(1);
+    
+    if (lastUpload && lastUpload.length > 0) {
+      resumo.lastImportDate = lastUpload[0].createdAt;
     }
   }
   

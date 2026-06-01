@@ -503,7 +503,11 @@ export default function Dashboard() {
               <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="text-lg sm:text-2xl font-bold mb-1">{saldoFinal ? formatMoney(saldoFinal) : 'R$ 0,00'}</div>
-            <div className="text-xs sm:text-sm opacity-90">Último OFX</div>
+            <div className="text-xs sm:text-sm opacity-90">
+              {resumoBanco?.lastImportDate
+                ? `Última atualização: ${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} às ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR')}`
+                : 'Nenhuma atualização'}
+            </div>
           </div>
 
           {/* Card Receitas */}
