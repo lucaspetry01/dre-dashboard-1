@@ -36,6 +36,13 @@
       "when": 1780283252603,
       "tag": "0004_shallow_misty_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1780298295896,
+      "tag": "0005_lucky_shadowcat",
+      "breakpoints": true
     }
   ]
 }

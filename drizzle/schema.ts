@@ -213,12 +213,18 @@ export const cargas = mysqlTable(
     /** Valor do frete/receita */
     valorFrete: decimal("valorFrete", { precision: 10, scale: 2 }).default("0"),
     
+    /** Valor retido (10% do valorFrete) */
+    valorRetido: decimal("valorRetido", { precision: 10, scale: 2 }).default("0"),
+    
+    /** Valor líquido do frete (valorFrete - valorRetido) */
+    valorLiquidoFrete: decimal("valorLiquidoFrete", { precision: 10, scale: 2 }).default("0"),
+    
     /** Número do protocolo/comprovante */
     numeroProtocolo: varchar("numeroProtocolo", { length: 50 }),
     
     /** Custo total calculado: combustível + manutenção + custoOutros */
     custoTotal: decimal("custoTotal", { precision: 10, scale: 2 }).default("0"),
-    /** Lucro calculado: valorFrete - custoTotal */
+    /** Lucro calculado: valorLiquidoFrete - custoTotal */
     lucro: decimal("lucro", { precision: 10, scale: 2 }).default("0"),
     
     createdAt: timestamp("createdAt").defaultNow().notNull(),

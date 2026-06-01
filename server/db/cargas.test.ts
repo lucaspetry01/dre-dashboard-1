@@ -1,10 +1,13 @@
 import { describe, it, expect } from 'vitest';
 
 /**
- * Testes para validar o cálculo dinâmico de custos fixos
+ * Testes para validar o cálculo dinâmico de custos fixos e retenção
  * Motorista: R$ 220 (fixo)
  * Chapa 1: R$ 150 (se selecionada, senão R$ 0)
  * Chapa 2: R$ 150 (se selecionada, senão R$ 0)
+ * Valor Retido: 10% do Valor Frete
+ * Valor Líquido Frete: Valor Frete - Valor Retido
+ * Lucro: Valor Líquido Frete - Custo Total
  */
 
 describe('Cálculo de Custos Fixos Dinâmicos', () => {
@@ -20,11 +23,17 @@ describe('Cálculo de Custos Fixos Dinâmicos', () => {
     const custoChapa2 = 0; // nenhuma
     const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
     const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
-    const lucro = valorFrete - custoTotal;
+    
+    // Cálculo de retenção e frete líquido
+    const valorRetido = valorFrete * 0.1; // 10% de retenção
+    const valorLiquidoFrete = valorFrete - valorRetido;
+    const lucro = valorLiquidoFrete - custoTotal;
 
     expect(custoFixo).toBe(220);
     expect(custoTotal).toBe(395); // 100 + 50 + 25 + 220
-    expect(lucro).toBe(105); // 500 - 395
+    expect(valorRetido).toBe(50); // 10% de 500
+    expect(valorLiquidoFrete).toBe(450); // 500 - 50
+    expect(lucro).toBe(55); // 450 - 395
   });
 
   it('deve calcular custoFixo = 370 quando uma chapa é selecionada', () => {
@@ -39,11 +48,17 @@ describe('Cálculo de Custos Fixos Dinâmicos', () => {
     const custoChapa2 = 0; // nenhuma
     const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
     const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
-    const lucro = valorFrete - custoTotal;
+    
+    // Cálculo de retenção e frete líquido
+    const valorRetido = valorFrete * 0.1; // 10% de retenção
+    const valorLiquidoFrete = valorFrete - valorRetido;
+    const lucro = valorLiquidoFrete - custoTotal;
 
     expect(custoFixo).toBe(370);
     expect(custoTotal).toBe(545); // 100 + 50 + 25 + 370
-    expect(lucro).toBe(-45); // 500 - 545
+    expect(valorRetido).toBe(50); // 10% de 500
+    expect(valorLiquidoFrete).toBe(450); // 500 - 50
+    expect(lucro).toBe(-95); // 450 - 545
   });
 
   it('deve calcular custoFixo = 520 quando ambas as chapas são selecionadas', () => {
@@ -58,11 +73,17 @@ describe('Cálculo de Custos Fixos Dinâmicos', () => {
     const custoChapa2 = 150; // selecionada
     const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
     const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
-    const lucro = valorFrete - custoTotal;
+    
+    // Cálculo de retenção e frete líquido
+    const valorRetido = valorFrete * 0.1; // 10% de retenção
+    const valorLiquidoFrete = valorFrete - valorRetido;
+    const lucro = valorLiquidoFrete - custoTotal;
 
     expect(custoFixo).toBe(520);
     expect(custoTotal).toBe(695); // 100 + 50 + 25 + 520
-    expect(lucro).toBe(-195); // 500 - 695
+    expect(valorRetido).toBe(50); // 10% de 500
+    expect(valorLiquidoFrete).toBe(450); // 500 - 50
+    expect(lucro).toBe(-245); // 450 - 695
   });
 
   it('deve calcular custoFixo = 370 quando apenas chapa2 é selecionada', () => {
@@ -77,11 +98,17 @@ describe('Cálculo de Custos Fixos Dinâmicos', () => {
     const custoChapa2 = 150; // selecionada
     const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
     const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
-    const lucro = valorFrete - custoTotal;
+    
+    // Cálculo de retenção e frete líquido
+    const valorRetido = valorFrete * 0.1; // 10% de retenção
+    const valorLiquidoFrete = valorFrete - valorRetido;
+    const lucro = valorLiquidoFrete - custoTotal;
 
     expect(custoFixo).toBe(370);
     expect(custoTotal).toBe(545); // 100 + 50 + 25 + 370
-    expect(lucro).toBe(-45); // 500 - 545
+    expect(valorRetido).toBe(50); // 10% de 500
+    expect(valorLiquidoFrete).toBe(450); // 500 - 50
+    expect(lucro).toBe(-95); // 450 - 545
   });
 
   it('deve detectar string vazia como "nenhuma chapa"', () => {
@@ -106,7 +133,7 @@ describe('Cálculo de Custos Fixos Dinâmicos', () => {
     expect(custoChapa2).toBe(150);
   });
 
-  it('deve validar lucro positivo quando frete > custoTotal', () => {
+  it('deve validar lucro positivo quando frete líquido > custoTotal', () => {
     const valorCombustivel = 50;
     const manutencao = 20;
     const custoOutros = 10;
@@ -117,10 +144,16 @@ describe('Cálculo de Custos Fixos Dinâmicos', () => {
     const custoChapa2 = 0;
     const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
     const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
-    const lucro = valorFrete - custoTotal;
+    
+    // Cálculo de retenção e frete líquido
+    const valorRetido = valorFrete * 0.1; // 10% de retenção
+    const valorLiquidoFrete = valorFrete - valorRetido;
+    const lucro = valorLiquidoFrete - custoTotal;
 
     expect(custoTotal).toBe(450); // 50 + 20 + 10 + 370
-    expect(lucro).toBe(550); // 1000 - 450
+    expect(valorRetido).toBe(100); // 10% de 1000
+    expect(valorLiquidoFrete).toBe(900); // 1000 - 100
+    expect(lucro).toBe(450); // 900 - 450
     expect(lucro).toBeGreaterThan(0);
   });
 });

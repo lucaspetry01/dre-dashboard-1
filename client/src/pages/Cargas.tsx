@@ -107,7 +107,12 @@ export default function Cargas() {
   const custoChapa2 = formData.chapa2 && formData.chapa2.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
   const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
   const custoTotalCalculado = valorCombustivelCalculado + Number(formData.manutencao || 0) + Number(formData.custoOutros || 0) + custoFixo;
-  const lucroCalculado = Number(formData.valorFrete || 0) - custoTotalCalculado;
+  
+  // Cálculo de retenção e frete líquido
+  const valorFrete = Number(formData.valorFrete || 0);
+  const valorRetido = valorFrete * 0.1; // 10% de retenção
+  const valorLiquidoFrete = valorFrete - valorRetido;
+  const lucroCalculado = valorLiquidoFrete - custoTotalCalculado;
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
@@ -682,19 +687,27 @@ export default function Cargas() {
                     </div>
                   </div>
 
-                  {/* Resumo de Custos */}
+                  {/* Resumo de Custos e Retenção */}
                   <div className="bg-slate-700/50 rounded-lg p-4 space-y-3 mb-4">
                     <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Valor Frete:</span>
+                      <span className="text-blue-400 font-semibold">R$ {formatBRL(valorFrete)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Valor Retido (10%):</span>
+                      <span className="text-yellow-400 font-semibold">R$ {formatBRL(valorRetido)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Valor Líquido Frete:</span>
+                      <span className="text-green-400 font-semibold">R$ {formatBRL(valorLiquidoFrete)}</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-600">
                       <span className="text-slate-300">Custo Total:</span>
                       <span className="text-white font-semibold">R$ {formatBRL(custoTotalCalculado)}</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-300">Valor Total Frete:</span>
-                      <span className="text-blue-400 font-semibold">R$ {formatBRL(Number(formData.valorFrete || 0))}</span>
-                    </div>
                     <div className="flex justify-between items-center pt-2 border-t border-slate-600">
                       <span className="text-slate-300">Lucro:</span>
-                      {Number(formData.valorFrete || 0) === 0 ? (
+                      {valorFrete === 0 ? (
                         <span className="text-slate-400 text-sm">Preencha o Frete</span>
                       ) : (
                         <span className={`font-semibold ${lucroCalculado >= 0 ? 'text-green-400' : 'text-red-400'}`}>

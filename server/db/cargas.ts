@@ -22,6 +22,10 @@ export async function criarCarga(data: {
   const db = await getDb();
   if (!db) throw new Error('Database connection failed');
 
+  // Calcular valores de retenção e frete líquido
+  const valorRetido = data.valorFrete * 0.1; // 10% de retenção
+  const valorLiquidoFrete = data.valorFrete - valorRetido;
+
   // Calcular custo total e lucro
   // Custos fixos: motorista R$ 220 (fixo) + chapa1 R$ 150 (se selecionada) + chapa2 R$ 150 (se selecionada)
   const custoMotorista = 220; // Sempre R$ 220
@@ -29,7 +33,7 @@ export async function criarCarga(data: {
   const custoChapa2 = data.chapa2 && data.chapa2.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
   const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
   const custoTotal = data.valorCombustivel + data.manutencao + data.custoOutros + custoFixo;
-  const lucro = data.valorFrete - custoTotal;
+  const lucro = valorLiquidoFrete - custoTotal;
 
   const result = await db.insert(cargas).values({
     pasta: data.pasta,
@@ -43,6 +47,8 @@ export async function criarCarga(data: {
     manutencao: data.manutencao.toString() as any,
     custoOutros: data.custoOutros.toString() as any,
     valorFrete: data.valorFrete.toString() as any,
+    valorRetido: valorRetido.toString() as any,
+    valorLiquidoFrete: valorLiquidoFrete.toString() as any,
     numeroProtocolo: data.numeroProtocolo || null,
     custoTotal: custoTotal.toString() as any,
     lucro: lucro.toString() as any,
@@ -93,16 +99,22 @@ export async function atualizarCarga(
   const chapa1 = data.chapa1 !== undefined ? data.chapa1 : c.chapa1;
   const chapa2 = data.chapa2 !== undefined ? data.chapa2 : c.chapa2;
 
-  // Recalcular
+  // Recalcular valores de retenção e frete líquido
+  const valorRetido = valorFrete * 0.1; // 10% de retenção
+  const valorLiquidoFrete = valorFrete - valorRetido;
+
+  // Recalcular custos
   // Custos fixos: motorista R$ 220 (fixo) + chapa1 R$ 150 (se selecionada) + chapa2 R$ 150 (se selecionada)
   const custoMotorista = 220; // Sempre R$ 220
   const custoChapa1 = chapa1 && chapa1.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
   const custoChapa2 = chapa2 && chapa2.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
   const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
   const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
-  const lucro = valorFrete - custoTotal;
+  const lucro = valorLiquidoFrete - custoTotal;
 
   const updateData: any = {
+    valorRetido: valorRetido.toString(),
+    valorLiquidoFrete: valorLiquidoFrete.toString(),
     custoTotal: custoTotal.toString(),
     lucro: lucro.toString(),
   };
