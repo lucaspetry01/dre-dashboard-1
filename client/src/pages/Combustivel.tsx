@@ -208,6 +208,17 @@ export default function Combustivel() {
             </Dialog>
           </div>
 
+          {/* Imagem da placa quando selecionada */}
+          {selectedPasta === 'MFF' && (
+            <div className="mb-4 rounded-lg overflow-hidden bg-slate-700 p-3 flex justify-center">
+              <img
+                src="/manus-storage/pasted_file_hUieZb_image_f916ea3a.png"
+                alt="Placa MFF"
+                className="max-w-xs h-auto rounded-md"
+              />
+            </div>
+          )}
+
           {/* Tabela de abastecimentos */}
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader className="pb-2">
