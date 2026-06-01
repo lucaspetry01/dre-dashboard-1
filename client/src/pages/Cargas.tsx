@@ -492,7 +492,16 @@ export default function Cargas() {
                     <Button
                       size="sm"
                       className="bg-blue-600 hover:bg-blue-700 text-white"
-                      onClick={() => handleCloseDialog()}
+                      onClick={() => {
+                        handleCloseDialog();
+                        // Definir a data de hoje no formato YYYY-MM-DD
+                        const today = new Date();
+                        const year = today.getFullYear();
+                        const month = String(today.getMonth() + 1).padStart(2, '0');
+                        const day = String(today.getDate()).padStart(2, '0');
+                        const todayString = `${year}-${month}-${day}`;
+                        setFormData(prev => ({ ...prev, data: todayString }));
+                      }}
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Nova Carga
