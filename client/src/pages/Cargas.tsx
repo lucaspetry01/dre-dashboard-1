@@ -248,7 +248,7 @@ export default function Cargas() {
   return (
     <div className="min-h-screen bg-slate-900 p-4 lg:p-8">
       {/* Cabeçalho */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -265,8 +265,69 @@ export default function Cargas() {
         </div>
       </div>
 
+      {/* Filtros - Sem títulos, uma linha cada */}
+      <div className="mb-6 space-y-2">
+        {/* Filtros por Período */}
+        <div className="flex gap-1 flex-wrap">
+          {(['semana', 'mes', 'semestre'] as const).map((period) => (
+            <Button
+              key={period}
+              onClick={() => setFilterPeriod(filterPeriod === period ? null : period)}
+              variant={filterPeriod === period ? 'default' : 'outline'}
+              size="sm"
+              className={`text-xs py-1 px-2 h-auto ${
+                filterPeriod === period
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+              }`}
+            >
+              {period === 'semana' ? 'Semana' : period === 'mes' ? 'Mês' : 'Semestre'}
+            </Button>
+          ))}
+          {filterPeriod && (
+            <Button
+              onClick={() => setFilterPeriod(null)}
+              variant="ghost"
+              size="sm"
+              className="text-xs py-1 px-2 h-auto text-slate-400 hover:text-slate-200"
+            >
+              ✕
+            </Button>
+          )}
+        </div>
+
+        {/* Filtros por Rota */}
+        <div className="flex gap-1 flex-wrap">
+          {ROTAS.map((rota) => (
+            <Button
+              key={rota}
+              onClick={() => setFilterRota(filterRota === rota ? null : rota)}
+              variant={filterRota === rota ? 'default' : 'outline'}
+              size="sm"
+              className={`text-xs py-1 px-2 h-auto ${
+                filterRota === rota
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+              }`}
+            >
+              {rota}
+            </Button>
+          ))}
+          {filterRota && (
+            <Button
+              onClick={() => setFilterRota(null)}
+              variant="ghost"
+              size="sm"
+              className="text-xs py-1 px-2 h-auto text-slate-400 hover:text-slate-200"
+            >
+              ✕
+            </Button>
+          )}
+        </div>
+      </div>
+
       {/* Layout: Pastas 30% esquerda, Imagem 70% direita */}
-      <div className="grid grid-cols-10 gap-6 mb-8 h-80">
+      <div className="grid grid-cols-10 gap-6 mb-6 h-80">
         {/* Coluna Esquerda: Pastas (30% = 3 colunas de 10) */}
         <div className="col-span-3 flex flex-col gap-3">
           {PASTAS.map((pasta) => (
@@ -299,74 +360,7 @@ export default function Cargas() {
         </div>
       </div>
 
-      {/* Filtros */}
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6">
-        <div className="space-y-4">
-          {/* Filtros por Período */}
-          <div>
-            <p className="text-sm font-semibold text-slate-300 mb-2">Período</p>
-            <div className="flex gap-2 flex-wrap">
-              {(['semana', 'mes', 'semestre'] as const).map((period) => (
-                <Button
-                  key={period}
-                  onClick={() => setFilterPeriod(filterPeriod === period ? null : period)}
-                  variant={filterPeriod === period ? 'default' : 'outline'}
-                  size="sm"
-                  className={`capitalize ${
-                    filterPeriod === period
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
-                  }`}
-                >
-                  {period === 'semana' ? 'Esta Semana' : period === 'mes' ? 'Este Mês' : 'Este Semestre'}
-                </Button>
-              ))}
-              {filterPeriod && (
-                <Button
-                  onClick={() => setFilterPeriod(null)}
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-400 hover:text-slate-200"
-                >
-                  ✕ Limpar
-                </Button>
-              )}
-            </div>
-          </div>
 
-          {/* Filtros por Rota */}
-          <div>
-            <p className="text-sm font-semibold text-slate-300 mb-2">Rota</p>
-            <div className="flex gap-2 flex-wrap">
-              {ROTAS.map((rota) => (
-                <Button
-                  key={rota}
-                  onClick={() => setFilterRota(filterRota === rota ? null : rota)}
-                  variant={filterRota === rota ? 'default' : 'outline'}
-                  size="sm"
-                  className={`${
-                    filterRota === rota
-                      ? 'bg-green-600 hover:bg-green-700 text-white'
-                      : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
-                  }`}
-                >
-                  {rota}
-                </Button>
-              ))}
-              {filterRota && (
-                <Button
-                  onClick={() => setFilterRota(null)}
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-400 hover:text-slate-200"
-                >
-                  ✕ Limpar
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Formulário e Tabela de Cargas - Ocupando todo o espaço */}
       <div className="grid grid-cols-1 gap-6 flex-1 min-h-[500px]">
