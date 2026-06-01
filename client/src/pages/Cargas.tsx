@@ -543,9 +543,7 @@ export default function Cargas() {
                 <table className="w-full text-sm text-slate-300">
                   <thead className="border-b border-slate-700">
                     <tr>
-                      <th className="text-left py-1 px-1 w-6">
-                        <input type="checkbox" className="w-4 h-4" />
-                      </th>
+                      <th className="text-left py-1 px-1 w-6"></th>
                       <th className="text-left py-1 px-1 text-xs">Data</th>
                       <th className="text-left py-1 px-1 text-xs">Rota</th>
                       <th className="text-left py-1 px-1 text-xs">Motorista</th>
