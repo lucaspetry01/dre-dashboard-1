@@ -208,72 +208,77 @@ export default function Combustivel() {
             </Dialog>
           </div>
 
-          {/* Imagem da placa quando selecionada */}
-          {selectedPasta === 'MFF' && (
-            <div className="mb-4 rounded-lg overflow-hidden bg-slate-700 p-3 flex justify-center">
-              <img
-                src="/manus-storage/pasted_file_hUieZb_image_f916ea3a.png"
-                alt="Placa MFF"
-                className="max-w-xs h-auto rounded-md"
-              />
-            </div>
-          )}
+          {/* Layout: Imagem 30% + Tabela 70% */}
+          <div className="grid grid-cols-3 gap-3">
+            {/* Coluna da imagem (30%) */}
+            {selectedPasta === 'MFF' && (
+              <div className="col-span-1 rounded-lg overflow-hidden bg-slate-700 p-3 flex items-center justify-center">
+                <img
+                  src="/manus-storage/placa_mff_no_bg_eb502184.png"
+                  alt="Placa MFF"
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+            )}
 
-          {/* Tabela de abastecimentos */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-white">Abastecimentos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="text-center text-slate-400 text-xs">Carregando...</div>
-              ) : abastecimentos && abastecimentos.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-slate-300">
-                    <thead className="bg-slate-700 text-slate-200">
-                      <tr>
-                        <th className="px-2 py-1 text-left">Data</th>
-                        <th className="px-2 py-1 text-left">Placa</th>
-                        <th className="px-2 py-1 text-left">Rota</th>
-                        <th className="px-2 py-1 text-left">Motorista</th>
-                        <th className="px-2 py-1 text-left">Protocolo</th>
-                        <th className="px-2 py-1 text-center">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {abastecimentos.map((abastecimento) => (
-                        <tr key={abastecimento.id} className="border-t border-slate-700 hover:bg-slate-700">
-                          <td className="px-2 py-1">{formatDate(abastecimento.data)}</td>
-                          <td className="px-2 py-1 font-semibold">{abastecimento.placa}</td>
-                          <td className="px-2 py-1">{abastecimento.rota || '-'}</td>
-                          <td className="px-2 py-1">{abastecimento.motorista || '-'}</td>
-                          <td className="px-2 py-1">{abastecimento.protocolo || '-'}</td>
-                          <td className="px-2 py-1 text-center flex gap-1 justify-center">
-                            <button
-                              onClick={() => handleEdit(abastecimento)}
-                              className="text-blue-400 hover:text-blue-300 transition-colors"
-                              title="Editar"
-                            >
-                              <Edit2 className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(abastecimento.id)}
-                              className="text-red-400 hover:text-red-300 transition-colors"
-                              title="Deletar"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="text-center text-slate-400 py-4 text-xs">Nenhum abastecimento registrado nesta pasta</div>
-              )}
-            </CardContent>
-          </Card>
+            {/* Coluna da tabela (70% ou 100% se sem imagem) */}
+            <div className={selectedPasta === 'MFF' ? 'col-span-2' : 'col-span-3'}>
+              <Card className="bg-slate-800 border-slate-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm text-white">Abastecimentos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {isLoading ? (
+                    <div className="text-center text-slate-400 text-xs">Carregando...</div>
+                  ) : abastecimentos && abastecimentos.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs text-slate-300">
+                        <thead className="bg-slate-700 text-slate-200">
+                          <tr>
+                            <th className="px-2 py-1 text-left">Data</th>
+                            <th className="px-2 py-1 text-left">Placa</th>
+                            <th className="px-2 py-1 text-left">Rota</th>
+                            <th className="px-2 py-1 text-left">Motorista</th>
+                            <th className="px-2 py-1 text-left">Protocolo</th>
+                            <th className="px-2 py-1 text-center">Ações</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {abastecimentos.map((abastecimento) => (
+                            <tr key={abastecimento.id} className="border-t border-slate-700 hover:bg-slate-700">
+                              <td className="px-2 py-1">{formatDate(abastecimento.data)}</td>
+                              <td className="px-2 py-1 font-semibold">{abastecimento.placa}</td>
+                              <td className="px-2 py-1">{abastecimento.rota || '-'}</td>
+                              <td className="px-2 py-1">{abastecimento.motorista || '-'}</td>
+                              <td className="px-2 py-1">{abastecimento.protocolo || '-'}</td>
+                              <td className="px-2 py-1 text-center flex gap-1 justify-center">
+                                <button
+                                  onClick={() => handleEdit(abastecimento)}
+                                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                                  title="Editar"
+                                >
+                                  <Edit2 className="w-3 h-3" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(abastecimento.id)}
+                                  className="text-red-400 hover:text-red-300 transition-colors"
+                                  title="Deletar"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center text-slate-400 py-4 text-xs">Nenhum abastecimento registrado nesta pasta</div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>
