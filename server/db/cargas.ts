@@ -23,8 +23,11 @@ export async function criarCarga(data: {
   if (!db) throw new Error('Database connection failed');
 
   // Calcular custo total e lucro
-  // Custos fixos: chapa1 R$ 150 + chapa2 R$ 150 + motorista R$ 220 = R$ 520
-  const custoFixo = 150 + 150 + 220; // chapa1 + chapa2 + motorista
+  // Custos fixos: motorista R$ 220 (fixo) + chapa1 R$ 150 (se selecionada) + chapa2 R$ 150 (se selecionada)
+  const custoMotorista = 220; // Sempre R$ 220
+  const custoChapa1 = data.chapa1 && data.chapa1.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
+  const custoChapa2 = data.chapa2 && data.chapa2.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
+  const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
   const custoTotal = data.valorCombustivel + data.manutencao + data.custoOutros + custoFixo;
   const lucro = data.valorFrete - custoTotal;
 
@@ -87,10 +90,15 @@ export async function atualizarCarga(
   const manutencao = data.manutencao ?? Number(c.manutencao);
   const custoOutros = data.custoOutros ?? Number(c.custoOutros);
   const valorFrete = data.valorFrete ?? Number(c.valorFrete);
+  const chapa1 = data.chapa1 !== undefined ? data.chapa1 : c.chapa1;
+  const chapa2 = data.chapa2 !== undefined ? data.chapa2 : c.chapa2;
 
   // Recalcular
-  // Custos fixos: chapa1 R$ 150 + chapa2 R$ 150 + motorista R$ 220 = R$ 520
-  const custoFixo = 150 + 150 + 220; // chapa1 + chapa2 + motorista
+  // Custos fixos: motorista R$ 220 (fixo) + chapa1 R$ 150 (se selecionada) + chapa2 R$ 150 (se selecionada)
+  const custoMotorista = 220; // Sempre R$ 220
+  const custoChapa1 = chapa1 && chapa1.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
+  const custoChapa2 = chapa2 && chapa2.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
+  const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
   const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
   const lucro = valorFrete - custoTotal;
 

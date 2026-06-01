@@ -49,6 +49,14 @@ export default function Cargas() {
   const valorCombustivelCalculado =
     (parseFloat(formData.valorLitroDiesel) || 0) *
     (parseFloat(formData.litrosCombustivel) || 0);
+
+  // Cálculo dinâmico de custos fixos
+  const custoMotorista = 220; // Sempre R$ 220
+  const custoChapa1 = formData.chapa1 && formData.chapa1.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
+  const custoChapa2 = formData.chapa2 && formData.chapa2.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
+  const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
+  const custoTotalCalculado = valorCombustivelCalculado + Number(formData.manutencao || 0) + Number(formData.custoOutros || 0) + custoFixo;
+  const lucroCalculado = Number(formData.valorFrete || 0) - custoTotalCalculado;
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
@@ -404,26 +412,26 @@ export default function Cargas() {
                   {/* Chapas - Selects */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 1</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 1 {formData.chapa1 && formData.chapa1.trim() !== '' && <span className="text-green-400 text-xs">(+R$ 150)</span>}</label>
                       <select
                         value={formData.chapa1}
                         onChange={(e) => setFormData({ ...formData, chapa1: e.target.value })}
                         className="w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2 h-10"
                       >
-                        <option value="">Selecione Chapa 1</option>
+                        <option value="">Nenhum</option>
                         {CHAPAS.map((c) => (
                           <option key={c} value={c}>{c}</option>
                         ))}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 2</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 2 {formData.chapa2 && formData.chapa2.trim() !== '' && <span className="text-green-400 text-xs">(+R$ 150)</span>}</label>
                       <select
                         value={formData.chapa2}
                         onChange={(e) => setFormData({ ...formData, chapa2: e.target.value })}
                         className="w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2 h-10"
                       >
-                        <option value="">Selecione Chapa 2</option>
+                        <option value="">Nenhum</option>
                         {CHAPAS.map((c) => (
                           <option key={c} value={c}>{c}</option>
                         ))}
@@ -487,12 +495,7 @@ export default function Cargas() {
                   <div className="bg-slate-700/50 rounded-lg p-4 space-y-3 mb-4">
                     <div className="flex justify-between items-center">
                       <span className="text-slate-300">Custo Total:</span>
-                      <span className="text-white font-semibold">R$ {(
-                        Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
-                        Number(formData.manutencao || 0) + 
-                        Number(formData.custoOutros || 0) + 
-                        520
-                      ).toFixed(2)}</span>
+                      <span className="text-white font-semibold">R$ {custoTotalCalculado.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-300">Valor Total Frete:</span>
@@ -503,22 +506,8 @@ export default function Cargas() {
                       {Number(formData.valorFrete || 0) === 0 ? (
                         <span className="text-slate-400 text-sm">Preencha o Frete</span>
                       ) : (
-                        <span className={`font-semibold ${
-                          Number(formData.valorFrete || 0) - (
-                            Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
-                            Number(formData.manutencao || 0) + 
-                            Number(formData.custoOutros || 0) + 
-                            520
-                          ) >= 0 ? 'text-green-400' : 'text-red-400'
-                        }`}>
-                          R$ {(
-                            Number(formData.valorFrete || 0) - (
-                              Number(formData.valorLitroDiesel || 0) * Number(formData.litrosCombustivel || 0) + 
-                              Number(formData.manutencao || 0) + 
-                              Number(formData.custoOutros || 0) + 
-                              520
-                            )
-                          ).toFixed(2)}
+                        <span className={`font-semibold ${lucroCalculado >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          R$ {lucroCalculado.toFixed(2)}
                         </span>
                       )}
                     </div>
