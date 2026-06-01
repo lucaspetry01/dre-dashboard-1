@@ -149,8 +149,8 @@ export default function Cargas() {
       </div>
 
       {/* Formulário e Tabela de Cargas - Ocupando todo o espaço */}
-      <div className="grid grid-cols-1 gap-6">
-        <Card className="bg-slate-800 border-slate-700">
+      <div className="grid grid-cols-1 gap-6 flex-1 min-h-[500px]">
+        <Card className="bg-slate-800 border-slate-700 flex flex-col flex-1">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-white">Cargas - {selectedPasta}</CardTitle>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
