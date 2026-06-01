@@ -114,10 +114,10 @@ export default function Cargas() {
         </div>
       </div>
 
-      {/* Layout: Pastas à esquerda, Imagem à direita */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-        {/* Coluna Esquerda: Pastas */}
-        <div className="lg:col-span-1 flex flex-col gap-2">
+      {/* Layout: Pastas 30% esquerda, Imagem 70% direita */}
+      <div className="flex flex-col lg:flex-row gap-6 mb-8">
+        {/* Coluna Esquerda: Pastas (30%) */}
+        <div className="w-full lg:w-[30%] flex flex-col gap-2">
           {PASTAS.map((pasta) => (
             <Button
               key={pasta}
@@ -134,8 +134,8 @@ export default function Cargas() {
           ))}
         </div>
 
-        {/* Coluna Direita: Imagem */}
-        <div className="lg:col-span-3 flex items-center justify-center">
+        {/* Coluna Direita: Imagem (70%) */}
+        <div className="w-full lg:w-[70%] flex items-center justify-center">
           <Card className="w-full bg-slate-800 border-slate-700">
             <CardContent className="p-6">
               <img
@@ -148,7 +148,7 @@ export default function Cargas() {
         </div>
       </div>
 
-      {/* Formulário e Tabela de Cargas */}
+      {/* Formulário e Tabela de Cargas - Ocupando todo o espaço */}
       <div className="grid grid-cols-1 gap-6">
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader className="flex flex-row items-center justify-between">
