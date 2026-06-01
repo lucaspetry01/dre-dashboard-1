@@ -399,7 +399,7 @@ export default function Cargas() {
               <img
                 src="/manus-storage/pasted_file_9QIUXp_image_0d61aab3.png"
                 alt="TR.PETRY Logística e Transporte"
-                className="max-w-sm h-auto"
+                className="max-w-xs h-auto"
               />
             </div>
           )}
