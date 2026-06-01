@@ -248,6 +248,23 @@ export default function Cargas() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-white">Cargas - {selectedPasta}</CardTitle>
             <div className="flex gap-2">
+              {selectedForDelete.size === 1 && (
+                <Button
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => {
+                    const id = Array.from(selectedForDelete)[0];
+                    const carga = cargas?.find((c: any) => c.id === id);
+                    if (carga) {
+                      handleEditCarga(carga);
+                      setSelectedForDelete(new Set());
+                    }
+                  }}
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Editar
+                </Button>
+              )}
               {selectedForDelete.size > 0 ? (
                 <Button
                   size="sm"
