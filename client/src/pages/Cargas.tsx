@@ -249,41 +249,43 @@ export default function Cargas() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-white">Cargas - {selectedPasta}</CardTitle>
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                className="bg-purple-600 hover:bg-purple-700 text-white w-28"
-                onClick={() => setIsViewDialogOpen(true)}
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Visualizar
-              </Button>
-              {selectedForDelete.size === 1 && (
-                <Button
-                  size="sm"
-                  className="bg-blue-600 hover:bg-blue-700 text-white w-28"
-                  onClick={() => {
-                    const id = Array.from(selectedForDelete)[0];
-                    const carga = cargas?.find((c: any) => c.id === id);
-                    if (carga) {
-                      handleEditCarga(carga);
-                      setSelectedForDelete(new Set());
-                    }
-                  }}
-                >
-                  <Pencil className="w-4 h-4 mr-2" />
-                  Editar
-                </Button>
+              {selectedForDelete.size > 0 && (
+                <>
+                  <Button
+                    size="icon"
+                    className="bg-purple-600 hover:bg-purple-700 text-white h-9 w-9"
+                    onClick={() => setIsViewDialogOpen(true)}
+                    title="Visualizar resumo"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                  {selectedForDelete.size === 1 && (
+                    <Button
+                      size="icon"
+                      className="bg-blue-600 hover:bg-blue-700 text-white h-9 w-9"
+                      onClick={() => {
+                        const id = Array.from(selectedForDelete)[0];
+                        const carga = cargas?.find((c: any) => c.id === id);
+                        if (carga) {
+                          handleEditCarga(carga);
+                          setSelectedForDelete(new Set());
+                        }
+                      }}
+                      title="Editar carga"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                  )}
+                  <Button
+                    size="icon"
+                    className="bg-red-600 hover:bg-red-700 text-white h-9 w-9"
+                    onClick={handleDeleteSelected}
+                    title="Excluir cargas"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </>
               )}
-              {selectedForDelete.size > 0 ? (
-                <Button
-                  size="sm"
-                  className="bg-red-600 hover:bg-red-700 text-white w-28"
-                  onClick={handleDeleteSelected}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Excluir
-                </Button>
-              ) : null}
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 {selectedForDelete.size === 0 && (
                   <DialogTrigger asChild>
