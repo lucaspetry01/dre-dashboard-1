@@ -798,7 +798,18 @@ export default function Cargas() {
                   </thead>
                   <tbody>
                     {filteredCargas?.map((carga: any) => {
-                      const dateParts = new Date(carga.data).toLocaleDateString('pt-BR').split('/');
+                      // Garantir que a data seja parseada corretamente
+                      let dataObj: Date;
+                      if (carga.data instanceof Date) {
+                        dataObj = carga.data;
+                      } else if (typeof carga.data === 'string') {
+                        // Se for string YYYY-MM-DD, criar a data sem timezone issues
+                        const [year, month, day] = carga.data.split('-').map(Number);
+                        dataObj = new Date(year, month - 1, day);
+                      } else {
+                        dataObj = new Date();
+                      }
+                      const dateParts = dataObj.toLocaleDateString('pt-BR').split('/');
                       const dataEncurtada = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]?.slice(-2)}`;
                       return (
                       <tr key={carga.id} className="border-b border-slate-700 hover:bg-slate-700/50">
