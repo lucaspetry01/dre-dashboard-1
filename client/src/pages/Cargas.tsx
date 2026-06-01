@@ -22,7 +22,7 @@ const PLACA_IMAGES: Record<Pasta, string> = {
 
 export default function Cargas() {
   const [, setLocation] = useLocation();
-  const [selectedPasta, setSelectedPasta] = useState<Pasta>('IES');
+  const [selectedPasta, setSelectedPasta] = useState<Pasta | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [filterPeriod, setFilterPeriod] = useState<'semana' | 'mes' | 'semestre' | null>(null);
@@ -107,8 +107,11 @@ export default function Cargas() {
 
   // Queries
   const { data: cargas, isLoading } = trpc.cargas.listarPorPasta.useQuery(
-    selectedPasta
+    selectedPasta || 'IES'
   );
+
+  // Se nenhuma pasta selecionada, mostrar array vazio para exibir totais gerais
+  const cargasExibidas = selectedPasta ? cargas : []
 
   const filteredCargas = filterCargasByRota(filterCargasByPeriod(cargas));
 
@@ -121,7 +124,7 @@ export default function Cargas() {
   // Mutations
   const createMutation = trpc.cargas.criar.useMutation({
     onSuccess: () => {
-      utils.cargas.listarPorPasta.invalidate(selectedPasta);
+      if (selectedPasta) utils.cargas.listarPorPasta.invalidate(selectedPasta);
       handleCloseDialog();
       console.log('Carga registrada com sucesso!');
     },
@@ -132,7 +135,7 @@ export default function Cargas() {
 
   const deleteMutation = trpc.cargas.deletar.useMutation({
     onSuccess: () => {
-      utils.cargas.listarPorPasta.invalidate(selectedPasta);
+      if (selectedPasta) utils.cargas.listarPorPasta.invalidate(selectedPasta);
       setSelectedForDelete(new Set());
       console.log('Carga deletada com sucesso!');
     },
@@ -143,7 +146,7 @@ export default function Cargas() {
 
   const updateMutation = trpc.cargas.atualizar.useMutation({
     onSuccess: () => {
-      utils.cargas.listarPorPasta.invalidate(selectedPasta);
+      if (selectedPasta) utils.cargas.listarPorPasta.invalidate(selectedPasta);
       handleCloseDialog();
       console.log('Carga atualizada com sucesso!');
     },
@@ -197,7 +200,7 @@ export default function Cargas() {
         numeroProtocolo: formData.numeroProtocolo,
         valorFrete: parseFloat(formData.valorFrete) || 0,
       });
-    } else {
+    } else if (selectedPasta) {
       createMutation.mutate({
         pasta: selectedPasta,
         data: formData.data,
@@ -338,7 +341,7 @@ export default function Cargas() {
           {PASTAS.map((pasta) => (
             <Button
               key={pasta}
-              onClick={() => setSelectedPasta(pasta)}
+              onClick={() => setSelectedPasta(selectedPasta === pasta ? null : pasta)}
               variant={selectedPasta === pasta ? 'default' : 'outline'}
               className={`flex-1 text-base font-semibold transition-all ${
                 selectedPasta === pasta
@@ -353,15 +356,21 @@ export default function Cargas() {
 
         {/* Coluna Direita: Imagem (70% = 7 colunas de 10) */}
         <div className="col-span-7 flex items-center justify-center">
-          <Card className="w-full bg-slate-800 border-slate-700">
-            <CardContent className="p-6">
-              <img
-                src={PLACA_IMAGES[selectedPasta]}
-                alt={`Placa ${selectedPasta}`}
-                className="w-full h-64 object-cover rounded-lg"
-              />
-            </CardContent>
-          </Card>
+          {selectedPasta ? (
+            <Card className="w-full bg-slate-800 border-slate-700">
+              <CardContent className="p-6">
+                <img
+                  src={PLACA_IMAGES[selectedPasta]}
+                  alt={`Placa ${selectedPasta}`}
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="text-center text-slate-400">
+              <p className="text-lg">Selecione uma placa para visualizar</p>
+            </div>
+          )}
         </div>
       </div>
 
