@@ -109,8 +109,10 @@ export default function Cargas() {
     const valorLitro = litros > 0 ? (valorComb / litros).toFixed(2) : '';
 
     setEditingId(carga.id);
+    // Converter data para string se for Date object
+    const dataStr = typeof carga.data === 'string' ? carga.data : (carga.data instanceof Date ? carga.data.toISOString().split('T')[0] : '');
     setFormData({
-      data: carga.data || '',
+      data: dataStr,
       rota: rotaEhPadrao ? carga.rota : 'OUTROS',
       rotaCustom: rotaEhPadrao ? '' : (carga.rota || ''),
       motorista: carga.motorista || '',
@@ -332,7 +334,7 @@ export default function Cargas() {
                   {/* Mostrar apenas data ao editar em mobile */}
                   {editingId && (
                     <div className="md:hidden bg-blue-900/30 border border-blue-700 rounded-lg p-3 text-center">
-                      <p className="text-sm text-slate-300">Editando registro de <span className="font-semibold text-white">{formData.data}</span></p>
+                      <p className="text-sm text-slate-300">Editando registro de <span className="font-semibold text-white">{String(formData.data)}</span></p>
                       <p className="text-xs text-slate-400 mt-1">Edite os valores abaixo</p>
                     </div>
                   )}
