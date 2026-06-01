@@ -23,7 +23,9 @@ export async function criarCarga(data: {
   if (!db) throw new Error('Database connection failed');
 
   // Calcular custo total e lucro
-  const custoTotal = data.valorCombustivel + data.manutencao + data.custoOutros;
+  // Custos fixos: chapa R$ 150 + motorista R$ 220 = R$ 370
+  const custoFixo = 150 + 220; // chapa + motorista
+  const custoTotal = data.valorCombustivel + data.manutencao + data.custoOutros + custoFixo;
   const lucro = data.valorFrete - custoTotal;
 
   const result = await db.insert(cargas).values({
@@ -87,7 +89,9 @@ export async function atualizarCarga(
   const valorFrete = data.valorFrete ?? Number(c.valorFrete);
 
   // Recalcular
-  const custoTotal = valorCombustivel + manutencao + custoOutros;
+  // Custos fixos: chapa R$ 150 + motorista R$ 220 = R$ 370
+  const custoFixo = 150 + 220; // chapa + motorista
+  const custoTotal = valorCombustivel + manutencao + custoOutros + custoFixo;
   const lucro = valorFrete - custoTotal;
 
   const updateData: any = {
