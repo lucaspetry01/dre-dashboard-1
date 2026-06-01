@@ -493,22 +493,24 @@ export default function Cargas() {
                 <table className="w-full text-sm text-slate-300">
                   <thead className="border-b border-slate-700">
                     <tr>
-                      <th className="text-left py-2 px-2 w-8">
+                      <th className="text-left py-1 px-1 w-6">
                         <input type="checkbox" className="w-4 h-4" />
                       </th>
-                      <th className="text-left py-2 px-2">Data</th>
-                      <th className="text-left py-2 px-2">Rota</th>
-                      <th className="text-left py-2 px-2">Motorista</th>
-                      <th className="text-right py-2 px-2">Frete (R$)</th>
-                      <th className="text-right py-2 px-2">Custo Total (R$)</th>
-                      <th className="text-right py-2 px-2">Lucro (R$)</th>
-                      <th className="text-center py-2 px-2 w-20">Ações</th>
+                      <th className="text-left py-1 px-1 text-xs">Data</th>
+                      <th className="text-left py-1 px-1 text-xs">Rota</th>
+                      <th className="text-left py-1 px-1 text-xs">Motorista</th>
+                      <th className="text-right py-1 px-1 text-xs">Frete</th>
+                      <th className="text-right py-1 px-1 text-xs">Custo</th>
+                      <th className="text-right py-1 px-1 text-xs">Lucro</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {cargas?.map((carga: any) => (
+                    {cargas?.map((carga: any) => {
+                      const dateParts = new Date(carga.data).toLocaleDateString('pt-BR').split('/');
+                      const dataEncurtada = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]?.slice(-2)}`;
+                      return (
                       <tr key={carga.id} className="border-b border-slate-700 hover:bg-slate-700/50">
-                        <td className="py-2 px-2">
+                        <td className="py-1 px-1">
                           <input
                             type="checkbox"
                             className="w-4 h-4"
@@ -516,28 +518,17 @@ export default function Cargas() {
                             onChange={() => handleToggleCheckbox(carga.id)}
                           />
                         </td>
-                        <td className="py-2 px-2">{new Date(carga.data).toLocaleDateString('pt-BR')}</td>
-                        <td className="py-2 px-2">{carga.rota}</td>
-                        <td className="py-2 px-2">{carga.motorista}</td>
-                        <td className="text-right py-2 px-2">R$ {Number(carga.valorFrete || 0).toFixed(2)}</td>
-                        <td className="text-right py-2 px-2">R$ {Number(carga.custoTotal || 0).toFixed(2)}</td>
-                        <td className={`text-right py-2 px-2 font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        <td className="py-1 px-1 text-xs">{dataEncurtada}</td>
+                        <td className="py-1 px-1 text-xs">{carga.rota}</td>
+                        <td className="py-1 px-1 text-xs">{carga.motorista}</td>
+                        <td className="text-right py-1 px-1 text-xs">R$ {Number(carga.valorFrete || 0).toFixed(2)}</td>
+                        <td className="text-right py-1 px-1 text-xs">R$ {Number(carga.custoTotal || 0).toFixed(2)}</td>
+                        <td className={`text-right py-1 px-1 text-xs font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                           R$ {Number(carga.lucro || 0).toFixed(2)}
                         </td>
-                        <td className="text-center py-2 px-2">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEditCarga(carga)}
-                            className="text-blue-400 hover:text-blue-300 hover:bg-slate-700"
-                            title="Editar carga"
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </Button>
-                        </td>
                       </tr>
-                    ))}
+                    );
+                    })}
                   </tbody>
                 </table>
               </div>
