@@ -347,10 +347,10 @@ export default function Cargas() {
                         <td className="py-2 px-2">{new Date(carga.data).toLocaleDateString('pt-BR')}</td>
                         <td className="py-2 px-2">{carga.rota}</td>
                         <td className="py-2 px-2">{carga.motorista}</td>
-                        <td className="text-right py-2 px-2">R$ {carga.valorFrete?.toFixed(2)}</td>
-                        <td className="text-right py-2 px-2">R$ {carga.custoTotal?.toFixed(2)}</td>
-                        <td className={`text-right py-2 px-2 font-semibold ${(carga.lucro ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          R$ {carga.lucro?.toFixed(2)}
+                        <td className="text-right py-2 px-2">R$ {Number(carga.valorFrete || 0).toFixed(2)}</td>
+                        <td className="text-right py-2 px-2">R$ {Number(carga.custoTotal || 0).toFixed(2)}</td>
+                        <td className={`text-right py-2 px-2 font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          R$ {Number(carga.lucro || 0).toFixed(2)}
                         </td>
                       </tr>
                     ))}

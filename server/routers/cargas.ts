@@ -13,7 +13,7 @@ export const cargasRouter = router({
   /**
    * Cria uma nova carga
    */
-  criar: protectedProcedure
+  criar: publicProcedure
     .input(
       z.object({
         pasta: z.enum(['IES', 'IJD', 'DAJ', 'MFF', 'IGU']),
@@ -37,7 +37,7 @@ export const cargasRouter = router({
   /**
    * Atualiza uma carga existente
    */
-  atualizar: protectedProcedure
+  atualizar: publicProcedure
     .input(
       z.object({
         id: z.number(),
@@ -79,7 +79,7 @@ export const cargasRouter = router({
   /**
    * Deleta uma carga
    */
-  deletar: protectedProcedure
+  deletar: publicProcedure
     .input(z.number())
     .mutation(async ({ input }) => {
       return deletarCarga(input);
