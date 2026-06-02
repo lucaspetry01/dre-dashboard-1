@@ -246,15 +246,27 @@ export default function Dashboard() {
       result.qtd_receitas = resumo.qtd_receitas || 0;
       result.qtd_despesas = resumo.qtd_despesas || 0;
     } else {
-      // Se há filtro, calcular a partir do diário filtrado
-      filteredDiario.forEach(d => {
-        if (d.valor > 0) {
-          result.receitas += d.valor;
-          result.qtd_receitas += 1;
-        } else if (d.valor < 0) {
-          result.despesas += Math.abs(d.valor);
-          result.qtd_despesas += 1;
-        }
+      // Se há filtro, calcular a partir das transações reais em detalhes
+      const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
+      const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
+
+      Object.values(detalhes).forEach((categoryData: any) => {
+        const items = categoryData?.registros || [];
+        items.forEach((item: any) => {
+          const itemDate = parseRegistroDate(item.data);
+          if (!itemDate) return;
+          if (startObj && itemDate < startObj) return;
+          if (endObj && itemDate > endObj) return;
+
+          const valor = Number(item.valor) || 0;
+          if (valor > 0) {
+            result.receitas += valor;
+            result.qtd_receitas += 1;
+          } else if (valor < 0) {
+            result.despesas += Math.abs(valor);
+            result.qtd_despesas += 1;
+          }
+        });
       });
     }
 
@@ -262,7 +274,7 @@ export default function Dashboard() {
     result.resultado = result.receitas - result.despesas;
 
     return result;
-  }, [filteredDiario, resumo, startDate, endDate]);
+  }, [detalhes, resumo, startDate, endDate]);
 
   // Helper: converte data "dd/MM/yyyy" ou "dd/MM" para Date
   const parseRegistroDate = (dataStr: string): Date | null => {
