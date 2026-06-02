@@ -617,7 +617,7 @@ export default function Dashboard() {
                         <span className="text-xs text-slate-400 flex-shrink-0">({items.length})</span>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xs sm:text-sm font-bold text-slate-100 whitespace-nowrap">{formatMoney(categoria.valor_abs)}</span>
+                        <span className="text-xs sm:text-sm font-bold text-slate-100 whitespace-nowrap">{formatMoney(Math.abs(items.reduce((sum: number, item: any) => sum + Number(item.valor), 0)))}</span>
                         {isExpanded ? (
                           <ChevronUp className="w-4 h-4 text-slate-400" />
                         ) : (
