@@ -226,6 +226,21 @@ export default function Dashboard() {
     });
   }, [diario, startDate, endDate]);
 
+  // Helper: converte data "dd/MM/yyyy" ou "dd/MM" para Date
+  const parseRegistroDate = (dataStr: string): Date | null => {
+    if (!dataStr) return null;
+    const parts = dataStr.split('/');
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00`);
+    }
+    if (parts.length === 2) {
+      const [day, month] = parts;
+      return new Date(`2026-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00`);
+    }
+    return null;
+  };
+
   // Calcular resumo filtrado
   const resumoFiltrado = useMemo(() => {
     const result = {
@@ -275,21 +290,6 @@ export default function Dashboard() {
 
     return result;
   }, [detalhes, resumo, startDate, endDate]);
-
-  // Helper: converte data "dd/MM/yyyy" ou "dd/MM" para Date
-  const parseRegistroDate = (dataStr: string): Date | null => {
-    if (!dataStr) return null;
-    const parts = dataStr.split('/');
-    if (parts.length === 3) {
-      const [day, month, year] = parts;
-      return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00`);
-    }
-    if (parts.length === 2) {
-      const [day, month] = parts;
-      return new Date(`2026-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00`);
-    }
-    return null;
-  };
 
   // Categorias com dados (respeitando filtros de data)
   const categoriasComDados = useMemo(() => {
