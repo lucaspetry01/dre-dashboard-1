@@ -138,10 +138,10 @@ export default function Dashboard() {
     
     setActiveQuickFilter(filterId);
     
+    const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
     
     // Se é filtro de ano (daysFromNow), calcular a partir do ano atual
     if ((filter as any).daysFromNow) {
-      const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
       const start = new Date(refDate);
       start.setFullYear(start.getFullYear()); // Ano atual
       start.setMonth(0); // Janeiro
@@ -152,7 +152,16 @@ export default function Dashboard() {
       return;
     }
 
-    const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
+    // Filtro especial para "Mês" - usar primeiro dia do mês atual
+    if (filterId === 'mes') {
+      const start = new Date(refDate);
+      start.setDate(1); // Primeiro dia do mês
+      
+      setStartDate(start.toISOString().split('T')[0]);
+      setEndDate(REFERENCE_DATE);
+      return;
+    }
+
     const start = new Date(refDate);
     start.setDate(start.getDate() - (filter as any).days);
     
