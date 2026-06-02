@@ -499,6 +499,11 @@ export default function Dashboard() {
             </div>
             <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.lucro)}</div>
             <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.lucro >= 0 ? 'POSITIVO' : 'NEGATIVO'}</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-white/20">
+                {startDate && endDate ? `${startDate.split('-').reverse().join('/')} a ${endDate.split('-').reverse().join('/')}` : 'Período customizado'}
+              </div>
+            )}
           </div>
 
           {/* Card Saldo */}
@@ -527,6 +532,11 @@ export default function Dashboard() {
             </div>
             <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.receitas)}</div>
             <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-slate-600">
+                {startDate && endDate ? `${startDate.split('-').reverse().join('/')} a ${endDate.split('-').reverse().join('/')}` : 'Período customizado'}
+              </div>
+            )}
           </div>
 
           {/* Card Despesas */}
@@ -537,6 +547,11 @@ export default function Dashboard() {
             </div>
             <div className="text-lg sm:text-2xl font-bold mb-1">-{formatMoney(resumoFiltrado.despesas)}</div>
             <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-slate-600">
+                {startDate && endDate ? `${startDate.split('-').reverse().join('/')} a ${endDate.split('-').reverse().join('/')}` : 'Período customizado'}
+              </div>
+            )}
           </div>
         </div>
 
