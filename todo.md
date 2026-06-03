@@ -53,3 +53,8 @@
 - [x] Filtro de mês agora filtra o período completo do mês (01/MM a 31/MM)
 - [x] Botão "Limpar" aparece apenas quando um filtro está ativo
 - [x] Layout responsivo em mobile e desktop
+- [x] Ajuste final: reorganizar filtros para caber em apenas 2 linhas (grid-cols-8)
+- [x] Linha 1: Hoje, Sem, Trim, Ano, Jan, Fev, Mar, Abr
+- [x] Linha 2: Mai, Jun, Jul, Ago, Set, Out, Nov, Dez
+- [x] Reduzir padding dos botões (px-1.5 py-0.5) e gap (gap-1 sm:gap-1.5)
+- [x] Remover border-radius maior (rounded-md) para rounded simples

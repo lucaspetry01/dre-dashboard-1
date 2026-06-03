@@ -437,13 +437,13 @@ export default function Dashboard() {
             <div className="mb-1">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Filtros</label>
               
-              {/* Primeira linha: Hoje, Sem, Trim, Ano */}
-              <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-2">
+              {/* Linha 1: Hoje, Sem, Trim, Ano, Jan, Fev, Mar, Abr */}
+              <div className="grid grid-cols-8 gap-1 sm:gap-1.5 mb-1.5">
                 {quickFilters.map((filter) => (
                   <button
                     key={filter.id}
                     onClick={() => applyQuickFilter(filter.id)}
-                    className={`btn-3d px-2 py-0.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
+                    className={`btn-3d px-1.5 py-0.5 rounded text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
                       activeQuickFilter === filter.id
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
@@ -452,26 +452,35 @@ export default function Dashboard() {
                     {filter.label}
                   </button>
                 ))}
+                {months.slice(0, 4).map((month) => (
+                  <button
+                    key={month.id}
+                    onClick={() => applyQuickFilter(month.id)}
+                    className={`btn-3d px-1.5 py-0.5 rounded text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
+                      activeQuickFilter === month.id
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
+                    }`}
+                  >
+                    {month.label}
+                  </button>
+                ))}
               </div>
               
-              {/* Meses em 3 linhas com 4 botões cada */}
-              <div className="space-y-2">
-                {[0, 1, 2].map((row) => (
-                  <div key={`month-row-${row}`} className="grid grid-cols-4 gap-2 sm:gap-3">
-                    {months.slice(row * 4, (row + 1) * 4).map((month) => (
-                      <button
-                        key={month.id}
-                        onClick={() => applyQuickFilter(month.id)}
-                        className={`btn-3d px-2 py-0.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
-                          activeQuickFilter === month.id
-                            ? 'bg-blue-600 text-white shadow-lg'
-                            : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
-                        }`}
-                      >
-                        {month.label}
-                      </button>
-                    ))}
-                  </div>
+              {/* Linha 2: Mai, Jun, Jul, Ago, Set, Out, Nov, Dez */}
+              <div className="grid grid-cols-8 gap-1 sm:gap-1.5 mb-2">
+                {months.slice(4, 12).map((month) => (
+                  <button
+                    key={month.id}
+                    onClick={() => applyQuickFilter(month.id)}
+                    className={`btn-3d px-1.5 py-0.5 rounded text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
+                      activeQuickFilter === month.id
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
+                    }`}
+                  >
+                    {month.label}
+                  </button>
                 ))}
               </div>
               
