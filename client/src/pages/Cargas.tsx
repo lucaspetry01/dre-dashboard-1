@@ -277,7 +277,7 @@ export default function Cargas() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 p-4 lg:p-8">
+    <div className="min-h-screen bg-slate-900 p-4 lg:p-8 pb-28">
       {/* Cabeçalho */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">

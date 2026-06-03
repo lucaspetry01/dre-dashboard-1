@@ -80,3 +80,16 @@
 - [x] Posicionar botões ao lado do título no topo da página
 - [x] Botão Buscar abre modal de busca corretamente
 - [x] Botão OFX permite upload de arquivo
+
+## UI Enhancement - StickyFooter (Sessão atual)
+
+- [x] Criar componente StickyFooter com 3 botões (Dashboard, Reports, Cargas)
+- [x] Posicionar rodapé fixo na parte inferior da página (fixed bottom-0)
+- [x] Adicionar backdrop blur e border superior (border-t border-slate-700)
+- [x] Implementar navegação entre páginas ao clicar nos botões
+- [x] Adicionar indicador visual de página ativa (bg-blue-500/10 text-blue-400)
+- [x] Adicionar padding inferior (pb-28) em todas as páginas para não sobrepor conteúdo
+- [x] Rodapé permanece visível ao rolar a página (sticky footer behavior)
+- [x] Ícones: Dashboard (BarChart3), Reports (BarChart3), Cargas (Settings)
+- [x] Todos os 88 testes continuam passando
+- [x] Navegação testada: Dashboard → Reports (Combustível) → Cargas

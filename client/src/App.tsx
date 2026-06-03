@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Dashboard from "./pages/Dashboard";
 import Combustivel from "./pages/Combustivel";
 import Cargas from "./pages/Cargas";
+import StickyFooter from "./components/StickyFooter";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -37,6 +38,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
+          <StickyFooter />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

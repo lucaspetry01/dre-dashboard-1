@@ -101,7 +101,7 @@ export default function Combustivel() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-900">
+    <div className="flex h-screen bg-slate-900 pb-28">
       {/* Sidebar com pastas */}
       <div className="w-32 bg-slate-800 border-r border-slate-700 p-2 overflow-y-auto">
         <h2 className="text-xs font-bold text-white mb-2">Pastas</h2>
