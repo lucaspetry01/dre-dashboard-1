@@ -125,20 +125,51 @@ export default function Dashboard() {
   const quickFilters = [
     { id: 'hoje', label: 'Hoje', days: 0 },
     { id: 'sem', label: 'Sem', days: 7 },
-    { id: '15d', label: '15d', days: 15 },
-    { id: 'mes', label: 'Mês', days: 30 },
     { id: 'trim', label: 'Trim', days: 90 },
     { id: 'ano', label: 'Ano', daysFromNow: true },
+  ];
+
+  // Meses para filtro
+  const months = [
+    { id: 'jan', label: 'Jan', month: 0 },
+    { id: 'fev', label: 'Fev', month: 1 },
+    { id: 'mar', label: 'Mar', month: 2 },
+    { id: 'abr', label: 'Abr', month: 3 },
+    { id: 'mai', label: 'Mai', month: 4 },
+    { id: 'jun', label: 'Jun', month: 5 },
+    { id: 'jul', label: 'Jul', month: 6 },
+    { id: 'ago', label: 'Ago', month: 7 },
+    { id: 'set', label: 'Set', month: 8 },
+    { id: 'out', label: 'Out', month: 9 },
+    { id: 'nov', label: 'Nov', month: 10 },
+    { id: 'dez', label: 'Dez', month: 11 },
   ];
 
   // Aplicar filtro rápido
   const applyQuickFilter = (filterId: string) => {
     const filter = quickFilters.find(f => f.id === filterId);
-    if (!filter) return;
+    const monthFilter = months.find(m => m.id === filterId);
+    
+    if (!filter && !monthFilter) return;
     
     setActiveQuickFilter(filterId);
     
     const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
+    
+    // Se é filtro de mês
+    if (monthFilter) {
+      const start = new Date(refDate);
+      start.setMonth(monthFilter.month);
+      start.setDate(1);
+      
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + 1);
+      end.setDate(0); // Último dia do mês
+      
+      setStartDate(start.toISOString().split('T')[0]);
+      setEndDate(end.toISOString().split('T')[0]);
+      return;
+    }
     
     // Se é filtro de ano (daysFromNow), calcular a partir do ano atual
     if ((filter as any).daysFromNow) {
@@ -146,16 +177,6 @@ export default function Dashboard() {
       start.setFullYear(start.getFullYear()); // Ano atual
       start.setMonth(0); // Janeiro
       start.setDate(1); // Dia 1
-      
-      setStartDate(start.toISOString().split('T')[0]);
-      setEndDate(REFERENCE_DATE);
-      return;
-    }
-
-    // Filtro especial para "Mês" - usar primeiro dia do mês atual
-    if (filterId === 'mes') {
-      const start = new Date(refDate);
-      start.setDate(1); // Primeiro dia do mês
       
       setStartDate(start.toISOString().split('T')[0]);
       setEndDate(REFERENCE_DATE);
@@ -415,12 +436,14 @@ export default function Dashboard() {
             {/* Filtros Rápidos em Tags */}
             <div className="mb-1">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Filtros</label>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+              
+              {/* Primeira linha: Hoje, Sem, Trim, Ano */}
+              <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-2">
                 {quickFilters.map((filter) => (
                   <button
                     key={filter.id}
                     onClick={() => applyQuickFilter(filter.id)}
-                    className={`btn-3d px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
+                    className={`btn-3d px-2 py-0.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
                       activeQuickFilter === filter.id
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
@@ -429,19 +452,41 @@ export default function Dashboard() {
                     {filter.label}
                   </button>
                 ))}
-                {(startDate || endDate) && (
-                  <button
-                    onClick={resetFilters}
-                    className="btn-3d col-span-2 sm:col-span-1 px-2 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
-                  >
-                    Limpar
-                  </button>
-                )}
               </div>
+              
+              {/* Meses em 3 linhas com 4 botões cada */}
+              <div className="space-y-2">
+                {[0, 1, 2].map((row) => (
+                  <div key={`month-row-${row}`} className="grid grid-cols-4 gap-2 sm:gap-3">
+                    {months.slice(row * 4, (row + 1) * 4).map((month) => (
+                      <button
+                        key={month.id}
+                        onClick={() => applyQuickFilter(month.id)}
+                        className={`btn-3d px-2 py-0.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
+                          activeQuickFilter === month.id
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
+                        }`}
+                      >
+                        {month.label}
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              
+              {(startDate || endDate) && (
+                <button
+                  onClick={resetFilters}
+                  className="mt-2 w-full px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
+                >
+                  Limpar
+                </button>
+              )}
             </div>
 
             {/* Datas Customizadas lado a lado em mobile */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-700">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
               <div className="flex-1 min-w-0 sm:max-w-[160px]">
                 <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
                 <Input

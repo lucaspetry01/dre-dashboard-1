@@ -43,3 +43,13 @@
 ## Agrupamento de Transações
 
 - [x] Adicionar agrupamento por descrição completa no detalhamento de categorias com toggle para alternar entre visualizações individual e agrupada. Checkbox "Agrupar por descrição" aparece ao expandir categoria, mostrando contador de registros agrupados em verde.
+
+## UI Refinement - Filtros Compactos (Sessão atual)
+
+- [x] Reorganizar filtros rápidos em grid compacto: remover "15d" e "Mês" dos filtros rápidos
+- [x] Adicionar grid de meses (Jan-Dez) em 3 linhas com 4 botões cada
+- [x] Primeira linha: Hoje, Sem, Trim, Ano (4 botões)
+- [x] Meses em 3 linhas: Jan-Abr, Mai-Ago, Set-Dez
+- [x] Filtro de mês agora filtra o período completo do mês (01/MM a 31/MM)
+- [x] Botão "Limpar" aparece apenas quando um filtro está ativo
+- [x] Layout responsivo em mobile e desktop
