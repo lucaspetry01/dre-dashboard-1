@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, ArrowLeft, Truck, Pencil, Eye, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Eye, Trash2 } from 'lucide-react';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
 
@@ -280,20 +280,7 @@ export default function Cargas() {
     <div className="min-h-screen bg-slate-900 p-4 lg:p-8 pb-28">
       {/* Cabeçalho */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setLocation('/')}
-            className="text-slate-400 hover:text-slate-200"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex items-center gap-3">
-            <Truck className="w-8 h-8 text-blue-500" />
-            <h1 className="text-3xl font-bold text-white">Cargas</h1>
-          </div>
-        </div>
+        <h1 className="text-3xl font-bold text-white">Cargas</h1>
       </div>
 
       {/* Filtros - Sem títulos, uma linha cada */}

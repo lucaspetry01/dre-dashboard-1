@@ -93,3 +93,10 @@
 - [x] Ícones: Dashboard (BarChart3), Reports (BarChart3), Cargas (Settings)
 - [x] Todos os 88 testes continuam passando
 - [x] Navegação testada: Dashboard → Reports (Combustível) → Cargas
+
+## UI Refinement - Ajustes de Ícones (Sessão atual)
+
+- [x] Trocar ícone de engrenagem (Settings) para caminhão (Truck) no StickyFooter
+- [x] Remover ícone de caminhão do cabeçalho da página Cargas
+- [x] Remover seta de voltar (ArrowLeft) da página Cargas
+- [x] Todos os 88 testes continuam passando

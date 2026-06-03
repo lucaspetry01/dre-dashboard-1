@@ -1,4 +1,4 @@
-import { BarChart3, Settings, Zap } from 'lucide-react';
+import { BarChart3, Truck } from 'lucide-react';
 import { useLocation } from 'wouter';
 
 export default function StickyFooter() {
@@ -45,7 +45,7 @@ export default function StickyFooter() {
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
             }`}
           >
-            <Settings className="w-6 h-6" />
+            <Truck className="w-6 h-6" />
             <span className="text-xs font-medium">Cargas</span>
           </button>
         </div>
