@@ -71,3 +71,7 @@
 - [x] Remover apenas a palavra "Filtros" do título do Card
 - [x] Manter o box inteiro com todos os filtros (botões de período e datas customizadas)
 - [x] Filtros continuam funcionando corretamente (testado com Ago: 01/08 a 31/08)
+- [x] Remover CardHeader vazio do box de filtros
+- [x] "Período" agora começa logo no início do box sem espaço vazio
+- [x] Filtros funcionando corretamente (testado com Mar: 01/03 a 31/03)
+- [x] Espaço otimizado no box de filtros

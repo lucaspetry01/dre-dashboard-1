@@ -528,10 +528,7 @@ export default function Dashboard() {
 
         {/* Filtros - Card separado, agora abaixo dos 4 cards */}
         <Card className="border-slate-700 bg-slate-900/50 mb-6 entrance-animate" style={{ animationDelay: '0.2s' }}>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm sm:text-base text-slate-100"></CardTitle>
-          </CardHeader>
-          <CardContent className="pt-2">
+          <CardContent className="pt-4">
             {/* Filtros Rápidos em Tags */}
             <div className="mb-1">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Período</label>
