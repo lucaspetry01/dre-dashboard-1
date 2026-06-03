@@ -75,3 +75,8 @@
 - [x] "Período" agora começa logo no início do box sem espaço vazio
 - [x] Filtros funcionando corretamente (testado com Mar: 01/03 a 31/03)
 - [x] Espaço otimizado no box de filtros
+- [x] Reduzir altura dos botões Buscar e OFX em 50%
+- [x] Deixar botões com exatamente a mesma altura (h-8)
+- [x] Posicionar botões ao lado do título no topo da página
+- [x] Botão Buscar abre modal de busca corretamente
+- [x] Botão OFX permite upload de arquivo

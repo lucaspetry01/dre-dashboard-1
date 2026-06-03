@@ -375,7 +375,27 @@ export default function Dashboard() {
         {/* Header */}
         <div className="mb-6 sm:mb-8 entrance-fade delay-0">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-            <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Dashboard Financeiro</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Dashboard Financeiro</h1>
+              <Button
+                onClick={() => setSearchOpen(true)}
+                className="btn-3d bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md font-semibold flex items-center gap-2 h-8 text-sm"
+              >
+                <Search className="w-3 h-3" />
+                <span>Buscar</span>
+              </Button>
+              <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-md font-semibold cursor-pointer flex items-center gap-2 h-8 text-sm">
+                <Upload className="w-3 h-3" />
+                <span>OFX</span>
+                <input
+                  type="file"
+                  accept=".ofx,.txt"
+                  onChange={handleOfxUpload}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </label>
+            </div>
             <Button
               variant="outline"
               size="icon"
@@ -404,27 +424,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Botões de Buscar e Upload - Maiores, sem Card */}
-        <div className="flex gap-2 mb-4 justify-end">
-          <Button
-            onClick={() => setSearchOpen(true)}
-            className="btn-3d bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-semibold flex items-center gap-2"
-          >
-            <Search className="w-4 h-4" />
-            <span>Buscar</span>
-          </Button>
-          <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md font-semibold cursor-pointer flex items-center gap-2">
-            <Upload className="w-4 h-4" />
-            <span>OFX</span>
-            <input
-              type="file"
-              accept=".ofx,.OFX"
-              onChange={handleOfxUpload}
-              disabled={isUploading}
-              className="hidden"
-            />
-          </label>
-        </div>
+        {/* Botões de Buscar e Upload - Movidos para o header */}
 
         {/* Modal de Busca */}
         <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
