@@ -404,38 +404,137 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Filtros e Importação */}
-        <Card className="border-slate-700 bg-slate-900/50 mb-6 entrance-animate delay-1" style={{ animationDelay: '0.1s' }}>
-          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm sm:text-base text-slate-100 flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Filtros e Importação
-            </CardTitle>
-            <div className="flex gap-1.5">
+        {/* Botões de Buscar e Upload - Maiores, sem Card */}
+        <div className="flex gap-2 mb-4 justify-end">
+          <Button
+            onClick={() => setSearchOpen(true)}
+            className="btn-3d bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-semibold flex items-center gap-2"
+          >
+            <Search className="w-4 h-4" />
+            <span>Buscar</span>
+          </Button>
+          <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md font-semibold cursor-pointer flex items-center gap-2">
+            <Upload className="w-4 h-4" />
+            <span>OFX</span>
+            <input
+              type="file"
+              accept=".ofx,.OFX"
+              onChange={handleOfxUpload}
+              disabled={isUploading}
+              className="hidden"
+            />
+          </label>
+        </div>
+
+        {/* Modal de Busca */}
+        <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+          <DialogContent className="bg-slate-900 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-slate-100">Buscar Registro</DialogTitle>
+            </DialogHeader>
+            <div className="flex gap-2">
+              <Input
+                ref={searchInputRef}
+                placeholder="Digite uma palavra..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="bg-slate-800 border-slate-700 text-slate-100"
+                autoFocus
+              />
               <Button
-                onClick={() => setSearchOpen(true)}
-                className="btn-3d bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 px-2 flex-shrink-0"
+                onClick={handleSearch}
+                className="bg-blue-600 hover:bg-blue-700"
               >
-                <Search className="w-3 h-3 sm:mr-1" />
-                <span className="hidden sm:inline">Buscar</span>
+                <Search className="w-4 h-4" />
               </Button>
-              <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8 px-2 rounded-md font-semibold cursor-pointer flex items-center gap-1 flex-shrink-0">
-                <Upload className="w-3 h-3 sm:mr-1" />
-                <span className="hidden sm:inline">OFX</span>
-                <input
-                  type="file"
-                  accept=".ofx,.OFX"
-                  onChange={handleOfxUpload}
-                  disabled={isUploading}
-                  className="hidden"
-                />
-              </label>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* KPI HERO: 4 Cards em Grid 2x2 */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 entrance-animate" style={{ animationDelay: '0.1s' }}>
+          {/* Card Lucro */}
+          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
+            resumoFiltrado.lucro >= 0
+              ? 'bg-gradient-to-br from-emerald-500 to-emerald-700'
+              : 'bg-gradient-to-br from-red-500 to-red-700'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">💰 LUCRO</span>
+              {resumoFiltrado.lucro >= 0 ? (
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+              ) : (
+                <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5" />
+              )}
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.lucro)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.lucro >= 0 ? 'POSITIVO' : 'NEGATIVO'}</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-white/20">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
+              </div>
+            )}
+          </div>
+
+          {/* Card Saldo */}
+          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
+            saldoFinal !== null && saldoFinal !== undefined && saldoFinal < 0
+              ? 'bg-gradient-to-br from-red-500 to-red-700'
+              : 'bg-gradient-to-br from-blue-500 to-blue-700'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">🏦 SALDO</span>
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{saldoFinal ? formatMoney(saldoFinal) : 'R$ 0,00'}</div>
+            <div className="text-xs sm:text-sm opacity-90">
+              {resumoBanco?.lastImportDate
+                ? `Atualização: ${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+                : 'Nenhuma atualização'}
+            </div>
+          </div>
+
+          {/* Card Receitas */}
+          <div className="kpi-card-3d bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-emerald-500/30">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">📈 Receitas</span>
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.receitas)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-emerald-400/30">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
+              </div>
+            )}
+          </div>
+
+          {/* Card Despesas */}
+          <div className="kpi-card-3d bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-red-500/30">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">📉 Despesas</span>
+              <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">-{formatMoney(resumoFiltrado.despesas)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-red-400/30">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Filtros - Card separado, agora abaixo dos 4 cards */}
+        <Card className="border-slate-700 bg-slate-900/50 mb-6 entrance-animate" style={{ animationDelay: '0.2s' }}>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm sm:text-base text-slate-100">Filtros</CardTitle>
           </CardHeader>
           <CardContent className="pt-2">
             {/* Filtros Rápidos em Tags */}
             <div className="mb-1">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Filtros</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Período</label>
               
               {/* Linha 1: Hoje, Sem, Trim, Ano, Jan, Fev, Mar, Abr */}
               <div className="grid grid-cols-8 gap-1 sm:gap-1.5 mb-1.5">
@@ -520,110 +619,9 @@ export default function Dashboard() {
                   className="w-full text-xs h-8 px-2 overflow-hidden"
                 />
               </div>
-
             </div>
           </CardContent>
         </Card>
-
-        {/* Modal de Busca */}
-        <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
-          <DialogContent className="bg-slate-900 border-slate-700">
-            <DialogHeader>
-              <DialogTitle className="text-slate-100">Buscar Registro</DialogTitle>
-            </DialogHeader>
-            <div className="flex gap-2">
-              <Input
-                ref={searchInputRef}
-                placeholder="Digite uma palavra..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="bg-slate-800 border-slate-700 text-slate-100"
-                autoFocus
-              />
-              <Button
-                onClick={handleSearch}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Search className="w-4 h-4" />
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* KPI HERO: 4 Cards em Grid 2x2 */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 entrance-animate" style={{ animationDelay: '0.2s' }}>
-          {/* Card Lucro */}
-          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
-            resumoFiltrado.lucro >= 0
-              ? 'bg-gradient-to-br from-emerald-500 to-emerald-700'
-              : 'bg-gradient-to-br from-red-500 to-red-700'
-          }`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">💰 LUCRO</span>
-              {resumoFiltrado.lucro >= 0 ? (
-                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
-              ) : (
-                <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5" />
-              )}
-            </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.lucro)}</div>
-            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.lucro >= 0 ? 'POSITIVO' : 'NEGATIVO'}</div>
-            {(startDate || endDate) && (
-              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-white/20">
-                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
-              </div>
-            )}
-          </div>
-
-          {/* Card Saldo */}
-          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
-            saldoFinal !== null && saldoFinal !== undefined && saldoFinal < 0
-              ? 'bg-gradient-to-br from-red-500 to-red-700'
-              : 'bg-gradient-to-br from-blue-500 to-blue-700'
-          }`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">🏦 SALDO</span>
-              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">{saldoFinal ? formatMoney(saldoFinal) : 'R$ 0,00'}</div>
-            <div className="text-xs sm:text-sm opacity-90">
-              {resumoBanco?.lastImportDate
-                ? `Atualização: ${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
-                : 'Nenhuma atualização'}
-            </div>
-          </div>
-
-          {/* Card Receitas */}
-          <div className="kpi-card-3d bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-emerald-500/30">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">📈 Receitas</span>
-              <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.receitas)}</div>
-            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
-            {(startDate || endDate) && (
-              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-emerald-400/30">
-                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
-              </div>
-            )}
-          </div>
-
-          {/* Card Despesas */}
-          <div className="kpi-card-3d bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-red-500/30">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">📉 Despesas</span>
-              <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">-{formatMoney(resumoFiltrado.despesas)}</div>
-            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
-            {(startDate || endDate) && (
-              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-red-400/30">
-                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Gráfico de Despesas por Categoria */}
         <Card className="border-slate-700 bg-slate-900/50 mb-6 kpi-card-3d entrance-animate" style={{ animationDelay: '0.3s' }}>
@@ -654,7 +652,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Detalhamento por Categoria */}
-        <Card className="border-slate-700 bg-slate-900/50 kpi-card-3d entrance-animate" style={{ animationDelay: '0.4s' }}>
+        <Card className="border-slate-700 bg-slate-900/50 kpi-card-3d entrance-animate" style={{ animationDelay: '0.5s' }}>
           <CardHeader>
             <CardTitle className="text-base sm:text-lg text-slate-100">Detalhamento de Categorias</CardTitle>
           </CardHeader>

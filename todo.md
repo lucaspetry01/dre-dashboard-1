@@ -58,3 +58,13 @@
 - [x] Linha 2: Mai, Jun, Jul, Ago, Set, Out, Nov, Dez
 - [x] Reduzir padding dos botões (px-1.5 py-0.5) e gap (gap-1 sm:gap-1.5)
 - [x] Remover border-radius maior (rounded-md) para rounded simples
+
+## UI Reorganization - Layout Refinement (Sessão atual)
+
+- [x] Remover título "Filtros e Importação" do Card
+- [x] Aumentar tamanho dos botões Buscar e OFX (px-4 py-2)
+- [x] Posicionar botões maiores no topo à direita (justify-end)
+- [x] Reorganizar ordem: Cabeçalho → Botões → 4 Cards (Lucro, Saldo, Receitas, Despesas) → Box de Filtros
+- [x] Compactar cabeçalho da página
+- [x] Todos os 88 testes continuam passando
+- [x] Filtros funcionando corretamente (testado com Fev: 01/02 a 28/02)
