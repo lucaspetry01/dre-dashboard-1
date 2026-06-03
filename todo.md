@@ -68,3 +68,6 @@
 - [x] Compactar cabeçalho da página
 - [x] Todos os 88 testes continuam passando
 - [x] Filtros funcionando corretamente (testado com Fev: 01/02 a 28/02)
+- [x] Remover apenas a palavra "Filtros" do título do Card
+- [x] Manter o box inteiro com todos os filtros (botões de período e datas customizadas)
+- [x] Filtros continuam funcionando corretamente (testado com Ago: 01/08 a 31/08)
