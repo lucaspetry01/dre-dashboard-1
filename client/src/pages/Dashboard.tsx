@@ -513,7 +513,7 @@ export default function Dashboard() {
             <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.lucro >= 0 ? 'POSITIVO' : 'NEGATIVO'}</div>
             {(startDate || endDate) && (
               <div className="text-xs opacity-75 mt-2 pt-2 border-t border-white/20">
-                {startDate && endDate ? `${startDate.split('-').reverse().join('/')} a ${endDate.split('-').reverse().join('/')}` : 'Período customizado'}
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
               </div>
             )}
           </div>
@@ -531,7 +531,7 @@ export default function Dashboard() {
             <div className="text-lg sm:text-2xl font-bold mb-1">{saldoFinal ? formatMoney(saldoFinal) : 'R$ 0,00'}</div>
             <div className="text-xs sm:text-sm opacity-90">
               {resumoBanco?.lastImportDate
-                ? `Última atualização: ${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} às ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR')}`
+                ? `Atualização: ${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
                 : 'Nenhuma atualização'}
             </div>
           </div>
@@ -546,7 +546,7 @@ export default function Dashboard() {
             <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
             {(startDate || endDate) && (
               <div className="text-xs opacity-75 mt-2 pt-2 border-t border-slate-600">
-                {startDate && endDate ? `${startDate.split('-').reverse().join('/')} a ${endDate.split('-').reverse().join('/')}` : 'Período customizado'}
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
               </div>
             )}
           </div>
@@ -561,7 +561,7 @@ export default function Dashboard() {
             <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
             {(startDate || endDate) && (
               <div className="text-xs opacity-75 mt-2 pt-2 border-t border-slate-600">
-                {startDate && endDate ? `${startDate.split('-').reverse().join('/')} a ${endDate.split('-').reverse().join('/')}` : 'Período customizado'}
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
               </div>
             )}
           </div>
