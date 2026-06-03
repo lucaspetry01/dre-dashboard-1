@@ -68,3 +68,5 @@
 - [x] Compactar cabeçalho da página
 - [x] Todos os 88 testes continuam passando
 - [x] Filtros funcionando corretamente (testado com Fev: 01/02 a 28/02)
+- [x] Remover Card de Filtros inteiro para eliminar espaço vazio
+- [x] Gráficos aparecem logo após os 4 cards sem espaço intermediário
