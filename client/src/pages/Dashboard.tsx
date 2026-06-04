@@ -389,10 +389,11 @@ export default function Dashboard() {
                 <span>OFX</span>
                 <input
                   type="file"
-                  accept=".ofx,.txt"
+                  accept=".ofx,.txt,application/x-ofx,text/plain"
                   onChange={handleOfxUpload}
                   disabled={isUploading}
                   className="hidden"
+                  capture={false}
                 />
               </label>
             </div>

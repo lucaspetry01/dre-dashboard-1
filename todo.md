@@ -100,3 +100,10 @@
 - [x] Remover ícone de caminhão do cabeçalho da página Cargas
 - [x] Remover seta de voltar (ArrowLeft) da página Cargas
 - [x] Todos os 88 testes continuam passando
+
+## Bug Fix - Upload OFX no Mobile (Sessão atual)
+
+- [x] Corrigir input de arquivo OFX para funcionar no mobile
+- [x] Adicionar atributo capture={false} para permitir seleção de arquivos
+- [x] Expandir accept para incluir MIME types: .ofx, .txt, application/x-ofx, text/plain
+- [x] Todos os 88 testes continuam passando
