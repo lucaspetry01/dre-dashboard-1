@@ -241,9 +241,15 @@ export default function Dashboard() {
 
   // Efeito: quando meses são selecionados, calcular o período
   useMemo(() => {
-    if (selectedMonths.length === 0) {
+    // Se não há meses selecionados E não há filtro rápido ativo, limpar datas
+    if (selectedMonths.length === 0 && !activeQuickFilter) {
       setStartDate('');
       setEndDate('');
+      return;
+    }
+    
+    // Se há filtro rápido ativo (Hoje, Sem, etc), não sobrescrever as datas
+    if (activeQuickFilter) {
       return;
     }
 
@@ -265,7 +271,7 @@ export default function Dashboard() {
 
     setStartDate(start.toISOString().split('T')[0]);
     setEndDate(end.toISOString().split('T')[0]);
-  }, [selectedMonths]);
+  }, [selectedMonths, activeQuickFilter]);
 
   // Filtrar diário por data
   const filteredDiario = useMemo(() => {
