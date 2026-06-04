@@ -115,6 +115,7 @@ export default function Dashboard() {
   const [endDate, setEndDate] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
+  const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
   const [isFiltering, setIsFiltering] = useState(false);
   const [groupByDescription, setGroupByDescription] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -234,8 +235,37 @@ export default function Dashboard() {
     setStartDate('');
     setEndDate('');
     setActiveQuickFilter(null);
+    setSelectedMonths([]);
     setIsFiltering(false);
   };
+
+  // Efeito: quando meses são selecionados, calcular o período
+  useMemo(() => {
+    if (selectedMonths.length === 0) {
+      setStartDate('');
+      setEndDate('');
+      return;
+    }
+
+    const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
+    const selectedMonthNumbers = selectedMonths.map(m => months.find(month => month.id === m)?.month).filter(m => m !== undefined);
+    
+    if (selectedMonthNumbers.length === 0) return;
+
+    const minMonth = Math.min(...selectedMonthNumbers);
+    const maxMonth = Math.max(...selectedMonthNumbers);
+
+    const start = new Date(refDate);
+    start.setMonth(minMonth);
+    start.setDate(1);
+
+    const end = new Date(refDate);
+    end.setMonth(maxMonth + 1);
+    end.setDate(0);
+
+    setStartDate(start.toISOString().split('T')[0]);
+    setEndDate(end.toISOString().split('T')[0]);
+  }, [selectedMonths]);
 
   // Filtrar diário por data
   const filteredDiario = useMemo(() => {
@@ -545,7 +575,7 @@ export default function Dashboard() {
                     key={month.id}
                     onClick={() => applyQuickFilter(month.id)}
                     className={`btn-3d px-1.5 py-0.5 rounded text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
-                      activeQuickFilter === month.id
+                      selectedMonths.includes(month.id)
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
                     }`}
@@ -562,7 +592,7 @@ export default function Dashboard() {
                     key={month.id}
                     onClick={() => applyQuickFilter(month.id)}
                     className={`btn-3d px-1.5 py-0.5 rounded text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
-                      activeQuickFilter === month.id
+                      selectedMonths.includes(month.id)
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
                     }`}
@@ -572,7 +602,7 @@ export default function Dashboard() {
                 ))}
               </div>
               
-              {(startDate || endDate) && (
+              {(startDate || endDate || selectedMonths.length > 0) && (
                 <button
                   onClick={resetFilters}
                   className="mt-2 w-full px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"

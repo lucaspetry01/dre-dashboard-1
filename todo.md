@@ -170,3 +170,13 @@
 - [x] Adicionar negative margin-top (-mt-0.5) para compactar ainda mais
 - [x] Otimizar tamanho do box de filtros
 - [x] Todos os 88 testes continuam passando
+
+## Feature - Multi-seleção de Meses (Sessão atual)
+
+- [x] Adicionar estado selectedMonths para rastrear múltiplos meses selecionados
+- [x] Modificar função applyQuickFilter para adicionar/remover meses da seleção
+- [x] Atualizar lógica de filtro para calcular período baseado em meses selecionados
+- [x] Modificar renderização dos botões para mostrar visual de seleção múltipla
+- [x] Adicionar botão "Limpar" quando múltiplos meses estão selecionados
+- [x] Testar multi-seleção: Fev + Abr funciona corretamente (01/02 a 30/04)
+- [x] Todos os 88 testes continuam passando
