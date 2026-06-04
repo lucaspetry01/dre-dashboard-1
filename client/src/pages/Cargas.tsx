@@ -283,17 +283,6 @@ export default function Cargas() {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold text-white">Cargas</h1>
-        <Button
-          onClick={() => {
-            const today = new Date().toISOString().split('T')[0];
-            setFormData(prev => ({ ...prev, data: today }));
-            setFilterPeriod('hoje');
-          }}
-          variant={filterPeriod === 'hoje' ? 'default' : 'outline'}
-          className="w-32 px-4 py-2 text-sm font-semibold"
-        >
-          Hoje
-        </Button>
       </div>
 
       {/* Filtros - Sem títulos, uma linha cada */}

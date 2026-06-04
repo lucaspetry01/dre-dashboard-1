@@ -116,3 +116,12 @@
 - [x] Implementar função de filtro de período "Hoje"
 - [x] Botão muda de cor quando filtro está ativo (variant default/outline)
 - [x] Todos os 88 testes continuam passando
+
+## UI Adjustment - Botão "Hoje" Repositionado (Sessão atual)
+
+- [x] Remover botão "Hoje" da página Cargas
+- [x] Adicionar botão "Hoje" ao cabeçalho do Dashboard (substituindo ícone de caminhão)
+- [x] Botão "Hoje" no Dashboard filtra apenas o dia atual (02/06/2026)
+- [x] Botão muda de cor quando filtro está ativo (variant default/outline)
+- [x] Todos os 88 testes continuam passando
+- [x] Página Cargas mostra apenas filtros de período (Semana, Mês Atual, Mês Anterior, Semestre)

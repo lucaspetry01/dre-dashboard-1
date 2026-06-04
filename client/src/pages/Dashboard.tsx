@@ -398,13 +398,11 @@ export default function Dashboard() {
               </label>
             </div>
             <Button
-              variant="outline"
-              size="icon"
-              className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-blue-400 transition-colors"
-              title="Cargas"
-              onClick={() => setLocation('/cargas')}
+              onClick={() => setActiveQuickFilter(activeQuickFilter === 'hoje' ? null : 'hoje')}
+              variant={activeQuickFilter === 'hoje' ? 'default' : 'outline'}
+              className="w-32 px-4 py-2 text-sm font-semibold"
             >
-              <Truck className="w-8 h-8" />
+              Hoje
             </Button>
             {usandoBanco && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
