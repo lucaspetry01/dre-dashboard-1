@@ -135,3 +135,14 @@
 - [x] Botão muda de cor quando filtro está ativo
 - [x] Todos os 88 testes continuam passando
 - [x] Comportamento idêntico ao botão "Hoje" no box de filtros
+
+## UI Refinement - Remover Filtros Rápidos do Box (Sessão atual)
+
+- [x] Remover botões "Hoje", "Sem", "Trim", "Ano" do box de filtros
+- [x] Manter apenas os 12 meses (Jan-Dez) em 2 linhas
+- [x] Linha 1: Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago
+- [x] Linha 2: Set, Out, Nov, Dez
+- [x] Botão "Hoje" permanece no cabeçalho do Dashboard
+- [x] Filtro de mês funciona corretamente (testado com Abr: 01/04 a 30/04)
+- [x] Botão "Limpar" aparece quando filtro está ativo
+- [x] Todos os 88 testes continuam passando

@@ -538,22 +538,9 @@ export default function Dashboard() {
             <div className="mb-1">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Período</label>
               
-              {/* Linha 1: Hoje, Sem, Trim, Ano, Jan, Fev, Mar, Abr */}
+              {/* Linha 1: Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago */}
               <div className="grid grid-cols-8 gap-1 sm:gap-1.5 mb-1.5">
-                {quickFilters.map((filter) => (
-                  <button
-                    key={filter.id}
-                    onClick={() => applyQuickFilter(filter.id)}
-                    className={`btn-3d px-1.5 py-0.5 rounded text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
-                      activeQuickFilter === filter.id
-                        ? 'bg-blue-600 text-white shadow-lg'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
-                    }`}
-                  >
-                    {filter.label}
-                  </button>
-                ))}
-                {months.slice(0, 4).map((month) => (
+                {months.slice(0, 8).map((month) => (
                   <button
                     key={month.id}
                     onClick={() => applyQuickFilter(month.id)}
@@ -568,9 +555,9 @@ export default function Dashboard() {
                 ))}
               </div>
               
-              {/* Linha 2: Mai, Jun, Jul, Ago, Set, Out, Nov, Dez */}
+              {/* Linha 2: Set, Out, Nov, Dez */}
               <div className="grid grid-cols-8 gap-1 sm:gap-1.5 mb-2">
-                {months.slice(4, 12).map((month) => (
+                {months.slice(8, 12).map((month) => (
                   <button
                     key={month.id}
                     onClick={() => applyQuickFilter(month.id)}
