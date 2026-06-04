@@ -536,7 +536,7 @@ export default function Dashboard() {
           <CardContent className="pt-4">
             {/* Filtros Rápidos em Tags */}
             <div className="mb-1">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Período</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-0.5 -mt-0.5">Período</label>
               
               {/* Linha 1: Jan, Fev, Mar, Abr, Mai, Jun */}
               <div className="grid grid-cols-6 gap-1 sm:gap-1.5 mb-1.5">

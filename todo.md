@@ -163,3 +163,10 @@
 - [x] Usar grid-cols-2 para layout lado a lado
 - [x] Remover flex-col e manter responsivo
 - [x] Todos os 88 testes continuam passando
+
+## UI Optimization - Reduzir Espaço do Label "Período" (Sessão atual)
+
+- [x] Reduzir margin-bottom do label "Período" de mb-1 para mb-0.5
+- [x] Adicionar negative margin-top (-mt-0.5) para compactar ainda mais
+- [x] Otimizar tamanho do box de filtros
+- [x] Todos os 88 testes continuam passando
