@@ -398,7 +398,13 @@ export default function Dashboard() {
               </label>
             </div>
             <Button
-              onClick={() => setActiveQuickFilter(activeQuickFilter === 'hoje' ? null : 'hoje')}
+              onClick={() => {
+                if (activeQuickFilter === 'hoje') {
+                  resetFilters();
+                } else {
+                  applyQuickFilter('hoje');
+                }
+              }}
               variant={activeQuickFilter === 'hoje' ? 'default' : 'outline'}
               className="w-32 px-4 py-2 text-sm font-semibold"
             >

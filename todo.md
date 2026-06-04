@@ -125,3 +125,13 @@
 - [x] Botão muda de cor quando filtro está ativo (variant default/outline)
 - [x] Todos os 88 testes continuam passando
 - [x] Página Cargas mostra apenas filtros de período (Semana, Mês Atual, Mês Anterior, Semestre)
+
+## UI Enhancement - Sincronizar Função do Botão "Hoje" (Sessão atual)
+
+- [x] Sincronizar botão "Hoje" no cabeçalho com a função do box de filtros
+- [x] Botão "Hoje" no cabeçalho agora usa applyQuickFilter('hoje')
+- [x] Clique no botão filtra dados para 03/06/2026 a 03/06/2026
+- [x] Clique novamente reseta o filtro (resetFilters)
+- [x] Botão muda de cor quando filtro está ativo
+- [x] Todos os 88 testes continuam passando
+- [x] Comportamento idêntico ao botão "Hoje" no box de filtros
