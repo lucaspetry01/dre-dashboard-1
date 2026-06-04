@@ -25,7 +25,7 @@ export default function Cargas() {
   const [selectedPasta, setSelectedPasta] = useState<Pasta | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [filterPeriod, setFilterPeriod] = useState<'semana' | 'mes' | 'mesAnterior' | 'semestre' | null>(null);
+  const [filterPeriod, setFilterPeriod] = useState<'semana' | 'mes' | 'mesAnterior' | 'semestre' | 'hoje' | null>(null);
   const [filterRota, setFilterRota] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     data: '',
@@ -53,13 +53,17 @@ export default function Cargas() {
   }
 
   // Funções de filtro por período
-  const getDateRange = (period: 'semana' | 'mes' | 'mesAnterior' | 'semestre' | null) => {
+  const getDateRange = (period: 'semana' | 'mes' | 'mesAnterior' | 'semestre' | 'hoje' | null) => {
     if (!period) return { start: null, end: null };
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const start = new Date(today);
+    const end = new Date(today);
+    end.setHours(23, 59, 59, 999);
     
-    if (period === 'semana') {
+    if (period === 'hoje') {
+      return { start: today, end };
+    } else if (period === 'semana') {
       start.setDate(today.getDate() - today.getDay());
     } else if (period === 'mes') {
       start.setDate(1);
@@ -73,8 +77,6 @@ export default function Cargas() {
       start.setDate(1);
     }
     
-    const end = new Date(today);
-    end.setHours(23, 59, 59, 999);
     return { start, end };
   };
 
@@ -281,6 +283,17 @@ export default function Cargas() {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold text-white">Cargas</h1>
+        <Button
+          onClick={() => {
+            const today = new Date().toISOString().split('T')[0];
+            setFormData(prev => ({ ...prev, data: today }));
+            setFilterPeriod('hoje');
+          }}
+          variant={filterPeriod === 'hoje' ? 'default' : 'outline'}
+          className="w-32 px-4 py-2 text-sm font-semibold"
+        >
+          Hoje
+        </Button>
       </div>
 
       {/* Filtros - Sem títulos, uma linha cada */}

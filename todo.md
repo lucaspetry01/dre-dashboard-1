@@ -107,3 +107,12 @@
 - [x] Adicionar atributo capture={false} para permitir seleção de arquivos
 - [x] Expandir accept para incluir MIME types: .ofx, .txt, application/x-ofx, text/plain
 - [x] Todos os 88 testes continuam passando
+
+## UI Enhancement - Botão "Hoje" no Cabeçalho Cargas (Sessão atual)
+
+- [x] Adicionar botão "Hoje" ao cabeçalho da página Cargas
+- [x] Remover ícone de caminhão, substituir por texto "Hoje"
+- [x] Aumentar largura do botão em 40% (w-32)
+- [x] Implementar função de filtro de período "Hoje"
+- [x] Botão muda de cor quando filtro está ativo (variant default/outline)
+- [x] Todos os 88 testes continuam passando
