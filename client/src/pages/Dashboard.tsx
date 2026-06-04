@@ -153,24 +153,24 @@ export default function Dashboard() {
     
     if (!filter && !monthFilter) return;
     
+    // Se é filtro de mês, adicionar/remover da seleção
+    if (monthFilter) {
+      setSelectedMonths(prev => {
+        if (prev.includes(filterId)) {
+          return prev.filter(m => m !== filterId);
+        } else {
+          return [...prev, filterId];
+        }
+      });
+      setActiveQuickFilter(null);
+      return;
+    }
+    
+    // Para filtros rápidos (Hoje, Sem, Trim, Ano), limpar seleção de meses
+    setSelectedMonths([]);
     setActiveQuickFilter(filterId);
     
     const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
-    
-    // Se é filtro de mês
-    if (monthFilter) {
-      const start = new Date(refDate);
-      start.setMonth(monthFilter.month);
-      start.setDate(1);
-      
-      const end = new Date(start);
-      end.setMonth(end.getMonth() + 1);
-      end.setDate(0); // Último dia do mês
-      
-      setStartDate(start.toISOString().split('T')[0]);
-      setEndDate(end.toISOString().split('T')[0]);
-      return;
-    }
     
     // Se é filtro de ano (daysFromNow), calcular a partir do ano atual
     if ((filter as any).daysFromNow) {
