@@ -538,9 +538,9 @@ export default function Dashboard() {
             <div className="mb-1">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Período</label>
               
-              {/* Linha 1: Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago */}
-              <div className="grid grid-cols-8 gap-1 sm:gap-1.5 mb-1.5">
-                {months.slice(0, 8).map((month) => (
+              {/* Linha 1: Jan, Fev, Mar, Abr, Mai, Jun */}
+              <div className="grid grid-cols-6 gap-1 sm:gap-1.5 mb-1.5">
+                {months.slice(0, 6).map((month) => (
                   <button
                     key={month.id}
                     onClick={() => applyQuickFilter(month.id)}
@@ -555,9 +555,9 @@ export default function Dashboard() {
                 ))}
               </div>
               
-              {/* Linha 2: Set, Out, Nov, Dez */}
-              <div className="grid grid-cols-8 gap-1 sm:gap-1.5 mb-2">
-                {months.slice(8, 12).map((month) => (
+              {/* Linha 2: Jul, Ago, Set, Out, Nov, Dez */}
+              <div className="grid grid-cols-6 gap-1 sm:gap-1.5 mb-2">
+                {months.slice(6, 12).map((month) => (
                   <button
                     key={month.id}
                     onClick={() => applyQuickFilter(month.id)}

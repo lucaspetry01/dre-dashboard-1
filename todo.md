@@ -146,3 +146,13 @@
 - [x] Filtro de mês funciona corretamente (testado com Abr: 01/04 a 30/04)
 - [x] Botão "Limpar" aparece quando filtro está ativo
 - [x] Todos os 88 testes continuam passando
+
+## UI Refinement - Reorganizar Meses em 2 Linhas (Sessão atual)
+
+- [x] Reorganizar os 12 meses em 2 linhas com 6 colunas cada
+- [x] Linha 1: Jan, Fev, Mar, Abr, Mai, Jun
+- [x] Linha 2: Jul, Ago, Set, Out, Nov, Dez
+- [x] Todos os botões com o mesmo tamanho (grid-cols-6)
+- [x] Filtro de mês funciona corretamente (testado com Set: 01/09 a 30/09)
+- [x] Botão "Limpar" aparece quando filtro está ativo
+- [x] Todos os 88 testes continuam passando
