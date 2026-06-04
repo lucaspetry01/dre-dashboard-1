@@ -583,8 +583,8 @@ export default function Dashboard() {
             </div>
 
             {/* Datas Customizadas lado a lado em mobile */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
-              <div className="flex-1 min-w-0 sm:max-w-[160px]">
+            <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+              <div className="min-w-0">
                 <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
                 <Input
                   type="date"
@@ -596,7 +596,7 @@ export default function Dashboard() {
                   className="w-full text-xs h-8 px-2 overflow-hidden"
                 />
               </div>
-              <div className="flex-1 min-w-0 sm:max-w-[160px]">
+              <div className="min-w-0">
                 <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Fim</label>
                 <Input
                   type="date"

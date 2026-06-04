@@ -156,3 +156,10 @@
 - [x] Filtro de mês funciona corretamente (testado com Set: 01/09 a 30/09)
 - [x] Botão "Limpar" aparece quando filtro está ativo
 - [x] Todos os 88 testes continuam passando
+
+## UI Refinement - Reorganizar Datas na Mesma Linha (Sessão atual)
+
+- [x] Reorganizar campos de data "Início" e "Fim" para ficarem na mesma linha
+- [x] Usar grid-cols-2 para layout lado a lado
+- [x] Remover flex-col e manter responsivo
+- [x] Todos os 88 testes continuam passando
