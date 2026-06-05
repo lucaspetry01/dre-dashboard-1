@@ -601,69 +601,77 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Filtros - Card separado, agora abaixo dos 4 cards */}
-        <Card className="border-slate-700 bg-slate-900/50 mb-6 entrance-animate" style={{ animationDelay: '0.2s' }}>
-          <CardContent className="pt-4">
-            {/* Filtros Rápidos em Tags */}
-            <div className="mb-1">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-0.5 -mt-0.5">Período</label>
-              
-              {/* MonthCards com scroll horizontal */}
-              <div className="overflow-x-auto overflow-y-hidden pb-2 mb-2 -mx-3 px-3 sm:-mx-4 sm:px-4">
-                <div className="flex gap-2 sm:gap-2.5 min-w-min">
-                  {months.map((month) => (
-                    <div key={month.id} className="flex-shrink-0 w-24 sm:w-28">
-                      <MonthCard
-                        month={month.label}
-                        monthId={month.id}
-                        lucro={lucroByMonth[month.id] || 0}
-                        isSelected={selectedMonths.includes(month.id)}
-                        onClick={() => applyQuickFilter(month.id)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {(startDate || endDate || selectedMonths.length > 0) && (
-                <button
-                  onClick={resetFilters}
-                  className="mt-2 w-full px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
-                >
-                  Limpar
-                </button>
-              )}
-            </div>
+        {/* Filtros - MonthCards em 2 linhas sem Card ao redor */}
+        <div className="mb-6 entrance-animate" style={{ animationDelay: '0.2s' }}>
+          {/* Label Período */}
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Período</label>
+          
+          {/* Linha 1: Jan-Jun */}
+          <div className="grid grid-cols-6 gap-2 sm:gap-2.5 mb-2">
+            {months.slice(0, 6).map((month) => (
+              <MonthCard
+                key={month.id}
+                month={month.label}
+                monthId={month.id}
+                lucro={lucroByMonth[month.id] || 0}
+                isSelected={selectedMonths.includes(month.id)}
+                onClick={() => applyQuickFilter(month.id)}
+              />
+            ))}
+          </div>
+          
+          {/* Linha 2: Jul-Dez */}
+          <div className="grid grid-cols-6 gap-2 sm:gap-2.5 mb-3">
+            {months.slice(6, 12).map((month) => (
+              <MonthCard
+                key={month.id}
+                month={month.label}
+                monthId={month.id}
+                lucro={lucroByMonth[month.id] || 0}
+                isSelected={selectedMonths.includes(month.id)}
+                onClick={() => applyQuickFilter(month.id)}
+              />
+            ))}
+          </div>
+          
+          {/* Botão Limpar */}
+          {(startDate || endDate || selectedMonths.length > 0) && (
+            <button
+              onClick={resetFilters}
+              className="w-full mb-3 px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
+            >
+              Limpar
+            </button>
+          )}
 
-            {/* Datas Customizadas lado a lado em mobile */}
-            <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
-              <div className="min-w-0">
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
-                <Input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => {
-                    setStartDate(e.target.value);
-                    setActiveQuickFilter(null);
-                  }}
-                  className="w-full text-xs h-8 px-2 overflow-hidden"
-                />
-              </div>
-              <div className="min-w-0">
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Fim</label>
-                <Input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => {
-                    setEndDate(e.target.value);
-                    setActiveQuickFilter(null);
-                  }}
-                  className="w-full text-xs h-8 px-2 overflow-hidden"
-                />
-              </div>
+          {/* Datas Customizadas lado a lado */}
+          <div className="grid grid-cols-2 gap-1.5">
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  setActiveQuickFilter(null);
+                }}
+                className="w-full text-xs h-8 px-2 overflow-hidden"
+              />
             </div>
-          </CardContent>
-        </Card>
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Fim</label>
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => {
+                  setEndDate(e.target.value);
+                  setActiveQuickFilter(null);
+                }}
+                className="w-full text-xs h-8 px-2 overflow-hidden"
+              />
+            </div>
+          </div>
+        </div>
 
         {/* Gráfico de Despesas por Categoria */}
         <Card className="border-slate-700 bg-slate-900/50 mb-6 kpi-card-3d entrance-animate" style={{ animationDelay: '0.3s' }}>
