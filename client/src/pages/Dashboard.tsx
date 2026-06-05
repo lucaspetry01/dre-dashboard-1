@@ -441,19 +441,20 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 pb-28">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8 entrance-fade delay-0">
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Dashboard Financeiro</h1>
+        {/* Header - Reformulado para Mobile */}
+        <div className="mb-4 sm:mb-6 entrance-fade delay-0">
+          {/* Linha 1: Título + Botões */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+            <h1 className="text-xl sm:text-4xl font-bold text-slate-900 dark:text-white flex-1 truncate">Dashboard Financeiro</h1>
+            <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
               <Button
                 onClick={() => setSearchOpen(true)}
-                className="btn-3d bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md font-semibold flex items-center gap-2 h-8 text-sm"
+                className="btn-3d bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-md font-semibold flex items-center gap-1 h-8 text-xs sm:text-sm flex-1 sm:flex-none"
               >
                 <Search className="w-3 h-3" />
-                <span>Buscar</span>
+                <span className="hidden sm:inline">Buscar</span>
               </Button>
-              <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-md font-semibold cursor-pointer flex items-center gap-2 h-8 text-sm">
+              <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-md font-semibold cursor-pointer flex items-center gap-1 h-8 text-xs sm:text-sm flex-1 sm:flex-none">
                 <Upload className="w-3 h-3" />
                 <span>OFX</span>
                 <input
@@ -466,37 +467,43 @@ export default function Dashboard() {
                   multiple={false}
                 />
               </label>
+              <Button
+                onClick={() => {
+                  if (activeQuickFilter === 'hoje') {
+                    resetFilters();
+                  } else {
+                    applyQuickFilter('hoje');
+                  }
+                }}
+                variant={activeQuickFilter === 'hoje' ? 'default' : 'outline'}
+                className="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold h-8 flex-1 sm:flex-none"
+              >
+                Hoje
+              </Button>
             </div>
-            <Button
-              onClick={() => {
-                if (activeQuickFilter === 'hoje') {
-                  resetFilters();
-                } else {
-                  applyQuickFilter('hoje');
-                }
-              }}
-              variant={activeQuickFilter === 'hoje' ? 'default' : 'outline'}
-              className="w-32 px-4 py-2 text-sm font-semibold"
-            >
-              Hoje
-            </Button>
-            {usandoBanco && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
-                Banco de dados ({resumoBanco!.totalRegistros} registros)
-              </span>
-            )}
           </div>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">Transportes Moraes e Petry LTDA ME</p>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            {(startDate && endDate) ? (
-              <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
-                <Calendar className="w-3 h-3" />
-                {new Date(startDate + 'T00:00:00').toLocaleDateString('pt-BR')} a {new Date(endDate + 'T00:00:00').toLocaleDateString('pt-BR')}
-              </span>
-            ) : (
-              <>Período completo: {resumo.periodo_inicio} a {resumo.periodo_fim}</>
-            )}
-          </p>
+
+          {/* Linha 2: Empresa + Período + Badge */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 truncate">Transportes Moraes e Petry LTDA ME</p>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {(startDate && endDate) ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium whitespace-nowrap">
+                    <Calendar className="w-3 h-3" />
+                    {new Date(startDate + 'T00:00:00').toLocaleDateString('pt-BR')} a {new Date(endDate + 'T00:00:00').toLocaleDateString('pt-BR')}
+                  </span>
+                ) : (
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Período: {resumo.periodo_inicio} a {resumo.periodo_fim}</span>
+                )}
+              </p>
+              {usandoBanco && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-medium whitespace-nowrap">
+                  {resumoBanco!.totalRegistros} reg.
+                </span>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Botões de Buscar e Upload - Movidos para o header */}
