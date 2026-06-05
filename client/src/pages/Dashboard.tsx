@@ -601,37 +601,43 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Filtros - MonthCards em 2 linhas sem Card ao redor */}
+        {/* Filtros - MonthCards em 2 linhas com scroll horizontal */}
         <div className="mb-6 entrance-animate" style={{ animationDelay: '0.2s' }}>
           {/* Label Período */}
           <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Período</label>
           
-          {/* Linha 1: Jan-Jun */}
-          <div className="grid grid-cols-6 gap-2 sm:gap-2.5 mb-2">
-            {months.slice(0, 6).map((month) => (
-              <MonthCard
-                key={month.id}
-                month={month.label}
-                monthId={month.id}
-                lucro={lucroByMonth[month.id] || 0}
-                isSelected={selectedMonths.includes(month.id)}
-                onClick={() => applyQuickFilter(month.id)}
-              />
-            ))}
+          {/* Linha 1: Jan-Jun com scroll */}
+          <div className="overflow-x-auto overflow-y-hidden pb-2 mb-3 -mx-3 px-3 sm:-mx-4 sm:px-4">
+            <div className="flex gap-2 sm:gap-2.5 min-w-min">
+              {months.slice(0, 6).map((month) => (
+                <div key={month.id} className="flex-shrink-0 w-28 sm:w-32">
+                  <MonthCard
+                    month={month.label}
+                    monthId={month.id}
+                    lucro={lucroByMonth[month.id] || 0}
+                    isSelected={selectedMonths.includes(month.id)}
+                    onClick={() => applyQuickFilter(month.id)}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
           
-          {/* Linha 2: Jul-Dez */}
-          <div className="grid grid-cols-6 gap-2 sm:gap-2.5 mb-3">
-            {months.slice(6, 12).map((month) => (
-              <MonthCard
-                key={month.id}
-                month={month.label}
-                monthId={month.id}
-                lucro={lucroByMonth[month.id] || 0}
-                isSelected={selectedMonths.includes(month.id)}
-                onClick={() => applyQuickFilter(month.id)}
-              />
-            ))}
+          {/* Linha 2: Jul-Dez com scroll */}
+          <div className="overflow-x-auto overflow-y-hidden pb-2 mb-3 -mx-3 px-3 sm:-mx-4 sm:px-4">
+            <div className="flex gap-2 sm:gap-2.5 min-w-min">
+              {months.slice(6, 12).map((month) => (
+                <div key={month.id} className="flex-shrink-0 w-28 sm:w-32">
+                  <MonthCard
+                    month={month.label}
+                    monthId={month.id}
+                    lucro={lucroByMonth[month.id] || 0}
+                    isSelected={selectedMonths.includes(month.id)}
+                    onClick={() => applyQuickFilter(month.id)}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
           
           {/* Botão Limpar */}
