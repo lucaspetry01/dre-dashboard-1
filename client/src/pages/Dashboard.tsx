@@ -9,6 +9,7 @@ import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clo
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
+import MonthCard from '@/components/MonthCard';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useState, useMemo, useRef, useCallback } from 'react';
@@ -348,6 +349,38 @@ export default function Dashboard() {
     return result;
   }, [detalhes, resumo, startDate, endDate]);
 
+  // Calcular lucro por mês para MonthCards
+  const lucroByMonth = useMemo(() => {
+    const result: Record<string, number> = {};
+    
+    months.forEach(month => {
+      const monthNum = month.month;
+      const year = 2026;
+      let receitas = 0;
+      let despesas = 0;
+      
+      Object.values(detalhes).forEach((categoryData: any) => {
+        const items = categoryData?.registros || [];
+        items.forEach((item: any) => {
+          const itemDate = parseRegistroDate(item.data);
+          if (!itemDate) return;
+          if (itemDate.getMonth() !== monthNum || itemDate.getFullYear() !== year) return;
+          
+          const valor = Number(item.valor) || 0;
+          if (valor > 0) {
+            receitas += valor;
+          } else if (valor < 0) {
+            despesas += Math.abs(valor);
+          }
+        });
+      });
+      
+      result[month.id] = receitas - despesas;
+    });
+    
+    return result;
+  }, [detalhes]);
+
   // Categorias com dados (respeitando filtros de data)
   const categoriasComDados = useMemo(() => {
     if (!startDate && !endDate) {
@@ -575,37 +608,31 @@ export default function Dashboard() {
             <div className="mb-1">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-0.5 -mt-0.5">Período</label>
               
-              {/* Linha 1: Jan, Fev, Mar, Abr, Mai, Jun */}
-              <div className="grid grid-cols-6 gap-1 sm:gap-1.5 mb-1.5">
+              {/* Linha 1: Jan-Jun com MonthCards */}
+              <div className="grid grid-cols-6 gap-2 sm:gap-2.5 mb-2.5">
                 {months.slice(0, 6).map((month) => (
-                  <button
+                  <MonthCard
                     key={month.id}
+                    month={month.label}
+                    monthId={month.id}
+                    lucro={lucroByMonth[month.id] || 0}
+                    isSelected={selectedMonths.includes(month.id)}
                     onClick={() => applyQuickFilter(month.id)}
-                    className={`btn-3d px-1.5 py-0.5 rounded text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
-                      selectedMonths.includes(month.id)
-                        ? 'bg-blue-600 text-white shadow-lg'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
-                    }`}
-                  >
-                    {month.label}
-                  </button>
+                  />
                 ))}
               </div>
               
-              {/* Linha 2: Jul, Ago, Set, Out, Nov, Dez */}
-              <div className="grid grid-cols-6 gap-1 sm:gap-1.5 mb-2">
+              {/* Linha 2: Jul-Dez com MonthCards */}
+              <div className="grid grid-cols-6 gap-2 sm:gap-2.5 mb-2">
                 {months.slice(6, 12).map((month) => (
-                  <button
+                  <MonthCard
                     key={month.id}
+                    month={month.label}
+                    monthId={month.id}
+                    lucro={lucroByMonth[month.id] || 0}
+                    isSelected={selectedMonths.includes(month.id)}
                     onClick={() => applyQuickFilter(month.id)}
-                    className={`btn-3d px-1.5 py-0.5 rounded text-xs font-semibold transition-all whitespace-nowrap entrance-animate ${
-                      selectedMonths.includes(month.id)
-                        ? 'bg-blue-600 text-white shadow-lg'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
-                    }`}
-                  >
-                    {month.label}
-                  </button>
+                  />
                 ))}
               </div>
               

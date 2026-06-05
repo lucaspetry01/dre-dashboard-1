@@ -180,3 +180,14 @@
 - [x] Adicionar botão "Limpar" quando múltiplos meses estão selecionados
 - [x] Testar multi-seleção: Fev + Abr funciona corretamente (01/02 a 30/04)
 - [x] Todos os 88 testes continuam passando
+
+## Feature - MonthCards com Mini Gráficos (Sessão atual)
+
+- [x] Criar componente MonthCard com mini gráfico sparkline
+- [x] Exibir variação percentual mensal (verde/vermelho)
+- [x] Mostrar valor de lucro por mês
+- [x] Implementar multi-seleção com cards azuis quando selecionados
+- [x] Gráficos sparkline mostrando tendência visual
+- [x] 2 linhas com 6 cards cada (Jan-Jun, Jul-Dez)
+- [x] Período se ajusta dinamicamente entre meses selecionados
+- [x] Todos os 88 testes continuam passando
