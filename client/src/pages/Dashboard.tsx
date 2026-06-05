@@ -1,3 +1,4 @@
+'use client';
 import dashboardData from '@/data/dashboard.json';
 import detalhesData from '@/data/detalhes.json';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -98,51 +99,97 @@ export default function Dashboard() {
   const timeline_categorias = (dashboardData as unknown as { timeline_categorias?: unknown[] }).timeline_categorias ?? [];
   const detalhes = (usandoBanco ? resumoBanco!.detalhes : detalhesData) as Record<string, any>;
 
-  // State
-  const REFERENCE_DATE = '2026-06-05';
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  // Data de referência: último dia disponível (banco → JSON → hardcoded)
+  const REFERENCE_DATE = (() => {
+    if (usandoBanco && resumoBanco!.diario.length > 0) {
+      return resumoBanco!.diario[resumoBanco!.diario.length - 1].data_full;
+    }
+    if (dashboardData.diario.length > 0) {
+      return dashboardData.diario[dashboardData.diario.length - 1].data_full;
+    }
+    return '2026-05-27';
+  })();
+
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  // Sem filtro pré-setado: dashboard abre mostrando todo o período disponível
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
   const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
   const [isFiltering, setIsFiltering] = useState(false);
-  const [groupByDescriptionMap, setGroupByDescriptionMap] = useState<Record<string, boolean>>({});
+  const [groupByDescription, setGroupByDescription] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
+  const quickFilters = [
+    { id: 'hoje', label: 'Hoje', days: 0 },
+    { id: 'sem', label: 'Sem', days: 7 },
+    { id: 'trim', label: 'Trim', days: 90 },
+    { id: 'ano', label: 'Ano', daysFromNow: true },
+  ];
+
+  // Meses para filtro
   const months = [
-    { id: 'jan', month: 0, label: 'Jan' },
-    { id: 'fev', month: 1, label: 'Fev' },
-    { id: 'mar', month: 2, label: 'Mar' },
-    { id: 'abr', month: 3, label: 'Abr' },
-    { id: 'mai', month: 4, label: 'Mai' },
-    { id: 'jun', month: 5, label: 'Jun' },
-    { id: 'jul', month: 6, label: 'Jul' },
-    { id: 'ago', month: 7, label: 'Ago' },
-    { id: 'set', month: 8, label: 'Set' },
-    { id: 'out', month: 9, label: 'Out' },
-    { id: 'nov', month: 10, label: 'Nov' },
-    { id: 'dez', month: 11, label: 'Dez' },
+    { id: 'jan', label: 'Jan', month: 0 },
+    { id: 'fev', label: 'Fev', month: 1 },
+    { id: 'mar', label: 'Mar', month: 2 },
+    { id: 'abr', label: 'Abr', month: 3 },
+    { id: 'mai', label: 'Mai', month: 4 },
+    { id: 'jun', label: 'Jun', month: 5 },
+    { id: 'jul', label: 'Jul', month: 6 },
+    { id: 'ago', label: 'Ago', month: 7 },
+    { id: 'set', label: 'Set', month: 8 },
+    { id: 'out', label: 'Out', month: 9 },
+    { id: 'nov', label: 'Nov', month: 10 },
+    { id: 'dez', label: 'Dez', month: 11 },
   ];
 
   // Aplicar filtro rápido
-  const applyQuickFilter = (filter: string) => {
+  const applyQuickFilter = (filterId: string) => {
+    const filter = quickFilters.find(f => f.id === filterId);
+    const monthFilter = months.find(m => m.id === filterId);
+    
+    if (!filter && !monthFilter) return;
+    
+    // Se é filtro de mês, adicionar/remover da seleção
+    if (monthFilter) {
+      setSelectedMonths(prev => {
+        if (prev.includes(filterId)) {
+          return prev.filter(m => m !== filterId);
+        } else {
+          return [...prev, filterId];
+        }
+      });
+      setActiveQuickFilter(null);
+      return;
+    }
+    
+    // Para filtros rápidos (Hoje, Sem, Trim, Ano), limpar seleção de meses
+    setSelectedMonths([]);
+    setActiveQuickFilter(filterId);
+    
     const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
     
-    if (filter === 'hoje') {
+    // Se é filtro de ano (daysFromNow), calcular a partir do ano atual
+    if ((filter as any).daysFromNow) {
       const start = new Date(refDate);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(refDate);
-      end.setHours(23, 59, 59, 999);
+      start.setFullYear(start.getFullYear()); // Ano atual
+      start.setMonth(0); // Janeiro
+      start.setDate(1); // Dia 1
       
       setStartDate(start.toISOString().split('T')[0]);
-      setEndDate(end.toISOString().split('T')[0]);
-      setActiveQuickFilter('hoje');
-      setSelectedMonths([]);
-      setIsFiltering(true);
+      setEndDate(REFERENCE_DATE);
+      return;
     }
+
+    const start = new Date(refDate);
+    start.setDate(start.getDate() - (filter as any).days);
+    
+    setStartDate(start.toISOString().split('T')[0]);
+    setEndDate(REFERENCE_DATE);
   };
 
   // Buscar registro
@@ -302,66 +349,53 @@ export default function Dashboard() {
     return result;
   }, [detalhes, resumo, startDate, endDate]);
 
-  // Calcular período anterior (para comparação)
-  const resumoAnterior = useMemo(() => {
-    const result = {
-      receitas: 0,
-      despesas: 0,
-      lucro: 0,
-    };
-
-    if (!startDate || !endDate) return result;
-
-    const startObj = new Date(startDate + 'T00:00:00');
-    const endObj = new Date(endDate + 'T23:59:59');
-    const daysDiff = Math.ceil((endObj.getTime() - startObj.getTime()) / (1000 * 60 * 60 * 24));
-
-    const prevStart = new Date(startObj);
-    prevStart.setDate(prevStart.getDate() - daysDiff - 1);
-
-    const prevEnd = new Date(startObj);
-    prevEnd.setDate(prevEnd.getDate() - 1);
-
-    Object.values(detalhes).forEach((categoryData: any) => {
-      const items = categoryData?.registros || [];
-      items.forEach((item: any) => {
-        const itemDate = parseRegistroDate(item.data);
-        if (!itemDate) return;
-        if (itemDate < prevStart || itemDate > prevEnd) return;
-
-        const valor = Number(item.valor) || 0;
-        if (valor > 0) {
-          result.receitas += valor;
-        } else if (valor < 0) {
-          result.despesas += Math.abs(valor);
-        }
+  // Calcular lucro por mês para MonthCards
+  const lucroByMonth = useMemo(() => {
+    const result: Record<string, number> = {};
+    
+    months.forEach(month => {
+      const monthNum = month.month;
+      const year = 2026;
+      let receitas = 0;
+      let despesas = 0;
+      
+      Object.values(detalhes).forEach((categoryData: any) => {
+        const items = categoryData?.registros || [];
+        items.forEach((item: any) => {
+          const itemDate = parseRegistroDate(item.data);
+          if (!itemDate) return;
+          if (itemDate.getMonth() !== monthNum || itemDate.getFullYear() !== year) return;
+          
+          const valor = Number(item.valor) || 0;
+          if (valor > 0) {
+            receitas += valor;
+          } else if (valor < 0) {
+            despesas += Math.abs(valor);
+          }
+        });
       });
+      
+      result[month.id] = receitas - despesas;
     });
-
-    result.lucro = result.receitas - result.despesas;
+    
     return result;
-  }, [detalhes, startDate, endDate]);
+  }, [detalhes]);
 
-  // Calcular variação percentual
-  const calcularVariacao = (atual: number, anterior: number): number => {
-    if (anterior === 0) return 0;
-    return ((atual - anterior) / Math.abs(anterior)) * 100;
-  };
+  // Categorias com dados (respeitando filtros de data)
+  const categoriasComDados = useMemo(() => {
+    if (!startDate && !endDate) {
+      return categorias.filter(cat => cat.valor_abs > 0);
+    }
 
-  // Calcular categorias filtradas
-  const categoriasFiltradas = useMemo(() => {
-    const result: Array<{ nome: string; valor: number; valor_abs: number; quantidade: number }> = [];
+    const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
+    const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
+    const result: any[] = [];
 
-    Object.entries(categorias).forEach(([nome]) => {
+    Object.entries(detalhes).forEach(([nome, data]: [string, any]) => {
+      const items = data?.registros || [];
       let total = 0;
       let count = 0;
-      const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
-      const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
 
-      const categoryData = detalhes[nome];
-      if (!categoryData) return;
-
-      const items = categoryData.registros || [];
       items.forEach((item: any) => {
         const itemDate = parseRegistroDate(item.data);
         if (!itemDate) return;
@@ -407,20 +441,19 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 pb-28">
       <div className="max-w-7xl mx-auto">
-        {/* Header - Reformulado para Mobile */}
-        <div className="mb-4 sm:mb-6 entrance-fade delay-0">
-          {/* Linha 1: Título + Botões */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-            <h1 className="text-xl sm:text-4xl font-bold text-slate-900 dark:text-white flex-1 truncate">Dashboard Financeiro</h1>
-            <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8 entrance-fade delay-0">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Dashboard Financeiro</h1>
               <Button
                 onClick={() => setSearchOpen(true)}
-                className="btn-3d bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-md font-semibold flex items-center gap-1 h-8 text-xs sm:text-sm flex-1 sm:flex-none"
+                className="btn-3d bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md font-semibold flex items-center gap-2 h-8 text-sm"
               >
                 <Search className="w-3 h-3" />
-                <span className="hidden sm:inline">Buscar</span>
+                <span>Buscar</span>
               </Button>
-              <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-md font-semibold cursor-pointer flex items-center gap-1 h-8 text-xs sm:text-sm flex-1 sm:flex-none">
+              <label className="btn-3d bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-md font-semibold cursor-pointer flex items-center gap-2 h-8 text-sm">
                 <Upload className="w-3 h-3" />
                 <span>OFX</span>
                 <input
@@ -433,44 +466,40 @@ export default function Dashboard() {
                   multiple={false}
                 />
               </label>
-              <Button
-                onClick={() => {
-                  if (activeQuickFilter === 'hoje') {
-                    resetFilters();
-                  } else {
-                    applyQuickFilter('hoje');
-                  }
-                }}
-                variant={activeQuickFilter === 'hoje' ? 'default' : 'outline'}
-                className="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold h-8 flex-1 sm:flex-none"
-              >
-                Hoje
-              </Button>
             </div>
+            <Button
+              onClick={() => {
+                if (activeQuickFilter === 'hoje') {
+                  resetFilters();
+                } else {
+                  applyQuickFilter('hoje');
+                }
+              }}
+              variant={activeQuickFilter === 'hoje' ? 'default' : 'outline'}
+              className="w-32 px-4 py-2 text-sm font-semibold"
+            >
+              Hoje
+            </Button>
+            {usandoBanco && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+                Banco de dados ({resumoBanco!.totalRegistros} registros)
+              </span>
+            )}
           </div>
-
-          {/* Linha 2: Empresa + Período + Badge */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 truncate">Transportes Moraes e Petry LTDA ME</p>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {(startDate && endDate) ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium whitespace-nowrap">
-                    <Calendar className="w-3 h-3" />
-                    {new Date(startDate + 'T00:00:00').toLocaleDateString('pt-BR')} a {new Date(endDate + 'T00:00:00').toLocaleDateString('pt-BR')}
-                  </span>
-                ) : (
-                  <span className="text-xs text-slate-500 dark:text-slate-400">Período: {resumo.periodo_inicio} a {resumo.periodo_fim}</span>
-                )}
-              </p>
-              {usandoBanco && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-medium whitespace-nowrap">
-                  {resumoBanco!.totalRegistros} reg.
-                </span>
-              )}
-            </div>
-          </div>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">Transportes Moraes e Petry LTDA ME</p>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            {(startDate && endDate) ? (
+              <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                <Calendar className="w-3 h-3" />
+                {new Date(startDate + 'T00:00:00').toLocaleDateString('pt-BR')} a {new Date(endDate + 'T00:00:00').toLocaleDateString('pt-BR')}
+              </span>
+            ) : (
+              <>Período completo: {resumo.periodo_inicio} a {resumo.periodo_fim}</>
+            )}
+          </p>
         </div>
+
+        {/* Botões de Buscar e Upload - Movidos para o header */}
 
         {/* Modal de Busca */}
         <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
@@ -524,232 +553,334 @@ export default function Dashboard() {
           </div>
 
           {/* Card Saldo */}
-          <div className="kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg bg-gradient-to-br from-blue-500 to-blue-700">
+          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
+            saldoFinal !== null && saldoFinal !== undefined && saldoFinal < 0
+              ? 'bg-gradient-to-br from-red-500 to-red-700'
+              : 'bg-gradient-to-br from-blue-500 to-blue-700'
+          }`}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs sm:text-sm font-semibold opacity-90">🏦 SALDO</span>
               <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(saldoFinal || 0)}</div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{saldoFinal ? formatMoney(saldoFinal) : 'R$ 0,00'}</div>
             <div className="text-xs sm:text-sm opacity-90">
-              {saldoFinal ? (
-                <>Atualização: {new Date().toLocaleDateString('pt-BR')} {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</>
-              ) : (
-                <>Nenhuma atualização</>
-              )}
+              {resumoBanco?.lastImportDate
+                ? `Atualização: ${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+                : 'Nenhuma atualização'}
             </div>
           </div>
 
           {/* Card Receitas */}
-          <div className="kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg bg-gradient-to-br from-emerald-500 to-emerald-700">
+          <div className="kpi-card-3d bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-emerald-500/30">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">✅ RECEITAS</span>
-              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-xs sm:text-sm font-semibold opacity-90">📈 Receitas</span>
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.receitas)}</div>
             <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-emerald-400/30">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
+              </div>
+            )}
           </div>
 
           {/* Card Despesas */}
-          <div className="kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg bg-gradient-to-br from-red-500 to-red-700">
+          <div className="kpi-card-3d bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-red-500/30">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">🌞 DESPESAS</span>
+              <span className="text-xs sm:text-sm font-semibold opacity-90">📉 Despesas</span>
               <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="text-lg sm:text-2xl font-bold mb-1">-{formatMoney(resumoFiltrado.despesas)}</div>
             <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-red-400/30">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* MonthCards */}
+        {/* Filtros - MonthCards em 2 linhas com scroll horizontal */}
         <div className="mb-6 entrance-animate" style={{ animationDelay: '0.2s' }}>
-          <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
-            {months.map((month) => {
-              // Calcular lucro do mês
-              const monthStart = new Date('2026-01-01');
-              monthStart.setMonth(month.month);
-              monthStart.setDate(1);
-              
-              const monthEnd = new Date(monthStart);
-              monthEnd.setMonth(monthEnd.getMonth() + 1);
-              monthEnd.setDate(0);
-              
-              const monthStartStr = monthStart.toISOString().split('T')[0];
-              const monthEndStr = monthEnd.toISOString().split('T')[0];
-              
-              let monthLucro = 0;
-              Object.values(detalhes).forEach((categoryData: any) => {
-                const items = categoryData?.registros || [];
-                items.forEach((item: any) => {
-                  const itemDate = parseRegistroDate(item.data);
-                  if (!itemDate) return;
-                  if (itemDate < new Date(monthStartStr + 'T00:00:00')) return;
-                  if (itemDate > new Date(monthEndStr + 'T23:59:59')) return;
-                  monthLucro += Number(item.valor) || 0;
-                });
-              });
-              
-              return (
-                <MonthCard
-                  key={month.id}
-                  month={month.label}
-                  monthId={month.id}
-                  lucro={monthLucro}
-                  isSelected={selectedMonths.includes(month.id)}
-                  onClick={() => {
-                    if (selectedMonths.includes(month.id)) {
-                      setSelectedMonths(selectedMonths.filter(m => m !== month.id));
-                    } else {
-                      setSelectedMonths([...selectedMonths, month.id]);
-                    }
+          {/* Label Período */}
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Período</label>
+          
+          {/* Linha 1: Jan-Jun com scroll */}
+          <div className="overflow-x-auto overflow-y-hidden pb-2 mb-3 -mx-3 px-3 sm:-mx-4 sm:px-4">
+            <div className="flex gap-2 sm:gap-2.5 min-w-min">
+              {months.slice(0, 6).map((month) => (
+                <div key={month.id} className="flex-shrink-0 w-28 sm:w-32">
+                  <MonthCard
+                    month={month.label}
+                    monthId={month.id}
+                    lucro={lucroByMonth[month.id] || 0}
+                    isSelected={selectedMonths.includes(month.id)}
+                    onClick={() => applyQuickFilter(month.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Linha 2: Jul-Dez com scroll */}
+          <div className="overflow-x-auto overflow-y-hidden pb-2 mb-3 -mx-3 px-3 sm:-mx-4 sm:px-4">
+            <div className="flex gap-2 sm:gap-2.5 min-w-min">
+              {months.slice(6, 12).map((month) => (
+                <div key={month.id} className="flex-shrink-0 w-28 sm:w-32">
+                  <MonthCard
+                    month={month.label}
+                    monthId={month.id}
+                    lucro={lucroByMonth[month.id] || 0}
+                    isSelected={selectedMonths.includes(month.id)}
+                    onClick={() => applyQuickFilter(month.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Botão Limpar */}
+          {(startDate || endDate || selectedMonths.length > 0) && (
+            <button
+              onClick={resetFilters}
+              className="w-full mb-3 px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
+            >
+              Limpar
+            </button>
+          )}
+
+          {/* Datas Customizadas lado a lado com ícone */}
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
                     setActiveQuickFilter(null);
                   }}
+                  className="w-full text-xs h-9 px-2 pr-8 overflow-hidden bg-slate-800 border-slate-700 text-slate-100"
                 />
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Filtros */}
-        <Card className="bg-slate-900/50 border-slate-700 mb-6 entrance-animate" style={{ animationDelay: '0.3s' }}>
-          <CardContent className="pt-4 sm:pt-6">
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs sm:text-sm font-semibold text-slate-300 block mb-0.5 -mt-0.5">Período</label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      placeholder="mm/dd/yyyy"
-                      value={startDate ? new Date(startDate + 'T00:00:00').toLocaleDateString('pt-BR') : ''}
-                      readOnly
-                      className="bg-slate-800 border-slate-700 text-slate-100 text-xs sm:text-sm h-9 pr-8"
-                    />
-                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  </div>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      placeholder="mm/dd/yyyy"
-                      value={endDate ? new Date(endDate + 'T00:00:00').toLocaleDateString('pt-BR') : ''}
-                      readOnly
-                      className="bg-slate-800 border-slate-700 text-slate-100 text-xs sm:text-sm h-9 pr-8"
-                    />
-                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  </div>
-                </div>
+                <Calendar className="absolute right-2 w-4 h-4 text-slate-400 pointer-events-none" />
               </div>
-
-              {(isFiltering || selectedMonths.length > 0) && (
-                <Button
-                  onClick={resetFilters}
-                  variant="outline"
-                  className="w-full text-xs sm:text-sm h-8"
-                >
-                  <X className="w-3 h-3 mr-1" />
-                  Limpar Filtros
-                </Button>
-              )}
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Detalhamento de Categorias */}
-        <div className="space-y-3 entrance-animate" style={{ animationDelay: '0.4s' }}>
-          {categoriasFiltradas.map((categoria) => {
-            const categoryData = detalhes[categoria.nome];
-            if (!categoryData) return null;
-
-            const items = categoryData.registros || [];
-            const isExpanded = expandedCategory === categoria.nome;
-            const groupByDescription = groupByDescriptionMap[categoria.nome] || false;
-            const groupedItems = groupRegistrosByDescription(items, groupByDescription);
-
-            return (
-              <Card key={categoria.nome} id={`category-${categoria.nome}`} className="bg-slate-900/50 border-slate-700">
-                <CardHeader
-                  className="cursor-pointer hover:bg-slate-800/50 p-4 sm:p-6"
-                  onClick={() => setExpandedCategory(isExpanded ? null : categoria.nome)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <CategoryIcon categoryName={categoria.nome} />
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="text-sm sm:text-base text-slate-100 truncate">{simplifyCategoriName(categoria.nome)}</CardTitle>
-                        <p className="text-xs text-slate-500">{categoria.quantidade} registro{categoria.quantidade !== 1 ? 's' : ''}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={`text-sm sm:text-base font-bold ${categoria.valor >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {categoria.valor >= 0 ? '+' : ''}{formatMoney(categoria.valor)}
-                      </span>
-                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                    </div>
-                  </div>
-                </CardHeader>
-
-                {isExpanded && (
-                  <CardContent className="p-4 sm:p-6 border-t border-slate-700">
-                    <div className="mb-3 flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id={`group-${categoria.nome}`}
-                        checked={groupByDescription}
-                        onChange={(e) => setGroupByDescriptionMap({ ...groupByDescriptionMap, [categoria.nome]: e.target.checked })}
-                        className="w-4 h-4 rounded border-slate-600 bg-slate-800 cursor-pointer"
-                      />
-                      <label htmlFor={`group-${categoria.nome}`} className="text-xs sm:text-sm text-slate-300 cursor-pointer">
-                        Agrupar por descrição
-                      </label>
-                    </div>
-
-                    <div className="space-y-2">
-                      {groupedItems.map((item: any, idx: number) => (
-                        <div key={idx} className="flex items-center justify-between p-2 sm:p-3 bg-slate-800/50 rounded text-xs sm:text-sm">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-slate-200 truncate">{item.descricao}</p>
-                            {groupByDescription && item.count > 1 && (
-                              <p className="text-xs text-emerald-400 font-medium">{item.count} registros</p>
-                            )}
-                            {item.data && (
-                              <p className="text-xs text-slate-500">{item.data}</p>
-                            )}
-                          </div>
-                          <span className={`font-semibold flex-shrink-0 ml-2 ${Number(item.valor) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                            {Number(item.valor) >= 0 ? '+' : ''}{formatMoney(Number(item.valor))}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                )}
-              </Card>
-            );
-          })}
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Fim</label>
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                    setActiveQuickFilter(null);
+                  }}
+                  className="w-full text-xs h-9 px-2 pr-8 overflow-hidden bg-slate-800 border-slate-700 text-slate-100"
+                />
+                <Calendar className="absolute right-2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Gráfico de Despesas por Categoria */}
-        {categoriasFiltradas.filter(c => c.valor < 0).length > 0 && (
-          <div className="mt-6 entrance-animate" style={{ animationDelay: '0.5s' }}>
-            <Card className="bg-slate-900/50 border-slate-700">
-              <CardHeader className="p-4 sm:p-6">
-                <CardTitle className="text-sm sm:text-base">Despesas por Categoria</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
-                <BarChartWithLabels
-                  data={categoriasFiltradas
-                    .filter(c => c.valor < 0)
-                    .map((c, idx) => ({
-                      nome: c.nome,
-                      valor_display: Math.abs(c.valor),
-                      fill: COLORS[idx % COLORS.length]
-                    }))}
-                  formatMoney={formatMoney}
-                />
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        <Card className="border-slate-700 bg-slate-900/50 mb-6 kpi-card-3d entrance-animate" style={{ animationDelay: '0.3s' }}>
+          <CardHeader className="pb-1 pt-3">
+            <CardTitle className="text-base sm:text-lg text-slate-100">Despesas por Categoria</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0 pb-2 px-3">
+            <BarChartWithLabels
+              data={categoriasComDados
+                .filter(cat => cat.valor < 0)
+                .map(cat => ({
+                  nome: simplifyCategoriName(cat.nome),
+                  nomeOriginal: cat.nome,
+                  valor_display: cat.valor_abs
+                }))}
+              formatMoney={formatMoney}
+              onCategoryClick={(_nome: string, item: any) => {
+                const original = item?.nomeOriginal;
+                if (!original) return;
+                setExpandedCategory(original);
+                setTimeout(() => {
+                  const element = document.getElementById(`category-${original}`);
+                  element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+              }}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Detalhamento por Categoria */}
+        <Card className="border-slate-700 bg-slate-900/50 kpi-card-3d entrance-animate" style={{ animationDelay: '0.5s' }}>
+          <CardHeader>
+            <CardTitle className="text-base sm:text-lg text-slate-100">Detalhamento de Categorias</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {categoriasComDados.map((categoria) => {
+                const categoryData = detalhes[categoria.nome];
+                const allItems = categoryData?.registros || [];
+                // Filtrar items por data se houver filtro ativo
+                const items = (!startDate && !endDate) ? allItems : allItems.filter((item: any) => {
+                  const itemDate = parseRegistroDate(item.data);
+                  if (!itemDate) return false;
+                  const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
+                  const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
+                  if (startObj && itemDate < startObj) return false;
+                  if (endObj && itemDate > endObj) return false;
+                  return true;
+                });
+                const isExpanded = expandedCategory === categoria.nome;
+
+                return (
+                  <div key={categoria.nome} id={`category-${categoria.nome}`} className="border border-slate-700 rounded-lg overflow-hidden">
+                    <button
+                      onClick={() => setExpandedCategory(isExpanded ? null : categoria.nome)}
+                      className="w-full flex items-center justify-between p-3 hover:bg-slate-800/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <CategoryIcon categoryName={categoria.nome} />
+                        <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate">{simplifyCategoriName(categoria.nome)}</span>
+                        <span className="text-xs text-slate-400 flex-shrink-0">({items.length})</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="text-xs sm:text-sm font-bold text-slate-100 whitespace-nowrap">{formatMoney(Math.abs(items.reduce((sum: number, item: any) => sum + Number(item.valor), 0)))}</span>
+                        {isExpanded ? (
+                          <ChevronUp className="w-4 h-4 text-slate-400" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-slate-400" />
+                        )}
+                      </div>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="border-t border-slate-700 bg-slate-900/30 p-3 space-y-2">
+                        <label className="flex items-center gap-2 cursor-pointer mb-2">
+                          <input
+                            type="checkbox"
+                            checked={groupByDescription}
+                            onChange={(e) => setGroupByDescription(e.target.checked)}
+                            className="w-4 h-4 rounded border-slate-400 bg-slate-800 cursor-pointer"
+                          />
+                          <span className="text-xs text-slate-300">Agrupar por descrição</span>
+                        </label>
+                        {groupRegistrosByDescription(items, groupByDescription).map((item: any, idx: number) => {
+                          const isGrouped = item.count > 1;
+                          const transacaoId = item.id;
+                          const categoriaAtual = item.categoria;
+                          const podeMovimentar = ['OUTROS', 'PAGAMENTOS'].includes(categoriaAtual);
+                          
+                          return (
+                            <div key={idx} className="flex justify-between items-start text-xs gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-slate-200 font-medium text-xs break-words">{item.descricao}</p>
+                                {isGrouped && (
+                                  <p className="text-slate-500 text-xs">Agrupado: {item.count} transacoes</p>
+                                )}
+                                {!isGrouped && (
+                                  <p className="text-slate-500 text-xs">{item.data || 'N/A'}</p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                <span className="text-slate-100 font-semibold text-xs whitespace-nowrap">{formatMoney(item.valor)}</span>
+                                {podeMovimentar && !isGrouped && transacaoId && (
+                                  <MovimentarCategoriaButton
+                                    transacaoId={transacaoId}
+                                    categoriaAtual={categoriaAtual}
+                                    onSuccess={() => utils.ofx.resumoCompleto.invalidate()}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
+  );
+}
+
+
+/**
+ * Componente para mover transação entre categorias
+ */
+function MovimentarCategoriaButton({
+  transacaoId,
+  categoriaAtual,
+  onSuccess,
+}: {
+  transacaoId: number;
+  categoriaAtual: string;
+  onSuccess: () => void;
+}) {
+  const mutation = trpc.ofx.atualizarCategoria.useMutation();
+  const [open, setOpen] = useState(false);
+
+  // Lista de todas as categorias disponíveis
+  const categoriasDisponiveis = [
+    'RECEITAS OPERACIONAIS',
+    'COMBUSTÍVEL / POSTO',
+    'CHAPA / OPERACIONAL PF',
+    'PRÓ-LABORE / SOCIETÁRIO',
+    'MECÂNICA / MANUTENÇÃO',
+    'PEDÁGIOS / TAGS',
+    'IMPOSTOS / TRIBUTOS / OUTROS',
+    'CONTA / BOLETO',
+    'CONSÓRCIO / FINANCIAMENTO',
+    'CUSTO OPERACIONAL ESPECÍFICO',
+    'PAGAMENTOS',
+    'SAÍDAS NÃO CATEGORIZADAS',
+  ];
+
+  const handleMover = useCallback(
+    (novaCategoria: string) => {
+      if (novaCategoria === categoriaAtual) return;
+      
+      mutation.mutate(
+        { transacaoId, novaCategoria },
+        {
+          onSuccess: (result) => {
+            if (result.sucesso) {
+              toast.success(`Movido para ${novaCategoria}`);
+              setOpen(false);
+              onSuccess();
+            } else {
+              toast.error(result.mensagem || 'Erro ao mover');
+            }
+          },
+          onError: () => {
+            toast.error('Erro ao mover transação');
+          },
+        }
+      );
+    },
+    [transacaoId, categoriaAtual, mutation, onSuccess]
+  );
+
+  return (
+    <Select open={open} onOpenChange={setOpen}>
+      <SelectTrigger className="w-8 h-6 p-0 border-0 bg-slate-700 hover:bg-slate-600">
+        <MoreVertical className="w-3 h-3" />
+      </SelectTrigger>
+      <SelectContent>
+        {categoriasDisponiveis
+          .filter(cat => cat !== categoriaAtual)
+          .map(cat => (
+            <SelectItem key={cat} value={cat} onSelect={() => handleMover(cat)}>
+              {cat}
+            </SelectItem>
+          ))}
+      </SelectContent>
+    </Select>
   );
 }
