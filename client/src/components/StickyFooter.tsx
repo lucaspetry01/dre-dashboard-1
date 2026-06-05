@@ -23,6 +23,19 @@ export default function StickyFooter() {
             <span className="text-xs font-medium whitespace-nowrap">Dashboard</span>
           </button>
 
+          {/* Cargas */}
+          <button
+            onClick={() => setLocation('/cargas')}
+            className={`flex flex-col items-center gap-2 px-4 sm:px-6 py-2 rounded-lg transition-all flex-shrink-0 ${
+              isActive('/cargas')
+                ? 'text-blue-400 bg-blue-500/10'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+            }`}
+          >
+            <Truck className="w-6 h-6" />
+            <span className="text-xs font-medium whitespace-nowrap">Cargas</span>
+          </button>
+
           {/* Abastecimento */}
           <button
             onClick={() => {}}
@@ -57,19 +70,6 @@ export default function StickyFooter() {
           >
             <MapPin className="w-6 h-6" />
             <span className="text-xs font-medium whitespace-nowrap">Mapa</span>
-          </button>
-
-          {/* Cargas */}
-          <button
-            onClick={() => setLocation('/cargas')}
-            className={`flex flex-col items-center gap-2 px-4 sm:px-6 py-2 rounded-lg transition-all flex-shrink-0 ${
-              isActive('/cargas')
-                ? 'text-blue-400 bg-blue-500/10'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-            }`}
-          >
-            <Truck className="w-6 h-6" />
-            <span className="text-xs font-medium whitespace-nowrap">Cargas</span>
           </button>
         </div>
       </div>
