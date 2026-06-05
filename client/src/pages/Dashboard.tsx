@@ -650,31 +650,37 @@ export default function Dashboard() {
             </button>
           )}
 
-          {/* Datas Customizadas lado a lado */}
-          <div className="grid grid-cols-2 gap-1.5">
+          {/* Datas Customizadas lado a lado com ícone */}
+          <div className="grid grid-cols-2 gap-2 mt-3">
             <div className="min-w-0">
               <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  setActiveQuickFilter(null);
-                }}
-                className="w-full text-xs h-8 px-2 overflow-hidden"
-              />
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
+                    setActiveQuickFilter(null);
+                  }}
+                  className="w-full text-xs h-9 px-2 pr-8 overflow-hidden bg-slate-800 border-slate-700 text-slate-100"
+                />
+                <Calendar className="absolute right-2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
             </div>
             <div className="min-w-0">
               <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Fim</label>
-              <Input
-                type="date"
-                value={endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                  setActiveQuickFilter(null);
-                }}
-                className="w-full text-xs h-8 px-2 overflow-hidden"
-              />
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                    setActiveQuickFilter(null);
+                  }}
+                  className="w-full text-xs h-9 px-2 pr-8 overflow-hidden bg-slate-800 border-slate-700 text-slate-100"
+                />
+                <Calendar className="absolute right-2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
             </div>
           </div>
         </div>
