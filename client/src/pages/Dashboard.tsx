@@ -608,32 +608,21 @@ export default function Dashboard() {
             <div className="mb-1">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-0.5 -mt-0.5">Período</label>
               
-              {/* Linha 1: Jan-Jun com MonthCards */}
-              <div className="grid grid-cols-6 gap-2 sm:gap-2.5 mb-2.5">
-                {months.slice(0, 6).map((month) => (
-                  <MonthCard
-                    key={month.id}
-                    month={month.label}
-                    monthId={month.id}
-                    lucro={lucroByMonth[month.id] || 0}
-                    isSelected={selectedMonths.includes(month.id)}
-                    onClick={() => applyQuickFilter(month.id)}
-                  />
-                ))}
-              </div>
-              
-              {/* Linha 2: Jul-Dez com MonthCards */}
-              <div className="grid grid-cols-6 gap-2 sm:gap-2.5 mb-2">
-                {months.slice(6, 12).map((month) => (
-                  <MonthCard
-                    key={month.id}
-                    month={month.label}
-                    monthId={month.id}
-                    lucro={lucroByMonth[month.id] || 0}
-                    isSelected={selectedMonths.includes(month.id)}
-                    onClick={() => applyQuickFilter(month.id)}
-                  />
-                ))}
+              {/* MonthCards com scroll horizontal */}
+              <div className="overflow-x-auto overflow-y-hidden pb-2 mb-2 -mx-3 px-3 sm:-mx-4 sm:px-4">
+                <div className="flex gap-2 sm:gap-2.5 min-w-min">
+                  {months.map((month) => (
+                    <div key={month.id} className="flex-shrink-0 w-24 sm:w-28">
+                      <MonthCard
+                        month={month.label}
+                        monthId={month.id}
+                        lucro={lucroByMonth[month.id] || 0}
+                        isSelected={selectedMonths.includes(month.id)}
+                        onClick={() => applyQuickFilter(month.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
               
               {(startDate || endDate || selectedMonths.length > 0) && (

@@ -191,3 +191,13 @@
 - [x] 2 linhas com 6 cards cada (Jan-Jun, Jul-Dez)
 - [x] Período se ajusta dinamicamente entre meses selecionados
 - [x] Todos os 88 testes continuam passando
+
+## Feature - MonthCards com Scroll Horizontal (Sessão atual)
+
+- [x] Reorganizar MonthCards para 1 linha com scroll horizontal
+- [x] Mostrar apenas 6 cards visíveis por padrão
+- [x] Barra de rolagem lateral para ver os outros 6 meses
+- [x] Layout responsivo no mobile (flex com overflow-x-auto)
+- [x] Largura fixa dos cards (w-24 sm:w-28) para scroll consistente
+- [x] Multi-seleção funciona corretamente com scroll
+- [x] Todos os 88 testes continuam passando
