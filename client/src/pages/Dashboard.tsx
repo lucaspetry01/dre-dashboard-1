@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
 import MonthCard from '@/components/MonthCard';
+import { CategoryDetailView } from '@/components/CategoryDetailView';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useState, useMemo, useRef, useCallback } from 'react';
@@ -655,126 +656,63 @@ export default function Dashboard() {
 
 
 
-        {/* Gráfico de Despesas por Categoria */}
-        <Card className="border-slate-700 bg-slate-900/50 mb-6 kpi-card-3d entrance-animate" style={{ animationDelay: '0.3s' }}>
-          <CardHeader className="pb-1 pt-3">
-            <CardTitle className="text-base sm:text-lg text-slate-100">Despesas por Categoria</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0 pb-2 px-3">
-            <BarChartWithLabels
-              data={categoriasComDados
-                .filter(cat => cat.valor < 0)
-                .map(cat => ({
-                  nome: simplifyCategoriName(cat.nome),
-                  nomeOriginal: cat.nome,
-                  valor_display: cat.valor_abs
-                }))}
-              formatMoney={formatMoney}
-              onCategoryClick={(_nome: string, item: any) => {
-                const original = item?.nomeOriginal;
-                if (!original) return;
-                setExpandedCategory(original);
-                setTimeout(() => {
-                  const element = document.getElementById(`category-${original}`);
-                  element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-              }}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Detalhamento por Categoria */}
-        <Card className="border-slate-700 bg-slate-900/50 kpi-card-3d entrance-animate" style={{ animationDelay: '0.5s' }}>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg text-slate-100">Detalhamento de Categorias</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {categoriasComDados.map((categoria) => {
-                const categoryData = detalhes[categoria.nome];
-                const allItems = categoryData?.registros || [];
-                // Filtrar items por data se houver filtro ativo
-                const items = (!startDate && !endDate) ? allItems : allItems.filter((item: any) => {
-                  const itemDate = parseRegistroDate(item.data);
-                  if (!itemDate) return false;
-                  const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
-                  const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
-                  if (startObj && itemDate < startObj) return false;
-                  if (endObj && itemDate > endObj) return false;
-                  return true;
-                });
-                const isExpanded = expandedCategory === categoria.nome;
-
-                return (
-                  <div key={categoria.nome} id={`category-${categoria.nome}`} className="border border-slate-700 rounded-lg overflow-hidden">
-                    <button
-                      onClick={() => setExpandedCategory(isExpanded ? null : categoria.nome)}
-                      className="w-full flex items-center justify-between p-3 hover:bg-slate-800/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <CategoryIcon categoryName={categoria.nome} />
-                        <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate">{simplifyCategoriName(categoria.nome)}</span>
-                        <span className="text-xs text-slate-400 flex-shrink-0">({items.length})</span>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xs sm:text-sm font-bold text-slate-100 whitespace-nowrap">{formatMoney(Math.abs(items.reduce((sum: number, item: any) => sum + Number(item.valor), 0)))}</span>
-                        {isExpanded ? (
-                          <ChevronUp className="w-4 h-4 text-slate-400" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4 text-slate-400" />
-                        )}
-                      </div>
-                    </button>
-
-                    {isExpanded && (
-                      <div className="border-t border-slate-700 bg-slate-900/30 p-3 space-y-2">
-                        <label className="flex items-center gap-2 cursor-pointer mb-2">
-                          <input
-                            type="checkbox"
-                            checked={groupByDescription}
-                            onChange={(e) => setGroupByDescription(e.target.checked)}
-                            className="w-4 h-4 rounded border-slate-400 bg-slate-800 cursor-pointer"
-                          />
-                          <span className="text-xs text-slate-300">Agrupar por descrição</span>
-                        </label>
-                        {groupRegistrosByDescription(items, groupByDescription).map((item: any, idx: number) => {
-                          const isGrouped = item.count > 1;
-                          const transacaoId = item.id;
-                          const categoriaAtual = item.categoria;
-                          const podeMovimentar = ['OUTROS', 'PAGAMENTOS'].includes(categoriaAtual);
-                          
-                          return (
-                            <div key={idx} className="flex justify-between items-start text-xs gap-2">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-slate-200 font-medium text-xs break-words">{item.descricao}</p>
-                                {isGrouped && (
-                                  <p className="text-slate-500 text-xs">Agrupado: {item.count} transacoes</p>
-                                )}
-                                {!isGrouped && (
-                                  <p className="text-slate-500 text-xs">{item.data || 'N/A'}</p>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                <span className="text-slate-100 font-semibold text-xs whitespace-nowrap">{formatMoney(item.valor)}</span>
-                                {podeMovimentar && !isGrouped && transacaoId && (
-                                  <MovimentarCategoriaButton
-                                    transacaoId={transacaoId}
-                                    categoriaAtual={categoriaAtual}
-                                    onSuccess={() => utils.ofx.resumoCompleto.invalidate()}
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+        {/* Detalhamento de Categorias com Toggle Gráfico/Lista */}
+        <CategoryDetailView
+          categoriasComDados={categoriasComDados}
+          detalhes={detalhes}
+          expandedCategory={expandedCategory}
+          setExpandedCategory={setExpandedCategory}
+          groupByDescription={groupByDescription}
+          setGroupByDescription={setGroupByDescription}
+          startDate={startDate}
+          endDate={endDate}
+          formatMoney={formatMoney}
+          simplifyCategoriName={simplifyCategoriName}
+          parseRegistroDate={parseRegistroDate}
+          groupRegistrosByDescription={groupRegistrosByDescription}
+          onCategoryClick={(_nome: string, item: any) => {
+            const original = item?.nomeOriginal;
+            if (!original) return;
+            setExpandedCategory(original);
+            setTimeout(() => {
+              const element = document.getElementById(`category-${original}`);
+              element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+          }}
+          renderDetailContent={(items: any[], categoryName: string) => {
+            return groupRegistrosByDescription(items, groupByDescription).map((item: any, idx: number) => {
+              const isGrouped = item.count > 1;
+              const transacaoId = item.id;
+              const categoriaAtual = item.categoria;
+              const podeMovimentar = ['OUTROS', 'PAGAMENTOS'].includes(categoriaAtual);
+              
+              return (
+                <div key={idx} className="flex justify-between items-start text-xs gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-slate-200 font-medium text-xs break-words">{item.descricao}</p>
+                    {isGrouped && (
+                      <p className="text-slate-500 text-xs">Agrupado: {item.count} transacoes</p>
+                    )}
+                    {!isGrouped && (
+                      <p className="text-slate-500 text-xs">{item.data || 'N/A'}</p>
                     )}
                   </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-slate-100 font-semibold text-xs whitespace-nowrap">{formatMoney(item.valor)}</span>
+                    {podeMovimentar && !isGrouped && transacaoId && (
+                      <MovimentarCategoriaButton
+                        transacaoId={transacaoId}
+                        categoriaAtual={categoriaAtual}
+                        onSuccess={() => utils.ofx.resumoCompleto.invalidate()}
+                      />
+                    )}
+                  </div>
+                </div>
+              );
+            });
+          }}
+        />
+
       </div>
     </div>
   );

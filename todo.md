@@ -259,3 +259,14 @@
 - [x] Reduzir gap entre cards de gap-1.5 para gap-1
 - [x] Reduzir margin-bottom entre linhas de meses
 - [x] Todos os 88 testes continuam passando
+
+## Category Details Refactoring - Mobile UX (Sessão atual)
+
+- [x] Criar componente CategoryDetailView com toggle Gráfico/Lista
+- [x] Implementar barras de progresso com preenchimento visual
+- [x] Exibir porcentagem ao lado do valor (ex: R$ 30.764,86 | 45%)
+- [x] Remover gráfico de barras estático "Despesas por Categoria"
+- [x] Integrar novo componente no Dashboard
+- [x] Manter reatividade aos filtros de data
+- [x] Testar responsividade em mobile
+- [x] Todos os 88 testes continuam passando
