@@ -534,82 +534,8 @@ export default function Dashboard() {
           </DialogContent>
         </Dialog>
 
-        {/* KPI HERO: 4 Cards em Grid 2x2 */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 entrance-animate" style={{ animationDelay: '0.1s' }}>
-          {/* Card Lucro */}
-          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
-            resumoFiltrado.lucro >= 0
-              ? 'bg-gradient-to-br from-emerald-500 to-emerald-700'
-              : 'bg-gradient-to-br from-red-500 to-red-700'
-          }`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">💰 LUCRO</span>
-              {resumoFiltrado.lucro >= 0 ? (
-                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
-              ) : (
-                <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5" />
-              )}
-            </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.lucro)}</div>
-            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.lucro >= 0 ? 'POSITIVO' : 'NEGATIVO'}</div>
-            {(startDate || endDate) && (
-              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-white/20">
-                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
-              </div>
-            )}
-          </div>
-
-          {/* Card Saldo */}
-          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
-            saldoFinal !== null && saldoFinal !== undefined && saldoFinal < 0
-              ? 'bg-gradient-to-br from-red-500 to-red-700'
-              : 'bg-gradient-to-br from-blue-500 to-blue-700'
-          }`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">🏦 SALDO</span>
-              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">{saldoFinal ? formatMoney(saldoFinal) : 'R$ 0,00'}</div>
-            <div className="text-xs sm:text-sm opacity-90">
-              {resumoBanco?.lastImportDate
-                ? `Atualização: ${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
-                : 'Nenhuma atualização'}
-            </div>
-          </div>
-
-          {/* Card Receitas */}
-          <div className="kpi-card-3d bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-emerald-500/30">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">📈 Receitas</span>
-              <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.receitas)}</div>
-            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
-            {(startDate || endDate) && (
-              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-emerald-400/30">
-                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
-              </div>
-            )}
-          </div>
-
-          {/* Card Despesas */}
-          <div className="kpi-card-3d bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-red-500/30">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold opacity-90">📉 Despesas</span>
-              <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold mb-1">-{formatMoney(resumoFiltrado.despesas)}</div>
-            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
-            {(startDate || endDate) && (
-              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-red-400/30">
-                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Filtros - MonthCards em 2 linhas com scroll horizontal */}
-        <div className="mb-6 entrance-animate" style={{ animationDelay: '0.2s' }}>
+        {/* Filtros de Período - Movidos para acima dos cards */}
+        <div className="mb-4 entrance-animate" style={{ animationDelay: '0.1s' }}>
           {/* Label Período */}
           <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Período</label>
           
@@ -691,6 +617,82 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* KPI HERO: 4 Cards em Grid 2x2 */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 entrance-animate" style={{ animationDelay: '0.1s' }}>
+          {/* Card Lucro */}
+          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
+            resumoFiltrado.lucro >= 0
+              ? 'bg-gradient-to-br from-emerald-500 to-emerald-700'
+              : 'bg-gradient-to-br from-red-500 to-red-700'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">💰 LUCRO</span>
+              {resumoFiltrado.lucro >= 0 ? (
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+              ) : (
+                <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5" />
+              )}
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.lucro)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.lucro >= 0 ? 'POSITIVO' : 'NEGATIVO'}</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-white/20">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
+              </div>
+            )}
+          </div>
+
+          {/* Card Saldo */}
+          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
+            saldoFinal !== null && saldoFinal !== undefined && saldoFinal < 0
+              ? 'bg-gradient-to-br from-red-500 to-red-700'
+              : 'bg-gradient-to-br from-blue-500 to-blue-700'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">🏦 SALDO</span>
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{saldoFinal ? formatMoney(saldoFinal) : 'R$ 0,00'}</div>
+            <div className="text-xs sm:text-sm opacity-90">
+              {resumoBanco?.lastImportDate
+                ? `Atualização: ${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+                : 'Nenhuma atualização'}
+            </div>
+          </div>
+
+          {/* Card Receitas */}
+          <div className="kpi-card-3d bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-emerald-500/30">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">📈 Receitas</span>
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.receitas)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-emerald-400/30">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
+              </div>
+            )}
+          </div>
+
+          {/* Card Despesas */}
+          <div className="kpi-card-3d bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-red-500/30">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">📉 Despesas</span>
+              <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">-{formatMoney(resumoFiltrado.despesas)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-red-400/30">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
+              </div>
+            )}
+          </div>
+        </div>
+
+
 
         {/* Gráfico de Despesas por Categoria */}
         <Card className="border-slate-700 bg-slate-900/50 mb-6 kpi-card-3d entrance-animate" style={{ animationDelay: '0.3s' }}>

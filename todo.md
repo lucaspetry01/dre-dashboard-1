@@ -211,3 +211,10 @@
 - [x] Melhorar responsividade em telas pequenas
 - [x] Manter detalhamento de categorias intacto
 - [x] Todos os 88 testes continuam passando
+
+## Layout Reorganization - Period Filters (Sessão atual)
+
+- [x] Mover filtros de período (MonthCards) para acima dos cards principais
+- [x] Mover campos de data customizada (Início/Fim) para acima dos cards
+- [x] Manter botão Limpar junto aos filtros
+- [x] Todos os 88 testes continuam passando
