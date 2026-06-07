@@ -123,6 +123,7 @@ export default function Dashboard() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const monthsScrollRef = useRef<HTMLDivElement>(null);
 
   // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
   const quickFilters = [
@@ -147,6 +148,31 @@ export default function Dashboard() {
     { id: 'nov', label: 'Nov', month: 10 },
     { id: 'dez', label: 'Dez', month: 11 },
   ];
+
+  // Calcular último mês com registros para auto-scroll
+  const lastMonthWithData = useMemo(() => {
+    if (!usandoBanco || !resumoBanco?.diario || resumoBanco.diario.length === 0) return null;
+    const lastDate = resumoBanco.diario[resumoBanco.diario.length - 1].data_full;
+    const lastDateObj = new Date(lastDate + 'T00:00:00');
+    const monthIndex = lastDateObj.getMonth();
+    return months[monthIndex]?.id || null;
+  }, [usandoBanco, resumoBanco]);
+
+  // Auto-scroll para o último mês com dados
+  useMemo(() => {
+    if (lastMonthWithData && monthsScrollRef.current) {
+      setTimeout(() => {
+        const monthElement = document.getElementById(`month-${lastMonthWithData}`);
+        if (monthElement && monthsScrollRef.current) {
+          const containerWidth = monthsScrollRef.current.clientWidth;
+          const elementLeft = monthElement.offsetLeft;
+          const elementWidth = monthElement.clientWidth;
+          const scrollPosition = elementLeft - (containerWidth / 2) + (elementWidth / 2);
+          monthsScrollRef.current.scrollLeft = Math.max(0, scrollPosition);
+        }
+      }, 100);
+    }
+  }, [lastMonthWithData]);
 
   // Aplicar filtro rápido
   const applyQuickFilter = (filterId: string) => {
@@ -509,9 +535,18 @@ export default function Dashboard() {
           </div>
 
           {/* Barra de Meses Horizontal com Scroll - Economiza Espaço Vertical */}
-          <div className="flex gap-1 mb-2 overflow-x-auto pb-2" style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div 
+            ref={monthsScrollRef}
+            className="flex gap-1 mb-2 overflow-x-auto pb-2" 
+            style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {months.map((month) => (
-              <div key={month.id} className="flex-shrink-0" style={{ width: 'calc((100vw - 32px) / 3.5)' }}>
+              <div 
+                key={month.id} 
+                id={`month-${month.id}`}
+                className="flex-shrink-0" 
+                style={{ width: '80px', minWidth: '80px' }}
+              >
                 <MonthCard
                   month={month.label}
                   monthId={month.id}
