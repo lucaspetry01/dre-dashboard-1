@@ -12,6 +12,7 @@ interface MonthCardProps {
 /**
  * MonthCard - Card com mini gráfico sparkline mostrando tendência mensal
  * Exibe o mês, variação percentual e um mini gráfico de tendência
+ * Padronizado com tamanho fixo e padding uniforme
  */
 export default function MonthCard({
   month,
@@ -31,14 +32,15 @@ export default function MonthCard({
   return (
     <button
       onClick={onClick}
-      className={`relative p-1 rounded-md transition-all duration-200 entrance-animate text-xs ${
+      className={`relative w-20 h-24 flex flex-col items-center justify-between p-2 rounded-md transition-all duration-200 entrance-animate text-xs ${
         isSelected
           ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
           : 'bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700'
       }`}
+      style={{ minWidth: '80px' }}
     >
       {/* Header: Mês e Variação */}
-      <div className="flex items-start justify-between mb-0.5">
+      <div className="flex items-start justify-between w-full">
         <span className="text-xs font-bold leading-tight">{month}</span>
         <div className={`flex items-center gap-0.5 text-xs font-semibold ${
           isPositive ? 'text-green-400' : 'text-red-400'
@@ -54,7 +56,7 @@ export default function MonthCard({
 
       {/* Mini Sparkline */}
       <svg
-        className="w-full h-3 mb-0.5"
+        className="w-full flex-1 my-1"
         viewBox="0 0 100 30"
         preserveAspectRatio="none"
       >
@@ -82,7 +84,7 @@ export default function MonthCard({
       </svg>
 
       {/* Valor */}
-      <div className="text-xs font-semibold truncate leading-tight text-center">
+      <div className="text-xs font-semibold truncate leading-tight text-center w-full">
         {Math.abs(lucro).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
       </div>
     </button>

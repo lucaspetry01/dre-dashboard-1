@@ -498,10 +498,10 @@ export default function Dashboard() {
           </div>
 
           {/* Linha 2: Razão Social */}
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2 truncate">Transportes Moraes e Petry LTDA ME</p>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-3 truncate">Transportes Moraes e Petry LTDA ME</p>
 
           {/* Linha 3: Inputs de Data (Início | Fim) lado a lado */}
-          <div className="grid grid-cols-2 gap-2 mb-2">
+          <div className="grid grid-cols-2 gap-2 mb-3">
             <div className="min-w-0">
               <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-1">Início</label>
               <div className="relative flex items-center">
@@ -537,7 +537,7 @@ export default function Dashboard() {
           {/* Barra de Meses Horizontal com Scroll - Economiza Espaço Vertical */}
           <div 
             ref={monthsScrollRef}
-            className="flex gap-1 mb-2 overflow-x-auto pb-2" 
+            className="flex gap-1.5 mb-2 overflow-x-auto pb-2" 
             style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {months.map((month) => (
