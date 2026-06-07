@@ -508,10 +508,10 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Linha 4: Barra de Meses em 2 Linhas (Sem Scroll) - Ultra Compacto */}
-          {/* Linha 1: Jan-Jun */}
-          <div className="grid grid-cols-6 gap-1 mb-1">
-            {months.slice(0, 6).map((month) => (
+          {/* Linha 4: Barra de Meses em 3 Linhas (Sem Scroll) - Ultra Compacto */}
+          {/* Linha 1: Jan-Abr */}
+          <div className="grid grid-cols-4 gap-1 mb-1">
+            {months.slice(0, 4).map((month) => (
               <div key={month.id} className="w-full">
                 <MonthCard
                   month={month.label}
@@ -524,9 +524,24 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Linha 2: Jul-Dez */}
-          <div className="grid grid-cols-6 gap-1 mb-2">
-            {months.slice(6, 12).map((month) => (
+          {/* Linha 2: Mai-Ago */}
+          <div className="grid grid-cols-4 gap-1 mb-1">
+            {months.slice(4, 8).map((month) => (
+              <div key={month.id} className="w-full">
+                <MonthCard
+                  month={month.label}
+                  monthId={month.id}
+                  lucro={lucroByMonth[month.id] || 0}
+                  isSelected={selectedMonths.includes(month.id)}
+                  onClick={() => applyQuickFilter(month.id)}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Linha 3: Set-Dez */}
+          <div className="grid grid-cols-4 gap-1 mb-2">
+            {months.slice(8, 12).map((month) => (
               <div key={month.id} className="w-full">
                 <MonthCard
                   month={month.label}
