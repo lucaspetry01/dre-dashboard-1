@@ -83,9 +83,9 @@ export default function MonthCard({
         />
       </svg>
 
-      {/* Valor */}
+      {/* Valor em Reais */}
       <div className="text-xs font-semibold truncate leading-tight text-center w-full">
-        {Math.abs(lucro).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+        R$ {(Math.abs(lucro) / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}k
       </div>
     </button>
   );
