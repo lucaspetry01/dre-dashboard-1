@@ -31,30 +31,30 @@ export default function MonthCard({
   return (
     <button
       onClick={onClick}
-      className={`relative p-3 rounded-lg transition-all duration-200 entrance-animate ${
+      className={`relative p-2 rounded-lg transition-all duration-200 entrance-animate ${
         isSelected
-          ? 'bg-blue-600 text-white shadow-lg ring-2 ring-blue-400'
+          ? 'bg-blue-600 text-white shadow-lg ring-1 ring-blue-400'
           : 'bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700'
       }`}
     >
       {/* Header: Mês e Variação */}
-      <div className="flex items-start justify-between mb-2">
-        <span className="text-xs font-bold">{month}</span>
+      <div className="flex items-start justify-between mb-1">
+        <span className="text-xs font-bold leading-none">{month}</span>
         <div className={`flex items-center gap-0.5 text-xs font-semibold ${
           isPositive ? 'text-green-400' : 'text-red-400'
         }`}>
           {isPositive ? (
-            <TrendingUp size={12} />
+            <TrendingUp size={10} />
           ) : (
-            <TrendingDown size={12} />
+            <TrendingDown size={10} />
           )}
-          <span>{percentChange}%</span>
+          <span className="text-xs leading-none">{percentChange}%</span>
         </div>
       </div>
 
       {/* Mini Sparkline */}
       <svg
-        className="w-full h-8 mb-1"
+        className="w-full h-5 mb-1"
         viewBox="0 0 100 30"
         preserveAspectRatio="none"
       >
@@ -68,7 +68,7 @@ export default function MonthCard({
             .join(' ')}
           fill="none"
           stroke={isPositive ? '#4ade80' : '#f87171'}
-          strokeWidth="1.5"
+          strokeWidth="1"
           vectorEffect="non-scaling-stroke"
         />
         
@@ -82,7 +82,7 @@ export default function MonthCard({
       </svg>
 
       {/* Valor */}
-      <div className="text-xs font-semibold truncate">
+      <div className="text-xs font-semibold truncate leading-none">
         R$ {Math.abs(lucro).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
       </div>
     </button>

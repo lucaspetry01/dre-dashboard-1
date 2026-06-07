@@ -236,3 +236,14 @@
 - [x] Usar grid grid-cols-6 para distribuir igualmente
 - [x] Reduzir tamanho dos cards mantendo funcionalidade
 - [x] Todos os 88 testes continuam passando
+
+## Month Cards Ultra-Compact (Sessão atual)
+
+- [x] Reduzir padding de p-3 para p-2
+- [x] Reduzir altura do sparkline de h-8 para h-5
+- [x] Reduzir ícones de size-12 para size-10
+- [x] Reduzir margin-bottom de mb-2 para mb-1
+- [x] Adicionar leading-none para compactar linhas
+- [x] Reduzir strokeWidth de 1.5 para 1
+- [x] Reduzir ring de ring-2 para ring-1
+- [x] Todos os 88 testes continuam passando
