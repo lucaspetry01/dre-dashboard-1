@@ -31,15 +31,15 @@ export default function MonthCard({
   return (
     <button
       onClick={onClick}
-      className={`relative p-1.5 rounded-md transition-all duration-200 entrance-animate ${
+      className={`relative p-1 rounded-md transition-all duration-200 entrance-animate text-xs ${
         isSelected
-          ? 'bg-blue-600 text-white shadow-md ring-1 ring-blue-400'
+          ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
           : 'bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700'
       }`}
     >
       {/* Header: Mês e Variação */}
-      <div className="flex items-start justify-between mb-1">
-        <span className="text-xs font-bold leading-none">{month}</span>
+      <div className="flex items-start justify-between mb-0.5">
+        <span className="text-xs font-bold leading-tight">{month}</span>
         <div className={`flex items-center gap-0.5 text-xs font-semibold ${
           isPositive ? 'text-green-400' : 'text-red-400'
         }`}>
@@ -54,7 +54,7 @@ export default function MonthCard({
 
       {/* Mini Sparkline */}
       <svg
-        className="w-full h-4 mb-0.5"
+        className="w-full h-3 mb-0.5"
         viewBox="0 0 100 30"
         preserveAspectRatio="none"
       >
@@ -82,8 +82,8 @@ export default function MonthCard({
       </svg>
 
       {/* Valor */}
-      <div className="text-xs font-semibold truncate leading-tight">
-        R$ {Math.abs(lucro).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+      <div className="text-xs font-semibold truncate leading-tight text-center">
+        {Math.abs(lucro).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
       </div>
     </button>
   );
