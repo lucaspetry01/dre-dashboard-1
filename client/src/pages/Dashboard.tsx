@@ -508,10 +508,10 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Barra de Meses Responsiva - Auto-fit */}
-          <div className="grid gap-1 mb-2" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))' }}>
+          {/* Barra de Meses Horizontal com Scroll - Economiza Espaço Vertical */}
+          <div className="flex gap-1 mb-2 overflow-x-auto pb-2" style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {months.map((month) => (
-              <div key={month.id} className="w-full">
+              <div key={month.id} className="flex-shrink-0" style={{ width: 'calc((100vw - 32px) / 3.5)' }}>
                 <MonthCard
                   month={month.label}
                   monthId={month.id}
