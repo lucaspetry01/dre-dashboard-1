@@ -507,21 +507,35 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Linha 4: Barra de Meses com Minigráficos (Compacta para Mobile) */}
-          <div className="overflow-x-auto overflow-y-hidden -mx-3 px-3 sm:-mx-4 sm:px-4">
-            <div className="flex gap-1.5 min-w-min pb-2">
-              {months.map((month) => (
-                <div key={month.id} className="flex-shrink-0 w-20 sm:w-24">
-                  <MonthCard
-                    month={month.label}
-                    monthId={month.id}
-                    lucro={lucroByMonth[month.id] || 0}
-                    isSelected={selectedMonths.includes(month.id)}
-                    onClick={() => applyQuickFilter(month.id)}
-                  />
-                </div>
-              ))}
-            </div>
+          {/* Linha 4: Barra de Meses em 2 Linhas (Sem Scroll) */}
+          {/* Linha 1: Jan-Jun */}
+          <div className="grid grid-cols-6 gap-1.5 mb-2">
+            {months.slice(0, 6).map((month) => (
+              <div key={month.id} className="w-full">
+                <MonthCard
+                  month={month.label}
+                  monthId={month.id}
+                  lucro={lucroByMonth[month.id] || 0}
+                  isSelected={selectedMonths.includes(month.id)}
+                  onClick={() => applyQuickFilter(month.id)}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Linha 2: Jul-Dez */}
+          <div className="grid grid-cols-6 gap-1.5">
+            {months.slice(6, 12).map((month) => (
+              <div key={month.id} className="w-full">
+                <MonthCard
+                  month={month.label}
+                  monthId={month.id}
+                  lucro={lucroByMonth[month.id] || 0}
+                  isSelected={selectedMonths.includes(month.id)}
+                  onClick={() => applyQuickFilter(month.id)}
+                />
+              </div>
+            ))}
           </div>
 
           {/* Botão Limpar */}

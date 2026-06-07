@@ -229,3 +229,10 @@
 - [x] Botão Limpar Filtros integrado ao bloco
 - [x] Cards principais (LUCRO, SALDO, RECEITAS, DESPESAS) agora vem abaixo
 - [x] Todos os 88 testes continuam passando
+
+## Month Cards Compact Layout (Sessão atual)
+
+- [x] Reorganizar meses em 2 linhas (6 meses cada) sem scroll lateral
+- [x] Usar grid grid-cols-6 para distribuir igualmente
+- [x] Reduzir tamanho dos cards mantendo funcionalidade
+- [x] Todos os 88 testes continuam passando
