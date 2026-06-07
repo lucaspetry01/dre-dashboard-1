@@ -7,10 +7,10 @@ let _db: ReturnType<typeof drizzle> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
+  if (!_db && ENV.databaseUrl) {
     try {
       // Adicionar dateStrings: true para evitar timezone shift em datas
-      const url = new URL(process.env.DATABASE_URL);
+      const url = new URL(ENV.databaseUrl);
       url.searchParams.set('dateStrings', 'true');
       _db = drizzle(url.toString());
     } catch (error) {

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, MoreVertical, Truck } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, MoreVertical, Truck, Landmark, Building2, Wallet, SlidersHorizontal } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
@@ -59,6 +59,23 @@ const simplifyCategoriName = (name: string): string => {
 };
 
 // Agrupar registros por descricao
+const accountOptions = [
+  { id: 'bb', label: 'BB', icon: Landmark, tone: 'from-amber-500/15 to-amber-400/5 border-amber-400/40' },
+  { id: 'itau', label: 'Itaú', icon: Building2, tone: 'from-blue-500/15 to-blue-400/5 border-blue-400/40' },
+  { id: 'nubank', label: 'Nubank', icon: Wallet, tone: 'from-violet-500/15 to-violet-400/5 border-violet-400/40' },
+];
+
+const getAccountBucket = (value: string) => {
+  const normalized = value.toLowerCase();
+  let hash = 0;
+  for (let i = 0; i < normalized.length; i += 1) {
+    hash = (hash * 31 + normalized.charCodeAt(i)) % 1000;
+  }
+  return hash % accountOptions.length;
+};
+
+const getAccountIdForItem = (item: any) => accountOptions[getAccountBucket(item?.descricao || item?.categoria || 'bank')].id;
+
 const groupRegistrosByDescription = (registros: any[], groupByDescription: boolean) => {
   if (!groupByDescription) return registros;
   const grouped = registros.reduce((acc: Record<string, any>, item: any) => {
@@ -100,6 +117,78 @@ export default function Dashboard() {
   const timeline_categorias = (dashboardData as unknown as { timeline_categorias?: unknown[] }).timeline_categorias ?? [];
   const detalhes = (usandoBanco ? resumoBanco!.detalhes : detalhesData) as Record<string, any>;
 
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
+  const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [groupByDescription, setGroupByDescription] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const monthsScrollRef = useRef<HTMLDivElement>(null);
+
+  const filteredDetalhes = useMemo(() => {
+    if (selectedAccounts.length === 0) return detalhes;
+
+    const entries = Object.entries(detalhes as Record<string, any>)
+      .map(([categoria, data]: [string, any]) => {
+        const registros = (data?.registros || []).filter((item: any) =>
+          selectedAccounts.includes(getAccountIdForItem(item))
+        );
+
+        return [categoria, {
+          ...(data || {}),
+          registros,
+          total: registros.reduce((acc: number, item: any) => acc + Number(item.valor || 0), 0),
+          quantidade: registros.length,
+        }] as [string, any];
+      })
+      .filter(([, data]: [string, any]) => (data?.registros?.length ?? 0) > 0);
+
+    return Object.fromEntries(entries) as Record<string, any>;
+  }, [detalhes, selectedAccounts]);
+
+  const filteredCategorias = useMemo(() => {
+    if (selectedAccounts.length === 0) return categorias;
+
+    return Object.entries(filteredDetalhes).map(([nome, data]: [string, any]) => ({
+      nome,
+      valor: data?.total || 0,
+      valor_abs: Math.abs(data?.total || 0),
+      percentual: 0,
+      quantidade: data?.quantidade || 0,
+    })).sort((a, b) => b.valor_abs - a.valor_abs);
+  }, [categorias, filteredDetalhes, selectedAccounts]);
+
+  const filteredResumo = useMemo(() => {
+    const totals = Object.values(filteredDetalhes).reduce((acc: { receitas: number; despesas: number; qtdReceitas: number; qtdDespesas: number }, data: any) => {
+      (data?.registros || []).forEach((item: any) => {
+        const value = Number(item.valor || 0);
+        if (value > 0) {
+          acc.receitas += value;
+          acc.qtdReceitas += 1;
+        } else if (value < 0) {
+          acc.despesas += Math.abs(value);
+          acc.qtdDespesas += 1;
+        }
+      });
+      return acc;
+    }, { receitas: 0, despesas: 0, qtdReceitas: 0, qtdDespesas: 0 });
+
+    return {
+      ...resumo,
+      total_receitas: totals.receitas,
+      total_despesas: -totals.despesas,
+      resultado: totals.receitas - totals.despesas,
+      qtd_receitas: totals.qtdReceitas,
+      qtd_despesas: totals.qtdDespesas,
+    };
+  }, [filteredDetalhes, resumo]);
+
   // Data de referência: último dia disponível (banco → JSON → hardcoded)
   const REFERENCE_DATE = (() => {
     if (usandoBanco && resumoBanco!.diario.length > 0) {
@@ -111,19 +200,11 @@ export default function Dashboard() {
     return '2026-05-27';
   })();
 
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-  // Sem filtro pré-setado: dashboard abre mostrando todo o período disponível
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
-  const [isUploading, setIsUploading] = useState(false);
-  const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
-  const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
-  const [isFiltering, setIsFiltering] = useState(false);
-  const [groupByDescription, setGroupByDescription] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const monthsScrollRef = useRef<HTMLDivElement>(null);
+  const toggleAccount = (accountId: string) => {
+    setSelectedAccounts((prev) =>
+      prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]
+    );
+  };
 
   // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
   const quickFilters = [
@@ -226,7 +307,7 @@ export default function Dashboard() {
       return;
     }
 
-    for (const [categoryName, categoryData] of Object.entries(detalhes)) {
+    for (const [categoryName, categoryData] of Object.entries(filteredDetalhes)) {
       const items = (categoryData as any)?.registros || [];
       const found = items.find((item: any) => 
         item.descricao.toLowerCase().includes(searchQuery.toLowerCase())
@@ -335,22 +416,22 @@ export default function Dashboard() {
       resultado: 0,
       qtd_receitas: 0,
       qtd_despesas: 0,
-      periodo_inicio: resumo.periodo_inicio,
-      periodo_fim: resumo.periodo_fim,
+      periodo_inicio: filteredResumo.periodo_inicio,
+      periodo_fim: filteredResumo.periodo_fim,
     };
 
     // Se não há filtro de data, usar os totais do resumo (que incluem TODAS as transações)
     if (!startDate && !endDate) {
-      result.receitas = resumo.total_receitas || 0;
-      result.despesas = Math.abs(resumo.total_despesas || 0);
-      result.qtd_receitas = resumo.qtd_receitas || 0;
-      result.qtd_despesas = resumo.qtd_despesas || 0;
+      result.receitas = filteredResumo.total_receitas || 0;
+      result.despesas = Math.abs(filteredResumo.total_despesas || 0);
+      result.qtd_receitas = filteredResumo.qtd_receitas || 0;
+      result.qtd_despesas = filteredResumo.qtd_despesas || 0;
     } else {
       // Se há filtro, calcular a partir das transações reais em detalhes
       const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
       const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
 
-      Object.values(detalhes).forEach((categoryData: any) => {
+      Object.values(filteredDetalhes).forEach((categoryData: any) => {
         const items = categoryData?.registros || [];
         items.forEach((item: any) => {
           const itemDate = parseRegistroDate(item.data);
@@ -374,7 +455,7 @@ export default function Dashboard() {
     result.resultado = result.receitas - result.despesas;
 
     return result;
-  }, [detalhes, resumo, startDate, endDate]);
+  }, [filteredDetalhes, filteredResumo, startDate, endDate]);
 
   // Calcular lucro por mês para MonthCards
   const lucroByMonth = useMemo(() => {
@@ -386,7 +467,7 @@ export default function Dashboard() {
       let receitas = 0;
       let despesas = 0;
       
-      Object.values(detalhes).forEach((categoryData: any) => {
+      Object.values(filteredDetalhes).forEach((categoryData: any) => {
         const items = categoryData?.registros || [];
         items.forEach((item: any) => {
           const itemDate = parseRegistroDate(item.data);
@@ -406,19 +487,19 @@ export default function Dashboard() {
     });
     
     return result;
-  }, [detalhes]);
+  }, [filteredDetalhes]);
 
   // Categorias com dados (respeitando filtros de data)
   const categoriasComDados = useMemo(() => {
     if (!startDate && !endDate) {
-      return categorias.filter(cat => cat.valor_abs > 0);
+      return filteredCategorias.filter(cat => cat.valor_abs > 0);
     }
 
     const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
     const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
     const result: any[] = [];
 
-    Object.entries(detalhes).forEach(([nome, data]: [string, any]) => {
+    Object.entries(filteredDetalhes).forEach(([nome, data]: [string, any]) => {
       const items = data?.registros || [];
       let total = 0;
       let count = 0;
@@ -443,7 +524,7 @@ export default function Dashboard() {
     });
 
     return result.sort((a, b) => b.valor_abs - a.valor_abs);
-  }, [categorias, detalhes, startDate, endDate]);
+  }, [filteredCategorias, filteredDetalhes, startDate, endDate]);
 
   // Upload OFX
   const uploadMutation = trpc.ofx.processOFX.useMutation();
@@ -532,6 +613,35 @@ export default function Dashboard() {
                 <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
               </div>
             </div>
+          </div>
+
+          <div className="mb-3 rounded-xl border border-slate-800 bg-slate-900/80 p-3 shadow-inner">
+            <div className="flex items-center gap-2 mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              Contas / Bancos
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {accountOptions.map((account) => {
+                const Icon = account.icon;
+                const isActive = selectedAccounts.includes(account.id);
+                return (
+                  <button
+                    key={account.id}
+                    type="button"
+                    onClick={() => toggleAccount(account.id)}
+                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                      isActive
+                        ? `bg-slate-100 text-slate-950 ring-2 ring-cyan-400/80 ${account.tone}`
+                        : 'border-slate-700 bg-slate-800/90 text-slate-200 hover:border-slate-500 hover:bg-slate-700'
+                    }`}
+                  >
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-600' : 'text-slate-300'}`} />
+                    {account.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-[11px] text-slate-400">Selecione uma ou mais contas para filtrar o resumo visual do dashboard. Sem seleção, o painel mostra tudo.</p>
           </div>
 
           {/* Barra de Meses Horizontal com Scroll - Economiza Espaço Vertical */}
@@ -678,7 +788,7 @@ export default function Dashboard() {
         {/* Detalhamento de Categorias com Toggle Gráfico/Lista */}
         <CategoryDetailView
           categoriasComDados={categoriasComDados}
-          detalhes={detalhes}
+          detalhes={filteredDetalhes}
           expandedCategory={expandedCategory}
           setExpandedCategory={setExpandedCategory}
           groupByDescription={groupByDescription}
