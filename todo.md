@@ -247,3 +247,15 @@
 - [x] Reduzir strokeWidth de 1.5 para 1
 - [x] Reduzir ring de ring-2 para ring-1
 - [x] Todos os 88 testes continuam passando
+
+## Header Box Removal & Final Compaction (Sessão atual)
+
+- [x] Remover box/container do cabeçalho (bg-slate-900/30, rounded-lg, border)
+- [x] Deixar elementos soltos para ganhar espaço de margem
+- [x] Reduzir margins do cabeçalho (mb-4 para mb-2)
+- [x] Reduzir gaps entre linhas do cabeçalho
+- [x] Reduzir padding do MonthCard de p-2 para p-1.5
+- [x] Reduzir altura do sparkline de h-5 para h-4
+- [x] Reduzir gap entre cards de gap-1.5 para gap-1
+- [x] Reduzir margin-bottom entre linhas de meses
+- [x] Todos os 88 testes continuam passando

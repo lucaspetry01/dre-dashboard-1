@@ -441,10 +441,10 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 pb-28">
       <div className="max-w-7xl mx-auto">
-        {/* BLOCO SUPERIOR: Cabeçalho + Filtros Operacionais */}
-        <div className="mb-4 sm:mb-6 entrance-fade delay-0 bg-slate-900/30 rounded-lg p-3 sm:p-4 border border-slate-800">
+        {/* BLOCO SUPERIOR: Cabeçalho + Filtros Operacionais (Elementos Soltos) */}
+        <div className="mb-2 sm:mb-3 entrance-fade delay-0">
           {/* Linha 1: Título + Botões Buscar/OFX */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
             <h1 className="text-xl sm:text-3xl font-bold text-slate-900 dark:text-white flex-1 truncate">Dashboard Financeiro</h1>
             <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
               <Button
@@ -471,10 +471,10 @@ export default function Dashboard() {
           </div>
 
           {/* Linha 2: Razão Social */}
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-3 truncate">Transportes Moraes e Petry LTDA ME</p>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2 truncate">Transportes Moraes e Petry LTDA ME</p>
 
           {/* Linha 3: Inputs de Data (Início | Fim) lado a lado */}
-          <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="grid grid-cols-2 gap-2 mb-2">
             <div className="min-w-0">
               <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-1">Início</label>
               <div className="relative flex items-center">
@@ -507,9 +507,9 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Linha 4: Barra de Meses em 2 Linhas (Sem Scroll) */}
+          {/* Linha 4: Barra de Meses em 2 Linhas (Sem Scroll) - Ultra Compacto */}
           {/* Linha 1: Jan-Jun */}
-          <div className="grid grid-cols-6 gap-1.5 mb-2">
+          <div className="grid grid-cols-6 gap-1 mb-1">
             {months.slice(0, 6).map((month) => (
               <div key={month.id} className="w-full">
                 <MonthCard
@@ -524,7 +524,7 @@ export default function Dashboard() {
           </div>
 
           {/* Linha 2: Jul-Dez */}
-          <div className="grid grid-cols-6 gap-1.5">
+          <div className="grid grid-cols-6 gap-1 mb-2">
             {months.slice(6, 12).map((month) => (
               <div key={month.id} className="w-full">
                 <MonthCard

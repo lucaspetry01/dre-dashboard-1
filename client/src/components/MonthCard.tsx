@@ -31,9 +31,9 @@ export default function MonthCard({
   return (
     <button
       onClick={onClick}
-      className={`relative p-2 rounded-lg transition-all duration-200 entrance-animate ${
+      className={`relative p-1.5 rounded-md transition-all duration-200 entrance-animate ${
         isSelected
-          ? 'bg-blue-600 text-white shadow-lg ring-1 ring-blue-400'
+          ? 'bg-blue-600 text-white shadow-md ring-1 ring-blue-400'
           : 'bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700'
       }`}
     >
@@ -54,7 +54,7 @@ export default function MonthCard({
 
       {/* Mini Sparkline */}
       <svg
-        className="w-full h-5 mb-1"
+        className="w-full h-4 mb-0.5"
         viewBox="0 0 100 30"
         preserveAspectRatio="none"
       >
@@ -82,7 +82,7 @@ export default function MonthCard({
       </svg>
 
       {/* Valor */}
-      <div className="text-xs font-semibold truncate leading-none">
+      <div className="text-xs font-semibold truncate leading-tight">
         R$ {Math.abs(lucro).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
       </div>
     </button>
