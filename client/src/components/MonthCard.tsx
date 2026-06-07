@@ -36,9 +36,9 @@ export default function MonthCard({
       return 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400';
     }
     
-    // Sem dados (0,0k) - amarelo
+    // Sem dados - transparência 80% (20% opacidade)
     if (!hasData) {
-      return 'bg-yellow-900/40 text-yellow-300 border border-yellow-700/50 hover:bg-yellow-900/50';
+      return 'bg-slate-800/20 border border-slate-700/20 hover:bg-slate-800/30';
     }
     
     // Com dados - estilo normal
@@ -47,7 +47,7 @@ export default function MonthCard({
 
   const getValueColor = () => {
     if (isSelected) return 'text-white';
-    if (!hasData) return 'text-yellow-300';
+    if (!hasData) return 'text-white/90';
     return 'text-slate-200';
   };
 
