@@ -441,11 +441,11 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 pb-28">
       <div className="max-w-7xl mx-auto">
-        {/* Header - Reformulado para Mobile */}
-        <div className="mb-4 sm:mb-6 entrance-fade delay-0">
-          {/* Linha 1: Título + Botões */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-            <h1 className="text-xl sm:text-4xl font-bold text-slate-900 dark:text-white flex-1 truncate">Dashboard Financeiro</h1>
+        {/* BLOCO SUPERIOR: Cabeçalho + Filtros Operacionais */}
+        <div className="mb-4 sm:mb-6 entrance-fade delay-0 bg-slate-900/30 rounded-lg p-3 sm:p-4 border border-slate-800">
+          {/* Linha 1: Título + Botões Buscar/OFX */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+            <h1 className="text-xl sm:text-3xl font-bold text-slate-900 dark:text-white flex-1 truncate">Dashboard Financeiro</h1>
             <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
               <Button
                 onClick={() => setSearchOpen(true)}
@@ -467,43 +467,72 @@ export default function Dashboard() {
                   multiple={false}
                 />
               </label>
-              <Button
-                onClick={() => {
-                  if (activeQuickFilter === 'hoje') {
-                    resetFilters();
-                  } else {
-                    applyQuickFilter('hoje');
-                  }
-                }}
-                variant={activeQuickFilter === 'hoje' ? 'default' : 'outline'}
-                className="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold h-8 flex-1 sm:flex-none"
-              >
-                Hoje
-              </Button>
             </div>
           </div>
 
-          {/* Linha 2: Empresa + Período + Badge */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 truncate">Transportes Moraes e Petry LTDA ME</p>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {(startDate && endDate) ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium whitespace-nowrap">
-                    <Calendar className="w-3 h-3" />
-                    {new Date(startDate + 'T00:00:00').toLocaleDateString('pt-BR')} a {new Date(endDate + 'T00:00:00').toLocaleDateString('pt-BR')}
-                  </span>
-                ) : (
-                  <span className="text-xs text-slate-500 dark:text-slate-400">Período: {resumo.periodo_inicio} a {resumo.periodo_fim}</span>
-                )}
-              </p>
-              {usandoBanco && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-medium whitespace-nowrap">
-                  {resumoBanco!.totalRegistros} reg.
-                </span>
-              )}
+          {/* Linha 2: Razão Social */}
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-3 truncate">Transportes Moraes e Petry LTDA ME</p>
+
+          {/* Linha 3: Inputs de Data (Início | Fim) lado a lado */}
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-1">Início</label>
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
+                    setActiveQuickFilter(null);
+                  }}
+                  className="w-full text-xs h-8 px-2 pr-8 overflow-hidden bg-slate-800 border-slate-700 text-slate-100"
+                />
+                <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-1">Fim</label>
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                    setActiveQuickFilter(null);
+                  }}
+                  className="w-full text-xs h-8 px-2 pr-8 overflow-hidden bg-slate-800 border-slate-700 text-slate-100"
+                />
+                <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+              </div>
             </div>
           </div>
+
+          {/* Linha 4: Barra de Meses com Minigráficos (Compacta para Mobile) */}
+          <div className="overflow-x-auto overflow-y-hidden -mx-3 px-3 sm:-mx-4 sm:px-4">
+            <div className="flex gap-1.5 min-w-min pb-2">
+              {months.map((month) => (
+                <div key={month.id} className="flex-shrink-0 w-20 sm:w-24">
+                  <MonthCard
+                    month={month.label}
+                    monthId={month.id}
+                    lucro={lucroByMonth[month.id] || 0}
+                    isSelected={selectedMonths.includes(month.id)}
+                    onClick={() => applyQuickFilter(month.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Botão Limpar */}
+          {(startDate || endDate || selectedMonths.length > 0) && (
+            <button
+              onClick={resetFilters}
+              className="w-full mt-2 px-2 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
+            >
+              Limpar Filtros
+            </button>
+          )}
         </div>
 
         {/* Botões de Buscar e Upload - Movidos para o header */}
@@ -534,89 +563,7 @@ export default function Dashboard() {
           </DialogContent>
         </Dialog>
 
-        {/* Filtros de Período - Movidos para acima dos cards */}
-        <div className="mb-4 entrance-animate" style={{ animationDelay: '0.1s' }}>
-          {/* Label Período */}
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Período</label>
-          
-          {/* Linha 1: Jan-Jun com scroll */}
-          <div className="overflow-x-auto overflow-y-hidden pb-2 mb-3 -mx-3 px-3 sm:-mx-4 sm:px-4">
-            <div className="flex gap-2 sm:gap-2.5 min-w-min">
-              {months.slice(0, 6).map((month) => (
-                <div key={month.id} className="flex-shrink-0 w-28 sm:w-32">
-                  <MonthCard
-                    month={month.label}
-                    monthId={month.id}
-                    lucro={lucroByMonth[month.id] || 0}
-                    isSelected={selectedMonths.includes(month.id)}
-                    onClick={() => applyQuickFilter(month.id)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Linha 2: Jul-Dez com scroll */}
-          <div className="overflow-x-auto overflow-y-hidden pb-2 mb-3 -mx-3 px-3 sm:-mx-4 sm:px-4">
-            <div className="flex gap-2 sm:gap-2.5 min-w-min">
-              {months.slice(6, 12).map((month) => (
-                <div key={month.id} className="flex-shrink-0 w-28 sm:w-32">
-                  <MonthCard
-                    month={month.label}
-                    monthId={month.id}
-                    lucro={lucroByMonth[month.id] || 0}
-                    isSelected={selectedMonths.includes(month.id)}
-                    onClick={() => applyQuickFilter(month.id)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Botão Limpar */}
-          {(startDate || endDate || selectedMonths.length > 0) && (
-            <button
-              onClick={resetFilters}
-              className="w-full mb-3 px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all whitespace-nowrap entrance-animate"
-            >
-              Limpar
-            </button>
-          )}
 
-          {/* Datas Customizadas lado a lado com ícone */}
-          <div className="grid grid-cols-2 gap-2 mt-3">
-            <div className="min-w-0">
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Início</label>
-              <div className="relative flex items-center">
-                <Input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => {
-                    setStartDate(e.target.value);
-                    setActiveQuickFilter(null);
-                  }}
-                  className="w-full text-xs h-9 px-2 pr-8 overflow-hidden bg-slate-800 border-slate-700 text-slate-100"
-                />
-                <Calendar className="absolute right-2 w-4 h-4 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-            <div className="min-w-0">
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200 mb-0.5">Fim</label>
-              <div className="relative flex items-center">
-                <Input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => {
-                    setEndDate(e.target.value);
-                    setActiveQuickFilter(null);
-                  }}
-                  className="w-full text-xs h-9 px-2 pr-8 overflow-hidden bg-slate-800 border-slate-700 text-slate-100"
-                />
-                <Calendar className="absolute right-2 w-4 h-4 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* KPI HERO: 4 Cards em Grid 2x2 */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 entrance-animate" style={{ animationDelay: '0.1s' }}>

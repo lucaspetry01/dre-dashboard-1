@@ -218,3 +218,14 @@
 - [x] Mover campos de data customizada (Início/Fim) para acima dos cards
 - [x] Manter botão Limpar junto aos filtros
 - [x] Todos os 88 testes continuam passando
+
+## Layout Reorganization - Upper Block (Sessão atual)
+
+- [x] Criar bloco superior com fundo semi-transparente e borda
+- [x] Linha 1: Título "Dashboard Financeiro" + Botões Buscar/OFX
+- [x] Linha 2: Razão Social "Transportes Moraes e Petry LTDA ME"
+- [x] Linha 3: Inputs de data (Início | Fim) lado a lado, compactos para mobile
+- [x] Linha 4: Barra horizontal de 12 meses com minigráficos (w-20 mobile, w-24 desktop)
+- [x] Botão Limpar Filtros integrado ao bloco
+- [x] Cards principais (LUCRO, SALDO, RECEITAS, DESPESAS) agora vem abaixo
+- [x] Todos os 88 testes continuam passando
