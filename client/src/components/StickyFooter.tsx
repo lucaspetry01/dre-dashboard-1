@@ -1,8 +1,10 @@
-import { BarChart3, Truck, Fuel, Map, Zap, MapPin } from 'lucide-react';
+import { BarChart3, Truck, Fuel, Map, Zap, MapPin, Download } from 'lucide-react';
 import { useLocation } from 'wouter';
+import { useRef } from 'react';
 
 export default function StickyFooter() {
   const [location, setLocation] = useLocation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isActive = (path: string) => location === path;
 
@@ -70,6 +72,27 @@ export default function StickyFooter() {
             <MapPin className="w-5 h-5" />
             <span className="text-xs font-medium whitespace-nowrap leading-tight">Mapa</span>
           </button>
+
+          {/* OFX Upload */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex flex-col items-center gap-1 px-4 sm:px-6 py-1 rounded-lg transition-all flex-shrink-0 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+          >
+            <Download className="w-5 h-5" />
+            <span className="text-xs font-medium whitespace-nowrap leading-tight">OFX</span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".ofx,.txt"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                window.dispatchEvent(new CustomEvent('ofx-upload', { detail: { file } }));
+              }
+            }}
+          />
         </div>
       </div>
     </div>

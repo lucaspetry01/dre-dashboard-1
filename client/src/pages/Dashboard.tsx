@@ -13,7 +13,7 @@ import MonthCard from '@/components/MonthCard';
 import { CategoryDetailView } from '@/components/CategoryDetailView';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
-import { useState, useMemo, useRef, useCallback } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useLocation } from 'wouter';
 
 // Paleta usada pelo BarChartWithLabels (mantida para coerência visual futura)
@@ -528,6 +528,30 @@ export default function Dashboard() {
 
   // Upload OFX
   const uploadMutation = trpc.ofx.processOFX.useMutation();
+
+  useEffect(() => {
+    const handleOfxUploadEvent = async (event: any) => {
+      const file = event.detail?.file;
+      if (!file) return;
+
+      setIsUploading(true);
+      try {
+        const text = await file.text();
+        await uploadMutation.mutateAsync({ fileBase64: btoa(text), nomeArquivo: file.name });
+        toast.success('OFX importado com sucesso!');
+        await utils.ofx.resumoCompleto.invalidate();
+      } catch (error) {
+        toast.error('Erro ao importar OFX');
+        console.error(error);
+      } finally {
+        setIsUploading(false);
+      }
+    };
+
+    window.addEventListener('ofx-upload', handleOfxUploadEvent);
+    return () => window.removeEventListener('ofx-upload', handleOfxUploadEvent);
+  }, [uploadMutation, utils]);
+
   const handleOfxUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
