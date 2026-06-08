@@ -649,6 +649,7 @@ export default function Dashboard() {
             ref={monthsScrollRef}
             className="flex gap-1.5 mb-2 overflow-x-auto pb-2" 
             style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            onLoad={() => monthsScrollRef.current?.scrollTo({ left: 0 })}
           >
             {months.map((month) => (
               <div 
