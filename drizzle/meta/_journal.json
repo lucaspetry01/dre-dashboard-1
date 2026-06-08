@@ -50,6 +50,13 @@
       "when": 1780893479982,
       "tag": "0006_sturdy_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1780901553770,
+      "tag": "0007_jittery_killmonger",
+      "breakpoints": true
     }
   ]
 }
