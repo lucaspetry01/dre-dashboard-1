@@ -84,12 +84,20 @@ export default function StickyFooter() {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".ofx,.txt"
-            className="hidden"
+            accept=".ofx,.txt,application/x-ofx,text/plain,application/octet-stream"
+            style={{ display: 'none' }}
+            capture="environment"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
+                console.log('Arquivo selecionado:', file.name, file.type, file.size);
                 window.dispatchEvent(new CustomEvent('ofx-upload', { detail: { file } }));
+                // Reset input para permitir selecionar o mesmo arquivo novamente
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = '';
+                }
+              } else {
+                console.log('Nenhum arquivo selecionado');
               }
             }}
           />
