@@ -9,8 +9,8 @@ export default function StickyFooter() {
   const isActive = (path: string) => location === path;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-sm border-t border-slate-700 z-40">
-<div className="flex items-center justify-start gap-4 sm:gap-6 py-2 overflow-x-auto scrollbar-hide w-full">        <div className="flex items-center justify-center gap-4 sm:gap-6 py-2 overflow-x-auto">
+    <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-sm border-t border-slate-700 z-50 pointer-events-auto">
+      <div className="flex items-center justify-start gap-2 sm:gap-4 py-2 px-2 sm:px-4 overflow-x-auto scrollbar-hide w-full">
           {/* Dashboard */}
           <button
             onClick={() => setLocation('/')}
@@ -93,7 +93,6 @@ export default function StickyFooter() {
               }
             }}
           />
-        </div>
       </div>
     </div>
   );
