@@ -78,22 +78,21 @@ export const regrasCategorias = mysqlTable("regras_categorias", {
 ]);
 
 export const transacoes = mysqlTable("transacoes", {
-	id: int().autoincrement().notNull(),
-	data: varchar({ length: 10 }).notNull(),
-	dataTimestamp: timestamp({ mode: 'string' }).notNull(),
-	descricao: text().notNull(),
-	documento: varchar({ length: 64 }).default('),
-	valor: decimal({ precision: 15, scale: 2 }).notNull(),
-	saldo: decimal({ precision: 15, scale: 2 }).default('0'),
-	tipo: mysqlEnum(['entrada','saida']).notNull(),
-	categoria: varchar({ length: 100 }).default('OUTROS').notNull(),
-	hashUnico: varchar({ length: 64 }).notNull(),
-	uploadId: int(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-},
-(table) => [
-	index("data_idx").on(table.dataTimestamp),
-	index("categoria_idx").on(table.categoria),
+  id: int("id").autoincrement().notNull(),
+  data: varchar("data", { length: 10 }).notNull(),
+  dataTimestamp: timestamp("dataTimestamp", { mode: "string" }).notNull(),
+  descricao: text("descricao").notNull(),
+  document: varchar("document", { length: 64 }).default(""),
+  valor: decimal("valor", { precision: 15, scale: 2 }).notNull(),
+  saldo: decimal("saldo", { precision: 15, scale: 2 }).default("0"),
+  tipo: mysqlEnum("tipo", ["entrada", "saida"]).notNull(),
+  categoria: varchar("categoria", { length: 100 }).default("OUTROS").notNull(),
+  hashUnico: varchar("hashUnico", { length: 64 }).notNull(),
+  uploadId: int("uploadId"),
+  createdAt: timestamp("createdAt", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+}, (table) => [
+  index("data_idx").on(table.dataTimestamp),
+  index("categoria_idx").on(table.categoria),
 ]);
 
 export const uploads = mysqlTable("uploads", {

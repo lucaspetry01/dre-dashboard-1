@@ -5,11 +5,16 @@
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./shared/*"]
+    }
   },
   "include": [
     "src/**/*",
-    "drizzle/**/*", 
-    "drizzle.config.ts"
+    "drizzle/**/*",
+    "drizzle.config.ts",
+    "shared/**/*"
   ]
 }
