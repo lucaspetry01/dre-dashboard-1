@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { uploadRouter } from "./routers/upload";
 import { ofxRouter } from "./routers/ofx";
-import { abastecimentosRouter } from "./routers/abastecimentos";
+
 import { cargasRouter } from "./routers/cargas";
 
 export const appRouter = router({
@@ -22,7 +22,7 @@ export const appRouter = router({
   }),
   upload: uploadRouter,
   ofx: ofxRouter,
-  abastecimentos: abastecimentosRouter,
+
   cargas: cargasRouter,
 
   // TODO: add feature routers here, e.g.

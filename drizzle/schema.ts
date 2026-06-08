@@ -143,39 +143,7 @@ export const regrasCategorias = mysqlTable(
 export type RegraCategoria = typeof regrasCategorias.$inferSelect;
 export type InsertRegraCategoria = typeof regrasCategorias.$inferInsert;
 
-/**
- * Tabela de abastecimentos de combustível.
- * Registra cada abastecimento com data, placa, rota, motorista e protocolo.
- * Organizado por pasta (IES, IJD, DAJ, MFF, IGU).
- */
-export const abastecimentos = mysqlTable(
-  "abastecimentos",
-  {
-    id: int("id").autoincrement().primaryKey(),
-    /** Pasta/categoria: IES, IJD, DAJ, MFF, IGU */
-    pasta: mysqlEnum("pasta", ["IES", "IJD", "DAJ", "MFF", "IGU"]).notNull(),
-    /** Data do abastecimento no formato YYYY-MM-DD */
-    data: date("data").notNull(),
-    /** Placa do veículo */
-    placa: varchar("placa", { length: 20 }).notNull(),
-    /** Rota/trajeto */
-    rota: varchar("rota", { length: 100 }),
-    /** Nome do motorista */
-    motorista: varchar("motorista", { length: 100 }),
-    /** Número do protocolo/comprovante */
-    protocolo: varchar("protocolo", { length: 50 }),
-    createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-  },
-  (table) => ({
-    pastaIdx: index("pasta_idx").on(table.pasta),
-    dataIdx: index("data_idx").on(table.data),
-    placaIdx: index("placa_idx").on(table.placa),
-  })
-);
 
-export type Abastecimento = typeof abastecimentos.$inferSelect;
-export type InsertAbastecimento = typeof abastecimentos.$inferInsert;
 
 /**
  * Tabela de cargas por rota.
