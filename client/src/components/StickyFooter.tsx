@@ -86,7 +86,6 @@ export default function StickyFooter() {
             type="file"
             accept=".ofx,.txt,application/x-ofx,text/plain,application/octet-stream"
             style={{ display: 'none' }}
-            capture="environment"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
