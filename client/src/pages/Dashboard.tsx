@@ -903,8 +903,8 @@ export default function Dashboard() {
                 <div key={idx} className="p-3 bg-slate-800 rounded-lg border border-slate-700">
                   <div className="flex items-start justify-between mb-2">
                     <p className="text-sm font-semibold text-slate-100 truncate">{upload.nomeArquivo}</p>
-                    <span className="text-xs text-slate-400 flex-shrink-0">
-                      {new Date(upload.createdAt).toLocaleDateString('pt-BR')}
+                    <span className="text-xs text-slate-400 flex-shrink-0 whitespace-nowrap">
+                      {new Date(upload.createdAt).toLocaleDateString('pt-BR')} {new Date(upload.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-xs">
