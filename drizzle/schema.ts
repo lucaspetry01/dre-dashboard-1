@@ -82,7 +82,7 @@ export const transacoes = mysqlTable("transacoes", {
 	data: varchar({ length: 10 }).notNull(),
 	dataTimestamp: timestamp({ mode: 'string' }).notNull(),
 	descricao: text().notNull(),
-	documento: varchar({ length: 64 }).default('),
+	documento: varchar({ length: 64 }).default(''),
 	valor: decimal({ precision: 15, scale: 2 }).notNull(),
 	saldo: decimal({ precision: 15, scale: 2 }).default('0'),
 	tipo: mysqlEnum(['entrada','saida']).notNull(),
