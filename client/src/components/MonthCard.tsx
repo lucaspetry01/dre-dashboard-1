@@ -79,7 +79,7 @@ export default function MonthCard({
             ) : (
               <TrendingDown size={10} />
             )}
-            <span className="text-xs leading-none">{percentChange}%</span>
+            <span className="text-xxs leading-none">{percentChange}%</span>
           </div>
         )}
         {!hasData && (

@@ -1,24 +1,6 @@
 import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, int, mysqlEnum, date, varchar, timestamp, decimal, text } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
-export const abastecimentos = mysqlTable("abastecimentos", {
-	id: int().autoincrement().notNull(),
-	pasta: mysqlEnum(['IES','IJD','DAJ','MFF','IGU']).notNull(),
-	// you can use { mode: 'date' }, if you want to have Date as type for this column
-	data: date({ mode: 'string' }).notNull(),
-	placa: varchar({ length: 20 }).notNull(),
-	rota: varchar({ length: 100 }),
-	motorista: varchar({ length: 100 }),
-	protocolo: varchar({ length: 50 }),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
-},
-(table) => [
-	index("pasta_idx").on(table.pasta),
-	index("data_idx").on(table.data),
-	index("placa_idx").on(table.placa),
-]);
-
 export const cargas = mysqlTable("cargas", {
 	id: int().autoincrement().notNull(),
 	pasta: mysqlEnum(['IES','IJD','DAJ','MFF','IGU']).notNull(),

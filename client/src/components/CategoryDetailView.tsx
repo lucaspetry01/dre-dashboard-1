@@ -128,7 +128,7 @@ export function CategoryDetailView({
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <span className="text-xs sm:text-sm font-bold text-slate-100 whitespace-nowrap">
-                    {formatMoney(categoryValue)} | <span className="text-slate-300 font-semibold">{percentage}%</span>
+                    {formatMoney(categoryValue)} | <span className="text-slate-300 font-semibold text-xxs">{percentage}%</span>
                   </span>
                   {isExpanded ? (
                     <ChevronUp className="w-4 h-4 text-slate-400" />

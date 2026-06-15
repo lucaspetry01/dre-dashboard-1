@@ -128,6 +128,9 @@ export default function Dashboard() {
   const [groupByDescription, setGroupByDescription] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [hasNewNotification, setHasNewNotification] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [lastImportInfo, setLastImportInfo] = useState<any>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const monthsScrollRef = useRef<HTMLDivElement>(null);
 
@@ -528,6 +531,9 @@ export default function Dashboard() {
 
   // Upload OFX
   const uploadMutation = trpc.ofx.processOFX.useMutation();
+  const { data: uploadsHistory } = trpc.ofx.historicoUploads.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     const handleOfxUploadEvent = async (event: any) => {
@@ -537,7 +543,11 @@ export default function Dashboard() {
       setIsUploading(true);
       try {
         const text = await file.text();
-        await uploadMutation.mutateAsync({ fileBase64: btoa(text), nomeArquivo: file.name });
+        const result = await uploadMutation.mutateAsync({ fileBase64: btoa(text), nomeArquivo: file.name });
+        if (result.success) {
+          setHasNewNotification(true);
+          setLastImportInfo(result);
+        }
         toast.success('OFX importado com sucesso!');
         await utils.ofx.resumoCompleto.invalidate();
       } catch (error) {
@@ -559,7 +569,11 @@ export default function Dashboard() {
     setIsUploading(true);
     try {
       const text = await file.text();
-      await uploadMutation.mutateAsync({ fileBase64: btoa(text), nomeArquivo: file.name });
+      const result = await uploadMutation.mutateAsync({ fileBase64: btoa(text), nomeArquivo: file.name });
+      if (result.success) {
+        setHasNewNotification(true);
+        setLastImportInfo(result);
+      }
       toast.success('OFX importado com sucesso!');
       await utils.ofx.resumoCompleto.invalidate();
     } catch (error) {
@@ -568,6 +582,11 @@ export default function Dashboard() {
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const handleNotificationClick = () => {
+    setNotificationOpen(true);
+    setHasNewNotification(false);
   };
 
   return (
@@ -581,7 +600,6 @@ export default function Dashboard() {
     <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
       Balanço Financeiro TR. Petry Ltda.
     </h1>
-    <p className="text-sm text-slate-400 mt-1">Transportes Moraes e Petry LTDA ME</p>
   </div>
 
   {/* Barra de busca + avatar + sino */}
@@ -606,9 +624,14 @@ export default function Dashboard() {
     </button>
 
     {/* Sino */}
-    <button className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative">
+    <button 
+      onClick={handleNotificationClick}
+      className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors"
+    >
       <Bell className="w-4 h-4 text-slate-300" />
-      <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-500 rounded-full border border-slate-900" />
+      {hasNewNotification && (
+        <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-slate-900 animate-pulse" />
+      )}
     </button>
   </div>
 
@@ -863,13 +886,65 @@ export default function Dashboard() {
         />
 
       </div>
+
+      {/* Dialog de Notificacoes */}
+      <Dialog open={notificationOpen} onOpenChange={setNotificationOpen}>
+        <DialogContent className="bg-slate-900 border border-slate-700 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Bell className="w-5 h-5 text-blue-400" />
+              Ultimas Importacoes OFX
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {uploadsHistory && uploadsHistory.length > 0 ? (
+              uploadsHistory.slice(0, 5).map((upload: any, idx: number) => (
+                <div key={idx} className="p-3 bg-slate-800 rounded-lg border border-slate-700">
+                  <div className="flex items-start justify-between mb-2">
+                    <p className="text-sm font-semibold text-slate-100 truncate">{upload.nomeArquivo}</p>
+                    <span className="text-xs text-slate-400 flex-shrink-0 whitespace-nowrap">
+                      {new Date(upload.createdAt).toLocaleDateString('pt-BR')} {new Date(upload.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="bg-slate-700/50 p-2 rounded">
+                      <p className="text-slate-400">Processados</p>
+                      <p className="text-green-400 font-bold">{upload.totalProcessado}</p>
+                    </div>
+                    <div className="bg-slate-700/50 p-2 rounded">
+                      <p className="text-slate-400">Novos</p>
+                      <p className="text-blue-400 font-bold">{upload.totalNovos}</p>
+                    </div>
+                    <div className="bg-slate-700/50 p-2 rounded">
+                      <p className="text-slate-400">Duplicatas</p>
+                      <p className="text-yellow-400 font-bold">{upload.totalDuplicatas}</p>
+                    </div>
+                  </div>
+                  {upload.periodoInicio && upload.periodoFim && (
+                    <p className="text-xs text-slate-400 mt-2">
+                      Periodo: {upload.periodoInicio} a {upload.periodoFim}
+                    </p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-400 text-center py-4">Nenhuma importacao realizada</p>
+            )}
+          </div>
+          <div className="mt-4 pt-3 border-t border-slate-700">
+            <p className="text-xs text-slate-400">
+              Total de registros no banco: <span className="text-blue-400 font-bold">{resumoBanco?.totalRegistros || 0}</span>
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
 
 /**
- * Componente para mover transação entre categorias
+ * Componente para mover transacao entre categorias
  */
 function MovimentarCategoriaButton({
   transacaoId,

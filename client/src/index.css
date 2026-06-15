@@ -287,3 +287,11 @@
 .entrance-fade.delay-1 {
   animation-delay: 0.1s;
 }
+
+
+/* Extra small text size - 50% smaller than text-xs */
+@layer utilities {
+  .text-xxs {
+    @apply text-[0.625rem] leading-none;
+  }
+}
