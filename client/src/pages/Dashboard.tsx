@@ -600,7 +600,6 @@ export default function Dashboard() {
     <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
       Balanço Financeiro TR. Petry Ltda.
     </h1>
-    <p className="text-sm text-slate-400 mt-1">Transportes Moraes e Petry LTDA ME</p>
   </div>
 
   {/* Barra de busca + avatar + sino */}
