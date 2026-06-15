@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, MoreVertical, Truck, Landmark, Building2, Wallet, SlidersHorizontal, Bell } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, MoreVertical, Truck, Landmark, Building2, Wallet, SlidersHorizontal, Bell, RefreshCw } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
@@ -129,6 +129,7 @@ export default function Dashboard() {
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [lastImportInfo, setLastImportInfo] = useState<any>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const monthsScrollRef = useRef<HTMLDivElement>(null);
 
@@ -564,6 +565,19 @@ export default function Dashboard() {
     setHasNewNotification(false);
   };
 
+  const handleSync = async () => {
+    setIsSyncing(true);
+    try {
+      await utils.ofx.resumoCompleto.invalidate();
+      toast.success('Dados sincronizados com sucesso!');
+    } catch (error) {
+      toast.error('Erro ao sincronizar dados');
+      console.error(error);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 pb-28">
       <div className="max-w-7xl mx-auto">
@@ -594,6 +608,14 @@ export default function Dashboard() {
             </div>
             <button className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
               TM
+            </button>
+            <button
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Sincronizar dados"
+            >
+              <RefreshCw className={`w-4 h-4 text-slate-300 ${isSyncing ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={handleNotificationClick}
