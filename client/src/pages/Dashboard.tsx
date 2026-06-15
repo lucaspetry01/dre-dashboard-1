@@ -566,11 +566,13 @@ export default function Dashboard() {
     setHasNewNotification(false);
   };
 
+  const syncMutation = trpc.ofx.aplicarRegrasRetroativas.useMutation();
+
   const handleSync = async () => {
     setIsSyncing(true);
     try {
       // Aplicar regras retroativamente
-      const result = await trpc.ofx.aplicarRegrasRetroativas.mutate();
+      const result = await syncMutation.mutateAsync();
       
       // Invalidar cache para recarregar dados
       await utils.ofx.resumoCompleto.invalidate();
