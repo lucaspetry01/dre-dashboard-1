@@ -569,9 +569,18 @@ export default function Dashboard() {
   const handleSync = async () => {
     setIsSyncing(true);
     try {
+      // Aplicar regras retroativamente
+      const result = await trpc.ofx.aplicarRegrasRetroativas.mutate();
+      
+      // Invalidar cache para recarregar dados
       await utils.ofx.resumoCompleto.invalidate();
       setHasNewCategoryChanges(false);
-      toast.success('Dados sincronizados com sucesso!');
+      
+      if (result.sucesso) {
+        toast.success(`Sincronizado! ${result.mensagem}`);
+      } else {
+        toast.error(result.mensagem);
+      }
     } catch (error) {
       toast.error('Erro ao sincronizar dados');
       console.error(error);

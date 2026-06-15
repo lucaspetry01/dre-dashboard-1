@@ -12,7 +12,7 @@ import {
   listUploads,
   updateTransacaoCategoria,
 } from '../db/transacoes';
-import { getCategoriaIdPorNome, criarRegra } from '../db/regras';
+import { getCategoriaIdPorNome, criarRegra, aplicarRegrasRetroativamente } from '../db/regras';
 import type { InsertTransacao } from '../../drizzle/schema';
 
 /**
@@ -232,4 +232,26 @@ export const ofxRouter = router({
 
       return { sucesso: true, mensagem: 'Transação movida com sucesso' };
     }),
+
+  /**
+   * Aplica todas as regras de categorização criadas às transações existentes.
+   * Retorna o número de transações recategorizadas.
+   */
+  aplicarRegrasRetroativas: publicProcedure.mutation(async () => {
+    try {
+      const totalAtualizado = await aplicarRegrasRetroativamente();
+      return {
+        sucesso: true,
+        mensagem: `${totalAtualizado} transações recategorizadas com sucesso`,
+        totalAtualizado,
+      };
+    } catch (error) {
+      console.error('Erro ao aplicar regras retroativamente:', error);
+      return {
+        sucesso: false,
+        mensagem: 'Erro ao aplicar regras retroativamente',
+        totalAtualizado: 0,
+      };
+    }
+  }),
 });
