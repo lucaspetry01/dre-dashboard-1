@@ -130,6 +130,7 @@ export default function Dashboard() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [lastImportInfo, setLastImportInfo] = useState<any>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [hasNewCategoryChanges, setHasNewCategoryChanges] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const monthsScrollRef = useRef<HTMLDivElement>(null);
 
@@ -569,6 +570,7 @@ export default function Dashboard() {
     setIsSyncing(true);
     try {
       await utils.ofx.resumoCompleto.invalidate();
+      setHasNewCategoryChanges(false);
       toast.success('Dados sincronizados com sucesso!');
     } catch (error) {
       toast.error('Erro ao sincronizar dados');
@@ -576,6 +578,10 @@ export default function Dashboard() {
     } finally {
       setIsSyncing(false);
     }
+  };
+
+  const handleCategoryChange = () => {
+    setHasNewCategoryChanges(true);
   };
 
   return (
@@ -612,10 +618,13 @@ export default function Dashboard() {
             <button
               onClick={handleSync}
               disabled={isSyncing}
-              className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Sincronizar dados"
             >
               <RefreshCw className={`w-4 h-4 text-slate-300 ${isSyncing ? 'animate-spin' : ''}`} />
+              {hasNewCategoryChanges && (
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-yellow-500 rounded-full border border-slate-900 animate-pulse" />
+              )}
             </button>
             <button
               onClick={handleNotificationClick}
@@ -997,6 +1006,7 @@ function MovimentarCategoriaButton({
             );
             setModalOpen(false);
             onSuccess();
+            handleCategoryChange();
           } else {
             toast.error(result.mensagem || 'Erro ao mover');
           }
