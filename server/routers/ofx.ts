@@ -12,6 +12,7 @@ import {
   listUploads,
   updateTransacaoCategoria,
 } from '../db/transacoes';
+import { getCategoriaIdPorNome, criarRegra } from '../db/regras';
 import type { InsertTransacao } from '../../drizzle/schema';
 
 /**
@@ -171,6 +172,9 @@ export const ofxRouter = router({
     return await buildResumoAgregado();
   }),
 
+  /**
+   * Atualiza apenas a categoria de uma transação (sem criar regra).
+   */
   atualizarCategoria: publicProcedure
     .input(
       z.object({
@@ -184,5 +188,48 @@ export const ofxRouter = router({
         sucesso,
         mensagem: sucesso ? 'Categoria atualizada com sucesso' : 'Erro ao atualizar categoria',
       };
+    }),
+
+  /**
+   * Move transação de categoria e opcionalmente cria uma regra automática
+   * para que futuras transações similares sejam categorizadas corretamente.
+   */
+  moverComRegra: publicProcedure
+    .input(
+      z.object({
+        transacaoId: z.number().int().positive(),
+        novaCategoria: z.string().min(1),
+        criarRegra: z.boolean().default(false),
+        tipoRegra: z.enum(['KEYWORD', 'NOME_EXATO']).optional(),
+        valorRegra: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      // 1. Mover a transação para a nova categoria
+      const moveu = await updateTransacaoCategoria(input.transacaoId, input.novaCategoria);
+      if (!moveu) {
+        return { sucesso: false, mensagem: 'Erro ao mover transação' };
+      }
+
+      // 2. Criar regra no banco se solicitado
+      if (input.criarRegra && input.tipoRegra && input.valorRegra) {
+        const categoriaId = await getCategoriaIdPorNome(input.novaCategoria);
+        if (categoriaId) {
+          await criarRegra({
+            categoriaId,
+            tipo: input.tipoRegra,
+            valor: input.valorRegra.toUpperCase(),
+            descricao: `${input.tipoRegra === 'KEYWORD' ? 'Palavra-chave' : 'Nome exato'}: ${input.valorRegra}`,
+          });
+        } else {
+          // Categoria não encontrada na tabela categorias — mover funcionou mas regra não foi criada
+          return {
+            sucesso: true,
+            mensagem: 'Transação movida, mas categoria não encontrada para criar regra.',
+          };
+        }
+      }
+
+      return { sucesso: true, mensagem: 'Transação movida com sucesso' };
     }),
 });

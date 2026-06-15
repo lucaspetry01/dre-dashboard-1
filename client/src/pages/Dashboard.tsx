@@ -86,7 +86,7 @@ const groupRegistrosByDescription = (registros: any[], groupByDescription: boole
     if (!acc[key]) {
       acc[key] = {
         ...item,
-        descricao: key, // Usar nome próprio como descrição do grupo
+        descricao: key,
         valor: 0,
         count: 0,
         originalItems: []
@@ -102,13 +102,11 @@ const groupRegistrosByDescription = (registros: any[], groupByDescription: boole
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
-  // Buscar resumo do banco. Se houver dados → usa banco. Senão → JSON estático.
   const utils = trpc.useUtils();
   const { data: resumoBanco } = trpc.ofx.resumoCompleto.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
 
-  // Quando há dados no banco usamos eles; senão caímos no JSON estático (compat).
   const usandoBanco = !!(resumoBanco && resumoBanco.totalRegistros > 0);
   const resumo = usandoBanco ? resumoBanco!.resumo : dashboardData.resumo;
   const saldoFinal = usandoBanco ? resumoBanco!.saldoFinal : undefined;
@@ -192,7 +190,6 @@ export default function Dashboard() {
     };
   }, [filteredDetalhes, resumo]);
 
-  // Data de referência: último dia disponível (banco → JSON → hardcoded)
   const REFERENCE_DATE = (() => {
     if (usandoBanco && resumoBanco!.diario.length > 0) {
       return resumoBanco!.diario[resumoBanco!.diario.length - 1].data_full;
@@ -209,7 +206,6 @@ export default function Dashboard() {
     );
   };
 
-  // Opções de filtros rápidos baseadas no último dia do extrato (27/05/2026)
   const quickFilters = [
     { id: 'hoje', label: 'Hoje', days: 0 },
     { id: 'sem', label: 'Sem', days: 7 },
@@ -217,7 +213,6 @@ export default function Dashboard() {
     { id: 'ano', label: 'Ano', daysFromNow: true },
   ];
 
-  // Meses para filtro
   const months = [
     { id: 'jan', label: 'Jan', month: 0 },
     { id: 'fev', label: 'Fev', month: 1 },
@@ -233,7 +228,6 @@ export default function Dashboard() {
     { id: 'dez', label: 'Dez', month: 11 },
   ];
 
-  // Calcular último mês com registros para auto-scroll
   const lastMonthWithData = useMemo(() => {
     if (!usandoBanco || !resumoBanco?.diario || resumoBanco.diario.length === 0) return null;
     const lastDate = resumoBanco.diario[resumoBanco.diario.length - 1].data_full;
@@ -242,7 +236,6 @@ export default function Dashboard() {
     return months[monthIndex]?.id || null;
   }, [usandoBanco, resumoBanco]);
 
-  // Auto-scroll para o último mês com dados
   useMemo(() => {
     if (lastMonthWithData && monthsScrollRef.current) {
       setTimeout(() => {
@@ -258,14 +251,12 @@ export default function Dashboard() {
     }
   }, [lastMonthWithData]);
 
-  // Aplicar filtro rápido
   const applyQuickFilter = (filterId: string) => {
     const filter = quickFilters.find(f => f.id === filterId);
     const monthFilter = months.find(m => m.id === filterId);
     
     if (!filter && !monthFilter) return;
     
-    // Se é filtro de mês, adicionar/remover da seleção
     if (monthFilter) {
       setSelectedMonths(prev => {
         if (prev.includes(filterId)) {
@@ -278,18 +269,16 @@ export default function Dashboard() {
       return;
     }
     
-    // Para filtros rápidos (Hoje, Sem, Trim, Ano), limpar seleção de meses
     setSelectedMonths([]);
     setActiveQuickFilter(filterId);
     
     const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
     
-    // Se é filtro de ano (daysFromNow), calcular a partir do ano atual
     if ((filter as any).daysFromNow) {
       const start = new Date(refDate);
-      start.setFullYear(start.getFullYear()); // Ano atual
-      start.setMonth(0); // Janeiro
-      start.setDate(1); // Dia 1
+      start.setFullYear(start.getFullYear());
+      start.setMonth(0);
+      start.setDate(1);
       
       setStartDate(start.toISOString().split('T')[0]);
       setEndDate(REFERENCE_DATE);
@@ -303,7 +292,6 @@ export default function Dashboard() {
     setEndDate(REFERENCE_DATE);
   };
 
-  // Buscar registro
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       toast.error('Digite algo para buscar');
@@ -334,7 +322,6 @@ export default function Dashboard() {
     toast.error('Nenhum registro encontrado');
   };
 
-  // Formatar moeda
   const formatMoney = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -342,7 +329,6 @@ export default function Dashboard() {
     }).format(value);
   };
 
-  // Resetar filtros
   const resetFilters = () => {
     setStartDate('');
     setEndDate('');
@@ -351,16 +337,13 @@ export default function Dashboard() {
     setIsFiltering(false);
   };
 
-  // Efeito: quando meses são selecionados, calcular o período
   useMemo(() => {
-    // Se não há meses selecionados E não há filtro rápido ativo, limpar datas
     if (selectedMonths.length === 0 && !activeQuickFilter) {
       setStartDate('');
       setEndDate('');
       return;
     }
     
-    // Se há filtro rápido ativo (Hoje, Sem, etc), não sobrescrever as datas
     if (activeQuickFilter) {
       return;
     }
@@ -385,7 +368,6 @@ export default function Dashboard() {
     setEndDate(end.toISOString().split('T')[0]);
   }, [selectedMonths, activeQuickFilter]);
 
-  // Filtrar diário por data
   const filteredDiario = useMemo(() => {
     if (!startDate && !endDate) return diario;
     return diario.filter(d => {
@@ -395,7 +377,6 @@ export default function Dashboard() {
     });
   }, [diario, startDate, endDate]);
 
-  // Helper: converte data "dd/MM/yyyy" ou "dd/MM" para Date
   const parseRegistroDate = (dataStr: string): Date | null => {
     if (!dataStr) return null;
     const parts = dataStr.split('/');
@@ -410,7 +391,6 @@ export default function Dashboard() {
     return null;
   };
 
-  // Calcular resumo filtrado
   const resumoFiltrado = useMemo(() => {
     const result = {
       receitas: 0,
@@ -423,14 +403,12 @@ export default function Dashboard() {
       periodo_fim: filteredResumo.periodo_fim,
     };
 
-    // Se não há filtro de data, usar os totais do resumo (que incluem TODAS as transações)
     if (!startDate && !endDate) {
       result.receitas = filteredResumo.total_receitas || 0;
       result.despesas = Math.abs(filteredResumo.total_despesas || 0);
       result.qtd_receitas = filteredResumo.qtd_receitas || 0;
       result.qtd_despesas = filteredResumo.qtd_despesas || 0;
     } else {
-      // Se há filtro, calcular a partir das transações reais em detalhes
       const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
       const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
 
@@ -460,7 +438,6 @@ export default function Dashboard() {
     return result;
   }, [filteredDetalhes, filteredResumo, startDate, endDate]);
 
-  // Calcular lucro por mês para MonthCards
   const lucroByMonth = useMemo(() => {
     const result: Record<string, number> = {};
     
@@ -492,7 +469,6 @@ export default function Dashboard() {
     return result;
   }, [filteredDetalhes]);
 
-  // Categorias com dados (respeitando filtros de data)
   const categoriasComDados = useMemo(() => {
     if (!startDate && !endDate) {
       return filteredCategorias.filter(cat => cat.valor_abs > 0);
@@ -529,7 +505,6 @@ export default function Dashboard() {
     return result.sort((a, b) => b.valor_abs - a.valor_abs);
   }, [filteredCategorias, filteredDetalhes, startDate, endDate]);
 
-  // Upload OFX
   const uploadMutation = trpc.ofx.processOFX.useMutation();
   const { data: uploadsHistory } = trpc.ofx.historicoUploads.useQuery(undefined, {
     refetchOnWindowFocus: false,
@@ -592,137 +567,131 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 pb-28">
       <div className="max-w-7xl mx-auto">
-{/* BLOCO SUPERIOR: Cabeçalho novo */}
-<div className="mb-4 entrance-fade delay-0">
+        {/* BLOCO SUPERIOR: Cabeçalho */}
+        <div className="mb-4 entrance-fade delay-0">
 
-  {/* Título centralizado */}
-  <div className="text-center mb-4">
-    <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
-      Balanço Financeiro TR. Petry Ltda.
-    </h1>
-  </div>
+          {/* Título centralizado */}
+          <div className="text-center mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
+              Balanço Financeiro TR. Petry Ltda.
+            </h1>
+          </div>
 
-  {/* Barra de busca + avatar + sino */}
-  <div className="flex items-center gap-2 mb-4">
-    <div className="flex-1 relative">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-      <input
-        type="text"
-        placeholder="Buscar transação..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-        onClick={() => setSearchOpen(true)}
-        readOnly
-        className="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
-      />
-    </div>
+          {/* Barra de busca + avatar + sino */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Buscar transação..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                onClick={() => setSearchOpen(true)}
+                readOnly
+                className="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+              />
+            </div>
+            <button className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              TM
+            </button>
+            <button
+              onClick={handleNotificationClick}
+              className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors"
+            >
+              <Bell className="w-4 h-4 text-slate-300" />
+              {hasNewNotification && (
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-slate-900 animate-pulse" />
+              )}
+            </button>
+          </div>
 
-    {/* Avatar com iniciais */}
-    <button className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-      TM
-    </button>
+          {/* Inputs de Data */}
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-400 mb-1">Início</label>
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => { setStartDate(e.target.value); setActiveQuickFilter(null); }}
+                  className="w-full text-xs h-9 px-2 pr-8 bg-slate-800 border-slate-700 text-slate-100 rounded-lg"
+                />
+                <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-400 mb-1">Fim</label>
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => { setEndDate(e.target.value); setActiveQuickFilter(null); }}
+                  className="w-full text-xs h-9 px-2 pr-8 bg-slate-800 border-slate-700 text-slate-100 rounded-lg"
+                />
+                <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+          </div>
 
-    {/* Sino */}
-    <button 
-      onClick={handleNotificationClick}
-      className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors"
-    >
-      <Bell className="w-4 h-4 text-slate-300" />
-      {hasNewNotification && (
-        <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-slate-900 animate-pulse" />
-      )}
-    </button>
-  </div>
+          {/* Filtro de Contas / Bancos */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {accountOptions.map((account) => {
+              const Icon = account.icon;
+              const isActive = selectedAccounts.includes(account.id);
+              return (
+                <button
+                  key={account.id}
+                  type="button"
+                  onClick={() => toggleAccount(account.id)}
+                  className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-blue-600 border-blue-500 text-white ring-2 ring-blue-400/40'
+                      : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-500'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {account.label}
+                  {isActive && <X className="w-3 h-3 opacity-70" />}
+                </button>
+              );
+            })}
+          </div>
 
-  {/* Inputs de Data */}
-  <div className="grid grid-cols-2 gap-2 mb-3">
-    <div className="min-w-0">
-      <label className="block text-xs font-medium text-slate-400 mb-1">Início</label>
-      <div className="relative flex items-center">
-        <Input
-          type="date"
-          value={startDate}
-          onChange={(e) => { setStartDate(e.target.value); setActiveQuickFilter(null); }}
-          className="w-full text-xs h-9 px-2 pr-8 bg-slate-800 border-slate-700 text-slate-100 rounded-lg"
-        />
-        <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
-      </div>
-    </div>
-    <div className="min-w-0">
-      <label className="block text-xs font-medium text-slate-400 mb-1">Fim</label>
-      <div className="relative flex items-center">
-        <Input
-          type="date"
-          value={endDate}
-          onChange={(e) => { setEndDate(e.target.value); setActiveQuickFilter(null); }}
-          className="w-full text-xs h-9 px-2 pr-8 bg-slate-800 border-slate-700 text-slate-100 rounded-lg"
-        />
-        <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
-      </div>
-    </div>
-  </div>
+          {/* Barra de Meses */}
+          <div
+            ref={monthsScrollRef}
+            className="flex gap-1.5 mb-2 overflow-x-auto pb-2"
+            style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {months.map((month) => (
+              <div
+                key={month.id}
+                id={`month-${month.id}`}
+                className="flex-shrink-0"
+                style={{ width: '80px', minWidth: '80px' }}
+              >
+                <MonthCard
+                  month={month.label}
+                  monthId={month.id}
+                  lucro={lucroByMonth[month.id] || 0}
+                  isSelected={selectedMonths.includes(month.id)}
+                  onClick={() => applyQuickFilter(month.id)}
+                />
+              </div>
+            ))}
+          </div>
 
-  {/* Filtro de Contas / Bancos */}
-  <div className="flex flex-wrap gap-2 mb-3">
-    {accountOptions.map((account) => {
-      const Icon = account.icon;
-      const isActive = selectedAccounts.includes(account.id);
-      return (
-        <button
-          key={account.id}
-          type="button"
-          onClick={() => toggleAccount(account.id)}
-          className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all ${
-            isActive
-              ? 'bg-blue-600 border-blue-500 text-white ring-2 ring-blue-400/40'
-              : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-500'
-          }`}
-        >
-          <Icon className="w-3.5 h-3.5" />
-          {account.label}
-          {isActive && <X className="w-3 h-3 opacity-70" />}
-        </button>
-      );
-    })}
-  </div>
-
-  {/* Barra de Meses */}
-  <div
-    ref={monthsScrollRef}
-    className="flex gap-1.5 mb-2 overflow-x-auto pb-2"
-    style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-  >
-    {months.map((month) => (
-      <div
-        key={month.id}
-        id={`month-${month.id}`}
-        className="flex-shrink-0"
-        style={{ width: '80px', minWidth: '80px' }}
-      >
-        <MonthCard
-          month={month.label}
-          monthId={month.id}
-          lucro={lucroByMonth[month.id] || 0}
-          isSelected={selectedMonths.includes(month.id)}
-          onClick={() => applyQuickFilter(month.id)}
-        />
-      </div>
-    ))}
-  </div>
-
-  {/* Botão Limpar Filtros */}
-  {(startDate || endDate || selectedMonths.length > 0) && (
-    <button
-      onClick={resetFilters}
-      className="w-full mt-2 px-2 py-1.5 rounded-lg text-xs font-semibold bg-red-900/30 text-red-400 hover:bg-red-900/50 transition-all"
-    >
-      Limpar Filtros
-    </button>
-  )}
-</div>
-
-        {/* Botões de Buscar e Upload - Movidos para o header */}
+          {/* Botão Limpar Filtros */}
+          {(startDate || endDate || selectedMonths.length > 0) && (
+            <button
+              onClick={resetFilters}
+              className="w-full mt-2 px-2 py-1.5 rounded-lg text-xs font-semibold bg-red-900/30 text-red-400 hover:bg-red-900/50 transition-all"
+            >
+              Limpar Filtros
+            </button>
+          )}
+        </div>
 
         {/* Modal de Busca */}
         <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
@@ -740,17 +709,12 @@ export default function Dashboard() {
                 className="bg-slate-800 border-slate-700 text-slate-100"
                 autoFocus
               />
-              <Button
-                onClick={handleSearch}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
+              <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700">
                 <Search className="w-4 h-4" />
               </Button>
             </div>
           </DialogContent>
         </Dialog>
-
-
 
         {/* KPI HERO: 4 Cards em Grid 2x2 */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 entrance-animate" style={{ animationDelay: '0.1s' }}>
@@ -826,9 +790,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-
-
-        {/* Detalhamento de Categorias com Toggle Gráfico/Lista */}
+        {/* Detalhamento de Categorias */}
         <CategoryDetailView
           categoriasComDados={categoriasComDados}
           detalhes={filteredDetalhes}
@@ -856,8 +818,9 @@ export default function Dashboard() {
               const isGrouped = item.count > 1;
               const transacaoId = item.id;
               const categoriaAtual = item.categoria;
-              const podeMovimentar = ['OUTROS', 'PAGAMENTOS'].includes(categoriaAtual);
-              
+              // ← Agora qualquer categoria pode ser movida (não apenas OUTROS e PAGAMENTOS)
+              const podeMovimentar = !isGrouped && !!transacaoId;
+
               return (
                 <div key={idx} className="flex justify-between items-start text-xs gap-2">
                   <div className="flex-1 min-w-0">
@@ -871,10 +834,11 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-slate-100 font-semibold text-xs whitespace-nowrap">{formatMoney(item.valor)}</span>
-                    {podeMovimentar && !isGrouped && transacaoId && (
+                    {podeMovimentar && (
                       <MovimentarCategoriaButton
                         transacaoId={transacaoId}
                         categoriaAtual={categoriaAtual}
+                        descricao={item.descricao}
                         onSuccess={() => utils.ofx.resumoCompleto.invalidate()}
                       />
                     )}
@@ -942,23 +906,27 @@ export default function Dashboard() {
   );
 }
 
-
-/**
- * Componente para mover transacao entre categorias
- */
+// ─────────────────────────────────────────────────────────────
+// Componente: botão de mover transação com modal de regra
+// ─────────────────────────────────────────────────────────────
 function MovimentarCategoriaButton({
   transacaoId,
   categoriaAtual,
+  descricao,
   onSuccess,
 }: {
   transacaoId: number;
   categoriaAtual: string;
+  descricao: string;
   onSuccess: () => void;
 }) {
-  const mutation = trpc.ofx.atualizarCategoria.useMutation();
-  const [open, setOpen] = useState(false);
+  const mutation = trpc.ofx.moverComRegra.useMutation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [novaCategoria, setNovaCategoria] = useState('');
+  const [tipoRegra, setTipoRegra] = useState<'KEYWORD' | 'NOME_EXATO' | 'SEM_REGRA'>('SEM_REGRA');
+  const [valorRegra, setValorRegra] = useState('');
 
-  // Lista de todas as categorias disponíveis
   const categoriasDisponiveis = [
     'RECEITAS OPERACIONAIS',
     'COMBUSTÍVEL / POSTO',
@@ -974,45 +942,160 @@ function MovimentarCategoriaButton({
     'SAÍDAS NÃO CATEGORIZADAS',
   ];
 
-  const handleMover = useCallback(
-    (novaCategoria: string) => {
-      if (novaCategoria === categoriaAtual) return;
-      
-      mutation.mutate(
-        { transacaoId, novaCategoria },
-        {
-          onSuccess: (result) => {
-            if (result.sucesso) {
-              toast.success(`Movido para ${novaCategoria}`);
-              setOpen(false);
-              onSuccess();
-            } else {
-              toast.error(result.mensagem || 'Erro ao mover');
-            }
-          },
-          onError: () => {
-            toast.error('Erro ao mover transação');
-          },
-        }
-      );
-    },
-    [transacaoId, categoriaAtual, mutation, onSuccess]
-  );
+  // Sugestão de keyword: primeira palavra com mais de 3 letras que não seja número
+  const sugestaoKeyword = descricao
+    .trim()
+    .split(/\s+/)
+    .find(p => p.length > 3 && !/^\d+$/.test(p)) ?? descricao.split(' ')[0];
+
+  const abrirModal = (categoria: string) => {
+    setNovaCategoria(categoria);
+    setMenuOpen(false);
+    setValorRegra(sugestaoKeyword);
+    setTipoRegra('SEM_REGRA');
+    setModalOpen(true);
+  };
+
+  const confirmar = useCallback(() => {
+    mutation.mutate(
+      {
+        transacaoId,
+        novaCategoria,
+        criarRegra: tipoRegra !== 'SEM_REGRA',
+        tipoRegra: tipoRegra !== 'SEM_REGRA' ? tipoRegra : undefined,
+        valorRegra: tipoRegra !== 'SEM_REGRA' ? valorRegra : undefined,
+      },
+      {
+        onSuccess: (result) => {
+          if (result.sucesso) {
+            toast.success(
+              tipoRegra !== 'SEM_REGRA'
+                ? `Movido para "${novaCategoria}" e regra criada!`
+                : `Movido para "${novaCategoria}"`
+            );
+            setModalOpen(false);
+            onSuccess();
+          } else {
+            toast.error(result.mensagem || 'Erro ao mover');
+          }
+        },
+        onError: () => toast.error('Erro ao mover transação'),
+      }
+    );
+  }, [transacaoId, novaCategoria, tipoRegra, valorRegra, mutation, onSuccess]);
 
   return (
-    <Select open={open} onOpenChange={setOpen}>
-      <SelectTrigger className="w-8 h-6 p-0 border-0 bg-slate-700 hover:bg-slate-600">
-        <MoreVertical className="w-3 h-3" />
-      </SelectTrigger>
-      <SelectContent>
-        {categoriasDisponiveis
-          .filter(cat => cat !== categoriaAtual)
-          .map(cat => (
-            <SelectItem key={cat} value={cat} onSelect={() => handleMover(cat)}>
-              {cat}
-            </SelectItem>
-          ))}
-      </SelectContent>
-    </Select>
+    <>
+      {/* Menu de seleção de categoria */}
+      <Select open={menuOpen} onOpenChange={setMenuOpen}>
+        <SelectTrigger className="w-8 h-6 p-0 border-0 bg-slate-700 hover:bg-slate-600">
+          <MoreVertical className="w-3 h-3" />
+        </SelectTrigger>
+        <SelectContent>
+          {categoriasDisponiveis
+            .filter(cat => cat !== categoriaAtual)
+            .map(cat => (
+              <SelectItem key={cat} value={cat} onPointerDown={() => abrirModal(cat)}>
+                {cat}
+              </SelectItem>
+            ))}
+        </SelectContent>
+      </Select>
+
+      {/* Modal de confirmação e criação de regra */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-slate-100 text-sm">
+              Mover para: <span className="text-blue-400">{novaCategoria}</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-3 text-xs text-slate-300">
+            {/* Descrição da transação */}
+            <p className="text-slate-400 break-words italic">"{descricao}"</p>
+
+            <p className="font-semibold text-slate-200">Criar regra automática?</p>
+            <p className="text-slate-500 text-xs">
+              Uma regra faz com que futuras transações similares sejam categorizadas automaticamente.
+            </p>
+
+            {/* Opção: sem regra */}
+            <button
+              onClick={() => setTipoRegra('SEM_REGRA')}
+              className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
+                tipoRegra === 'SEM_REGRA'
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-300'
+                  : 'border-slate-700 bg-slate-800 hover:border-slate-500'
+              }`}
+            >
+              🚫 Só mover essa transação
+            </button>
+
+            {/* Opção: keyword */}
+            <button
+              onClick={() => setTipoRegra('KEYWORD')}
+              className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
+                tipoRegra === 'KEYWORD'
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-300'
+                  : 'border-slate-700 bg-slate-800 hover:border-slate-500'
+              }`}
+            >
+              🔑 Criar regra por palavra-chave
+              <span className="block text-slate-500 text-xs mt-0.5">
+                Ex: toda transação com "FARMACIA" vai para esta categoria
+              </span>
+            </button>
+
+            {/* Opção: nome exato */}
+            <button
+              onClick={() => setTipoRegra('NOME_EXATO')}
+              className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
+                tipoRegra === 'NOME_EXATO'
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-300'
+                  : 'border-slate-700 bg-slate-800 hover:border-slate-500'
+              }`}
+            >
+              🎯 Criar regra por nome exato
+              <span className="block text-slate-500 text-xs mt-0.5">
+                Só transações com descrição idêntica serão afetadas
+              </span>
+            </button>
+
+            {/* Input do valor da regra */}
+            {tipoRegra !== 'SEM_REGRA' && (
+              <div>
+                <label className="text-slate-400 mb-1 block">
+                  {tipoRegra === 'KEYWORD' ? 'Palavra-chave:' : 'Nome exato:'}
+                </label>
+                <input
+                  type="text"
+                  value={valorRegra}
+                  onChange={e => setValorRegra(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-600 text-slate-100 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Botões */}
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="flex-1 px-3 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs hover:bg-slate-700 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={confirmar}
+              disabled={mutation.isPending || (tipoRegra !== 'SEM_REGRA' && !valorRegra.trim())}
+              className="flex-1 px-3 py-2 rounded-lg bg-blue-600 text-white text-xs hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              {mutation.isPending ? 'Salvando...' : 'Confirmar'}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
