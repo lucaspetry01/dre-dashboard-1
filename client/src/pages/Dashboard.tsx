@@ -414,9 +414,9 @@ export default function Dashboard() {
       const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
       const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
 
-      Object.values(filteredDetalhes).forEach((categoryData: any) => {
-        const items = categoryData?.registros || [];
-        items.forEach((item: any) => {
+      Object.values(filteredDetalhes || {}).forEach((categoryData: any) => {
+          const items = categoryData?.registros ?? [];
+                items.forEach((item: any) => {
           const itemDate = parseRegistroDate(item.data);
           if (!itemDate) return;
           if (startObj && itemDate < startObj) return;
@@ -449,8 +449,8 @@ export default function Dashboard() {
       let receitas = 0;
       let despesas = 0;
       
-      Object.values(filteredDetalhes).forEach((categoryData: any) => {
-        const items = categoryData?.registros || [];
+      Object.values(filteredDetalhes || {}).forEach((categoryData: any) => {
+  const items = categoryData?.registros ?? [];
         items.forEach((item: any) => {
           const itemDate = parseRegistroDate(item.data);
           if (!itemDate) return;
@@ -480,8 +480,8 @@ export default function Dashboard() {
     const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
     const result: any[] = [];
 
-    Object.entries(filteredDetalhes).forEach(([nome, data]: [string, any]) => {
-      const items = data?.registros || [];
+    Object.entries(filteredDetalhes || {}).forEach(([nome, data]: [string, any]) => {
+  const items = data?.registros ?? [];
       let total = 0;
       let count = 0;
 
