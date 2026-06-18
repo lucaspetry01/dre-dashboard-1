@@ -477,10 +477,25 @@ export default function Dashboard() {
     return result;
   }, [filteredDetalhes]);
 
-  const categoriasComDados = useMemo(() => {
-    if (!startDate && !endDate) {
-      return filteredCategorias;
-    }
+const categoriasComDados = useMemo(() => {
+  if (!startDate && !endDate) {
+    // Recalcula sempre a partir dos detalhes reais para garantir consistência
+    const result: any[] = [];
+    Object.entries(filteredDetalhes || {}).forEach(([nome, data]: [string, any]) => {
+      const items = data?.registros ?? [];
+      let total = 0;
+      items.forEach((item: any) => { total += Number(item.valor) || 0; });
+      if (items.length > 0 && total !== 0) {
+        result.push({
+          nome,
+          valor: total,
+          valor_abs: Math.abs(total),
+          quantidade: items.length,
+        });
+      }
+    });
+    return result.sort((a, b) => b.valor_abs - a.valor_abs);
+  }
 
     const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
     const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
