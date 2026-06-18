@@ -387,6 +387,20 @@ export default function Dashboard() {
 
   const parseRegistroDate = (dataStr: string): Date | null => {
     if (!dataStr) return null;
+    
+    // Formato ISO: YYYY-MM-DD ou YYYY-MM-DDTHH:mm:ss
+    if (dataStr.includes('-') && !dataStr.includes('/')) {
+      try {
+        const date = new Date(dataStr);
+        if (!isNaN(date.getTime())) {
+          return date;
+        }
+      } catch (e) {
+        // Continua para tentar outro formato
+      }
+    }
+    
+    // Formato brasileiro: DD/MM/YYYY ou DD/MM
     const parts = dataStr.split('/');
     if (parts.length === 3) {
       const [day, month, year] = parts;

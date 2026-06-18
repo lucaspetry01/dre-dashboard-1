@@ -85,6 +85,12 @@ export async function obterTransacoesParaRecategorizar() {
  * Retorna o número de transações atualizadas.
  */
 export async function aplicarRegrasRetroativamente(): Promise<number> {
+  // TODO: Função desativada temporariamente para debug
+  // Estava causando recategorização incorreta de transações
+  console.log('[DEBUG] aplicarRegrasRetroativamente desativada temporariamente');
+  return 0;
+  
+  /* CÓDIGO ORIGINAL - DESATIVADO
   const db = await getDb();
   if (!db) return 0;
 
@@ -131,4 +137,5 @@ export async function aplicarRegrasRetroativamente(): Promise<number> {
   }
 
   return totalAtualizado;
+  */
 }
