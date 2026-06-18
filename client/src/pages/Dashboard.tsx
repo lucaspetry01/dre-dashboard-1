@@ -135,37 +135,41 @@ export default function Dashboard() {
   const monthsScrollRef = useRef<HTMLDivElement>(null);
 
   const filteredDetalhes = useMemo(() => {
-    if (selectedAccounts.length === 0) return detalhes;
-
-    const entries = Object.entries(detalhes as Record<string, any>)
-      .map(([categoria, data]: [string, any]) => {
-        const registros = (data?.registros || []).filter((item: any) =>
-          selectedAccounts.includes(getAccountIdForItem(item))
-        );
-
-        return [categoria, {
-          ...(data || {}),
-          registros,
-          total: registros.reduce((acc: number, item: any) => acc + Number(item.valor || 0), 0),
-          quantidade: registros.length,
-        }] as [string, any];
-      })
-      .filter(([, data]: [string, any]) => (data?.registros?.length ?? 0) > 0);
-
-    return Object.fromEntries(entries) as Record<string, any>;
-  }, [detalhes, selectedAccounts]);
+    // TODO: Implementar filtro de banco
+    // Por enquanto, retornar todos os detalhes sem filtrar
+    // if (selectedAccounts.length === 0) return detalhes;
+    // const entries = Object.entries(detalhes as Record<string, any>)
+    //   .map(([categoria, data]: [string, any]) => {
+    //     const registros = (data?.registros || []).filter((item: any) =>
+    //       selectedAccounts.includes(getAccountIdForItem(item))
+    //     );
+    //     return [categoria, {
+    //       ...(data || {}),
+    //       registros,
+    //       total: registros.reduce((acc: number, item: any) => acc + Number(item.valor || 0), 0),
+    //       quantidade: registros.length,
+    //     }] as [string, any];
+    //   })
+    //   .filter(([, data]: [string, any]) => (data?.registros?.length ?? 0) > 0);
+    // return Object.fromEntries(entries) as Record<string, any>;
+    return detalhes;
+  }, [detalhes]);
 
   const filteredCategorias = useMemo(() => {
-    if (selectedAccounts.length === 0) return categorias;
+    // TODO: Implementar filtro de banco
+    // Por enquanto, retornar todas as categorias sem filtrar
+    // if (selectedAccounts.length === 0) return categorias;
 
-    return Object.entries(filteredDetalhes).map(([nome, data]: [string, any]) => ({
-      nome,
-      valor: data?.total || 0,
-      valor_abs: Math.abs(data?.total || 0),
-      percentual: 0,
-      quantidade: data?.quantidade || 0,
-    })).sort((a, b) => b.valor_abs - a.valor_abs);
-  }, [categorias, filteredDetalhes, selectedAccounts]);
+    return categorias;
+    // TODO: Implementar filtro de banco
+    // return Object.entries(filteredDetalhes).map(([nome, data]: [string, any]) => ({
+    //   nome,
+    //   valor: data?.total || 0,
+    //   valor_abs: Math.abs(data?.total || 0),
+    //   percentual: 0,
+    //   quantidade: data?.quantidade || 0,
+    // })).sort((a, b) => b.valor_abs - a.valor_abs);
+  }, [categorias]);
 
   const filteredResumo = useMemo(() => {
     const totals = Object.values(filteredDetalhes).reduce((acc: { receitas: number; despesas: number; qtdReceitas: number; qtdDespesas: number }, data: any) => {
@@ -203,9 +207,11 @@ export default function Dashboard() {
   })();
 
   const toggleAccount = (accountId: string) => {
-    setSelectedAccounts((prev) =>
-      prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]
-    );
+    // TODO: Implementar filtro de banco (BB, Itaú, Nubank)
+    // Por enquanto, apenas deixar o botão visual sem funcionalidade
+    // setSelectedAccounts((prev) =>
+    //   prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]
+    // );
   };
 
   const quickFilters = [
@@ -680,21 +686,22 @@ export default function Dashboard() {
           <div className="flex flex-wrap gap-2 mb-3">
             {accountOptions.map((account) => {
               const Icon = account.icon;
-              const isActive = selectedAccounts.includes(account.id);
+              // TODO: Implementar filtro de banco
+              const isActive = false; // selectedAccounts.includes(account.id);
               return (
                 <button
                   key={account.id}
                   type="button"
-                  onClick={() => toggleAccount(account.id)}
-                  className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all ${
-                    isActive
-                      ? 'bg-blue-600 border-blue-500 text-white ring-2 ring-blue-400/40'
-                      : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-500'
-                  }`}
+                  onClick={() => {
+                    // TODO: Implementar filtro de banco
+                    // toggleAccount(account.id);
+                  }}
+                  className="flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-500"
                 >
                   <Icon className="w-3.5 h-3.5" />
                   {account.label}
-                  {isActive && <X className="w-3 h-3 opacity-70" />}
+                  {/* TODO: Mostrar X quando filtro estiver ativo */}
+                  {/* {isActive && <X className="w-3 h-3 opacity-70" />} */}
                 </button>
               );
             })}
