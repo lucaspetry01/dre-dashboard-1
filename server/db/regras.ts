@@ -1,26 +1,14 @@
-import { eq } from 'drizzle-orm';
+import { eq, asc } from 'drizzle-orm';
 import { getDb } from '../db';
 import { regrasCategorias, categorias, transacoes } from '../../drizzle/schema.js';
 
-/**
- * Busca o ID de uma categoria pelo nome.
- */
 export async function getCategoriaIdPorNome(nome: string): Promise<number | null> {
   const db = await getDb();
   if (!db) return null;
-
-  const result = await db
-    .select({ id: categorias.id })
-    .from(categorias)
-    .where(eq(categorias.nome, nome))
-    .limit(1);
-
+  const result = await db.select({ id: categorias.id }).from(categorias).where(eq(categorias.nome, nome)).limit(1);
   return result[0]?.id ?? null;
 }
 
-/**
- * Cria uma regra de categorização no banco.
- */
 export async function criarRegra(params: {
   categoriaId: number;
   tipo: 'KEYWORD' | 'REGEX' | 'NOME_EXATO';
@@ -29,7 +17,6 @@ export async function criarRegra(params: {
 }): Promise<boolean> {
   const db = await getDb();
   if (!db) return false;
-
   try {
     await db.insert(regrasCategorias).values({
       categoriaId: params.categoriaId,
@@ -46,15 +33,24 @@ export async function criarRegra(params: {
 }
 
 /**
- * Aplica TODAS as regras ativas a TODAS as transações.
- * Rápido: carrega tudo em memória e faz apenas um UPDATE por transação alterada.
- * Retorna o número de transações atualizadas.
+ * Aplica todas as regras ativas a todas as transações.
+ * Respeita a PRIORIDADE da categoria — menor número = maior prioridade.
+ * Ex: CHAPA (prioridade 5) vence PAGAMENTOS (prioridade 11).
  */
 export async function aplicarRegrasRetroativamente(): Promise<number> {
   const db = await getDb();
   if (!db) return 0;
 
-  // 1. Carregar todas as regras ativas de uma vez
+  // 1. Carregar categorias com prioridade
+  const todasCategorias = await db
+    .select({ id: categorias.id, nome: categorias.nome, prioridade: categorias.prioridade })
+    .from(categorias)
+    .orderBy(asc(categorias.prioridade)); // menor prioridade primeiro
+
+  const categoriaPorId = new Map(todasCategorias.map(c => [c.id, c.nome]));
+  const prioridadePorId = new Map(todasCategorias.map(c => [c.id, c.prioridade]));
+
+  // 2. Carregar regras ativas
   const regras = await db
     .select({
       tipo: regrasCategorias.tipo,
@@ -66,23 +62,28 @@ export async function aplicarRegrasRetroativamente(): Promise<number> {
 
   if (regras.length === 0) return 0;
 
-  // 2. Carregar todas as categorias de uma vez (evita query por transação)
-  const todasCategorias = await db
-    .select({ id: categorias.id, nome: categorias.nome })
-    .from(categorias);
+  // Ordenar regras pela prioridade da categoria (menor = maior prioridade)
+  regras.sort((a, b) => {
+    const pA = prioridadePorId.get(a.categoriaId) ?? 999;
+    const pB = prioridadePorId.get(b.categoriaId) ?? 999;
+    return pA - pB;
+  });
 
-  const categoriaPorId = new Map(todasCategorias.map(c => [c.id, c.nome]));
-
-  // 3. Carregar todas as transações de uma vez
+  // 3. Carregar todas as transações
   const todasTransacoes = await db
-    .select({ id: transacoes.id, descricao: transacoes.descricao, valor: transacoes.valor, categoria: transacoes.categoria })
+    .select({
+      id: transacoes.id,
+      descricao: transacoes.descricao,
+      valor: transacoes.valor,
+      categoria: transacoes.categoria,
+    })
     .from(transacoes);
 
   let totalAtualizado = 0;
 
-  // 4. Para cada transação, testar todas as regras em memória
+  // 4. Para cada transação, aplicar a primeira regra que bater (respeitando prioridade)
   for (const transacao of todasTransacoes) {
-    // Receitas nunca mudam de categoria
+    // Receitas nunca mudam
     if (Number(transacao.valor) > 0) continue;
 
     const descUpper = transacao.descricao.toUpperCase();
@@ -95,27 +96,21 @@ export async function aplicarRegrasRetroativamente(): Promise<number> {
       if (regra.tipo === 'KEYWORD') {
         corresponde = descUpper.includes(valorRegra);
       } else if (regra.tipo === 'NOME_EXATO') {
-        corresponde = descUpper === valorRegra;
+        corresponde = descUpper.includes(valorRegra);
       } else if (regra.tipo === 'REGEX') {
-        try {
-          corresponde = new RegExp(regra.valor, 'i').test(transacao.descricao);
-        } catch {
-          continue;
-        }
+        try { corresponde = new RegExp(regra.valor, 'i').test(transacao.descricao); }
+        catch { continue; }
       }
 
       if (corresponde) {
         novaCategoria = categoriaPorId.get(regra.categoriaId) ?? null;
-        break; // Primeira regra que bate vence
+        break; // Primeira regra com maior prioridade vence
       }
     }
 
-    // Só atualiza se a categoria mudou
+    // Só atualiza se mudou
     if (novaCategoria && novaCategoria !== transacao.categoria) {
-      await db
-        .update(transacoes)
-        .set({ categoria: novaCategoria })
-        .where(eq(transacoes.id, transacao.id));
+      await db.update(transacoes).set({ categoria: novaCategoria }).where(eq(transacoes.id, transacao.id));
       totalAtualizado++;
     }
   }
