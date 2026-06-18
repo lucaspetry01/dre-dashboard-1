@@ -479,7 +479,7 @@ export default function Dashboard() {
 
   const categoriasComDados = useMemo(() => {
     if (!startDate && !endDate) {
-      return filteredCategorias.filter(cat => cat.valor_abs > 0);
+      return filteredCategorias;
     }
 
     const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
