@@ -130,6 +130,7 @@ export default function Dashboard() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [lastImportInfo, setLastImportInfo] = useState<any>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [syncProgress, setSyncProgress] = useState(0);
   const [hasNewCategoryChanges, setHasNewCategoryChanges] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const monthsScrollRef = useRef<HTMLDivElement>(null);
@@ -605,12 +606,24 @@ const categoriasComDados = useMemo(() => {
 
   const handleSync = async () => {
     setIsSyncing(true);
+    setSyncProgress(0);
+    
     try {
+      // Simular progresso inicial
+      const progressInterval = setInterval(() => {
+        setSyncProgress(prev => Math.min(prev + Math.random() * 30, 90));
+      }, 300);
+      
       // Aplicar regras retroativamente
       const result = await syncMutation.mutateAsync();
       
+      clearInterval(progressInterval);
+      setSyncProgress(95);
+      
       // Invalidar cache para recarregar dados
       await utils.ofx.resumoCompleto.invalidate();
+      
+      setSyncProgress(100);
       setHasNewCategoryChanges(false);
       
       if (result.sucesso) {
@@ -618,9 +631,13 @@ const categoriasComDados = useMemo(() => {
       } else {
         toast.error(result.mensagem);
       }
+      
+      // Limpar progresso após 1s
+      setTimeout(() => setSyncProgress(0), 1000);
     } catch (error) {
       toast.error('Erro ao sincronizar dados');
       console.error(error);
+      setSyncProgress(0);
     } finally {
       setIsSyncing(false);
     }
@@ -661,17 +678,30 @@ const categoriasComDados = useMemo(() => {
             <button className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
               TM
             </button>
-            <button
-              onClick={handleSync}
-              disabled={isSyncing}
-              className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Sincronizar dados"
-            >
-              <RefreshCw className={`w-4 h-4 text-slate-300 ${isSyncing ? 'animate-spin' : ''}`} />
-              {hasNewCategoryChanges && (
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-yellow-500 rounded-full border border-slate-900 animate-pulse" />
+            <div className="relative">
+              <button
+                onClick={handleSync}
+                disabled={isSyncing}
+                className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                title="Sincronizar dados"
+              >
+                {syncProgress > 0 && (
+                  <div
+                    className="absolute inset-0 bg-blue-500/30 rounded-full transition-all duration-300"
+                    style={{ width: `${syncProgress}%` }}
+                  />
+                )}
+                <RefreshCw className={`w-4 h-4 text-slate-300 relative z-10 ${isSyncing ? 'animate-spin' : ''}`} />
+                {hasNewCategoryChanges && !isSyncing && (
+                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-yellow-500 rounded-full border border-slate-900 animate-pulse" />
+                )}
+              </button>
+              {isSyncing && (
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-slate-900 text-slate-100 text-xs px-2 py-1 rounded whitespace-nowrap z-50">
+                  {Math.round(syncProgress)}%
+                </div>
               )}
-            </button>
+            </div>
             <button
               onClick={handleNotificationClick}
               className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors"
