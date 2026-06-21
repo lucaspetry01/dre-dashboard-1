@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, BarChart3, List } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CategoryIcon from './CategoryIcon';
 import BarChartWithLabels from './BarChartWithLabels';
-import { InteractiveFlameIcon } from './InteractiveFlameIcon';
+import { PulsingFlameIcon } from './PulsingFlameIcon';
 
 interface CategoryData {
   nome: string;
@@ -130,7 +130,7 @@ export function CategoryDetailView({
                   <CategoryIcon categoryName={categoria.nome} />
                   <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate flex items-center gap-1">
                     {simplifyCategoriName(categoria.nome)}
-                    {isMaisCara && <InteractiveFlameIcon size={14} />}
+                    {isMaisCara && <PulsingFlameIcon size={14} />}
                   </span>
                   <span className="text-xs text-slate-400 flex-shrink-0">({items.length})</span>
                 </div>
