@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, BarChart3, List } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CategoryIcon from './CategoryIcon';
 import BarChartWithLabels from './BarChartWithLabels';
+import { FlameIcon } from './FlameIcon';
 
 interface CategoryData {
   nome: string;
@@ -53,6 +54,11 @@ export function CategoryDetailView({
       .reduce((sum, cat) => sum + cat.valor_abs, 0);
   }, [categoriasComDados]);
 
+  // Categoria de maior despesa (primeira da lista filtrada e ordenada)
+  const categoriaMaisCara = useMemo(() => {
+    return categoriasComDados.filter(cat => cat.valor < 0)[0]?.nome ?? null;
+  }, [categoriasComDados]);
+
   // Preparar dados para o gráfico
   const chartData = useMemo(() => {
     return categoriasComDados
@@ -87,6 +93,7 @@ export function CategoryDetailView({
         const isExpanded = expandedCategory === categoria.nome;
         const categoryValue = Math.abs(items.reduce((sum: number, item: any) => sum + Number(item.valor), 0));
         const percentage = totalDespesas > 0 ? ((categoryValue / totalDespesas) * 100).toFixed(0) : 0;
+        const isMaisCara = categoria.nome === categoriaMaisCara;
         
         // Cor derivada do valor (mais saturada para maiores valores)
         const getProgressColor = () => {
@@ -121,8 +128,9 @@ export function CategoryDetailView({
               >
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   <CategoryIcon categoryName={categoria.nome} />
-                  <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate">
+                  <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate flex items-center gap-1">
                     {simplifyCategoriName(categoria.nome)}
+                    {isMaisCara && <FlameIcon size={14} />}
                   </span>
                   <span className="text-xs text-slate-400 flex-shrink-0">({items.length})</span>
                 </div>
