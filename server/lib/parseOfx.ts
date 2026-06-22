@@ -95,6 +95,12 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   let accountId = extractTag(content, 'ACCTID');
   let cnpj = extractTag(content, 'IDSCOPE'); // CNPJ vem em IDSCOPE no OFX
   
+  // Normalizar bankId: remover zeros à esquerda e formatar como 3 dígitos
+  if (bankId) {
+    const bankNum = parseInt(bankId.trim(), 10);
+    bankId = bankNum.toString().padStart(3, '0');
+  }
+  
   // Tentar extrair CNPJ de outras tags se IDSCOPE estiver vazio
   if (!cnpj || cnpj.trim().length === 0) {
     cnpj = extractTag(content, 'IDORG'); // Alternativa: IDORG
@@ -113,8 +119,17 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   
   // Extrair agência (primeiros 4 dígitos) e conta (últimos 7 dígitos)
   let agencia = '';
+  let formattedAccount = '';
+  
   if (cleanAccountId.length >= 4) {
     agencia = cleanAccountId.substring(0, 4);
+    // Pega os dígitos após agência e formata como XXXXX-X (5 dígitos + hífen + 1 dígito verificador)
+    const accountPart = cleanAccountId.substring(4);
+    if (accountPart.length >= 6) {
+      // Pega os últimos 6 dígitos (5 + verificador)
+      const lastSix = accountPart.substring(accountPart.length - 6);
+      formattedAccount = lastSix.substring(0, 5) + '-' + lastSix.substring(5);
+    }
   }
   
   // Se CNPJ ainda está vazio, tentar usar mapeamento de agência/conta
@@ -125,7 +140,8 @@ export function parseOfx(ofxContent: string): OfxParseResult {
     }
   }
   
-  accountId = cleanAccountId;
+  // Usar conta formatada se disponível, senão usar limpeza simples
+  accountId = formattedAccount || cleanAccountId;
 
   // Período do extrato
   const dtStartRaw = extractTag(content, 'DTSTART');
