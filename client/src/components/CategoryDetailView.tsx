@@ -130,7 +130,7 @@ export function CategoryDetailView({
                   <CategoryIcon categoryName={categoria.nome} />
                   <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate flex items-center gap-1">
                     {simplifyCategoriName(categoria.nome)}
-                    {isMaisCara && <PulsingFlameIcon size={14} />}
+                    {isMaisCara && <PulsingFlameIcon size={18} />}
                   </span>
                   <span className="text-xs text-slate-400 flex-shrink-0">({items.length})</span>
                 </div>

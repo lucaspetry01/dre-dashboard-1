@@ -1,43 +1,32 @@
-// Ícone de chama animada para destacar a categoria de maior gasto
+// Ícone de chama minimalista em traço (outline), estilo "destaque popular"
 export function FlameIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="#FF7A1A" />
-          <stop offset="45%" stopColor="#FF3B30" />
-          <stop offset="100%" stopColor="#FFD23B" />
-        </linearGradient>
-      </defs>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Categoria de maior gasto"
+    >
       <style>{`
-        .flame-outer {
-          transform-origin: 32px 50px;
-          animation: flicker-outer 1.1s ease-in-out infinite alternate;
+        .flame-path {
+          transform-origin: 8px 8px;
+          animation: flame-pulse 1.6s ease-in-out infinite;
         }
-        .flame-inner {
-          transform-origin: 32px 46px;
-          animation: flicker-inner 0.9s ease-in-out infinite alternate;
-        }
-        @keyframes flicker-outer {
-          0% { transform: scaleY(1) scaleX(1) rotate(-1.5deg); }
-          50% { transform: scaleY(1.05) scaleX(0.97) rotate(1deg); }
-          100% { transform: scaleY(0.97) scaleX(1.03) rotate(-1deg); }
-        }
-        @keyframes flicker-inner {
-          0% { transform: scaleY(1) scaleX(1) translateY(0); }
-          50% { transform: scaleY(1.08) scaleX(0.94) translateY(-1px); }
-          100% { transform: scaleY(0.95) scaleX(1.05) translateY(1px); }
+        @keyframes flame-pulse {
+          0%, 100% { stroke-width: 1.1; opacity: 0.85; }
+          50% { stroke-width: 1.4; opacity: 1; }
         }
       `}</style>
       <path
-        className="flame-outer"
-        fill="url(#flameGrad)"
-        d="M32 6 C24 16 18 22 18 34 C18 45 24 52 32 52 C40 52 46 45 46 34 C46 22 40 16 32 6 Z M32 14 C36 20 40 26 40 34 C40 41 37 45 32 45 C27 45 24 41 24 34 C24 26 28 20 32 14 Z"
-      />
-      <path
-        className="flame-inner"
-        fill="#FFE066"
-        d="M32 22 C29 27 26 30 26 35 C26 40 29 43 32 43 C35 43 38 40 38 35 C38 30 35 27 32 22 Z"
+        className="flame-path"
+        fill="none"
+        stroke="#FF5353"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5.81 13.65 C5.81 13.65 5.04 13.27 5.42 11.51 C5.81 9.66 3.75 10.6 5.71 5.04 C5.71 5.04 6.91 8.66 9.09 8.01 C9.09 8.01 9.37 5.57 9.83 4.77 C10.86 2.95 12.96 1.76 13.21 0.49 C13.21 0.49 13.13 2.18 12.84 5.80 C12.61 8.11 10.72 8.55 11.09 10.56 C11.46 12.58 13.50 13.24 13.82 12.25 C14.22 10.99 14.19 8.32 15.67 7.52 C15.67 7.52 14.88 9.40 16.10 10.50 C16.52 11.22 17.99 12.35 16.65 14.02"
+        transform="translate(-2.5, -0.5) scale(0.78)"
       />
     </svg>
   );

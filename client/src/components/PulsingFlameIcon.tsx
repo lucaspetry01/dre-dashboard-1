@@ -15,66 +15,39 @@ export const PulsingFlameIcon: React.FC<PulsingFlameIconProps> = ({
       style={{ width: size, height: size }}
     >
       <style>{`
-        @keyframes flamePulse {
-          0% {
-            transform: scale(1);
-            opacity: 1;
-            filter: drop-shadow(0 0 2px rgba(255, 69, 0, 0.8));
-          }
-          50% {
-            transform: scale(1.15);
-            opacity: 0.9;
-            filter: drop-shadow(0 0 12px rgba(255, 69, 0, 1));
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-            filter: drop-shadow(0 0 2px rgba(255, 69, 0, 0.8));
-          }
-        }
-
-        @keyframes flameWave {
+        @keyframes flameOutlinePulse {
           0%, 100% {
-            d: path('M12 2C12 2 8 8 8 12C8 15.3137 9.79086 18 12 18C14.2091 18 16 15.3137 16 12C16 8 12 2 12 2Z');
+            stroke-width: 1.1;
+            opacity: 0.85;
           }
           50% {
-            d: path('M12 1.5C12 1.5 7.5 8 7.5 12.5C7.5 16 9.5 19 12 19C14.5 19 16.5 16 16.5 12.5C16.5 8 12 1.5 12 1.5Z');
+            stroke-width: 1.5;
+            opacity: 1;
           }
         }
-
-        .flame-icon {
-          animation: flamePulse 1.5s ease-in-out infinite;
+        .flame-outline-path {
+          transform-origin: 8px 8px;
+          animation: flameOutlinePulse 1.6s ease-in-out infinite;
         }
       `}</style>
 
       <svg
         width={size}
         height={size}
-        viewBox="0 0 24 24"
-        fill="none"
+        viewBox="0 0 16 16"
         xmlns="http://www.w3.org/2000/svg"
-        className="flame-icon"
+        aria-label="Categoria de maior gasto"
       >
-        {/* Camada externa - Vermelho escuro */}
         <path
-          d="M12 2C12 2 8 8 8 12C8 15.3137 9.79086 18 12 18C14.2091 18 16 15.3137 16 12C16 8 12 2 12 2Z"
-          fill="#FF4500"
+          className="flame-outline-path"
+          fill="none"
+          stroke="#FF5353"
+          strokeWidth="1.3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M5.81 13.65 C5.81 13.65 5.04 13.27 5.42 11.51 C5.81 9.66 3.75 10.6 5.71 5.04 C5.71 5.04 6.91 8.66 9.09 8.01 C9.09 8.01 9.37 5.57 9.83 4.77 C10.86 2.95 12.96 1.76 13.21 0.49 C13.21 0.49 13.13 2.18 12.84 5.80 C12.61 8.11 10.72 8.55 11.09 10.56 C11.46 12.58 13.50 13.24 13.82 12.25 C14.22 10.99 14.19 8.32 15.67 7.52 C15.67 7.52 14.88 9.40 16.10 10.50 C16.52 11.22 17.99 12.35 16.65 14.02"
+          transform="translate(-2.5, -0.5) scale(0.78)"
         />
-
-        {/* Camada média - Laranja */}
-        <path
-          d="M12 4C12 4 9.5 8.5 9.5 11.5C9.5 13.9853 10.5294 16 12 16C13.4706 16 14.5 13.9853 14.5 11.5C14.5 8.5 12 4 12 4Z"
-          fill="#FF8C00"
-        />
-
-        {/* Camada interna - Amarelo ouro */}
-        <path
-          d="M12 6C12 6 11 8.5 11 10C11 11.6569 11.3726 13 12 13C12.6274 13 13 11.6569 13 10C13 8.5 12 6 12 6Z"
-          fill="#FFD700"
-        />
-
-        {/* Brilho central branco */}
-        <circle cx="12" cy="9" r="1.2" fill="#FFFFFF" opacity="0.8" />
       </svg>
     </div>
   );
