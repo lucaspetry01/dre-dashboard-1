@@ -81,9 +81,24 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   const content = ofxContent.replace(/\r\n/g, '\n');
 
   // Extrair informações da conta
-  const bankId = extractTag(content, 'BANKID');
-  const accountId = extractTag(content, 'ACCTID');
-  const cnpj = extractTag(content, 'IDSCOPE'); // CNPJ vem em IDSCOPE no OFX
+  let bankId = extractTag(content, 'BANKID');
+  let accountId = extractTag(content, 'ACCTID');
+  let cnpj = extractTag(content, 'IDSCOPE'); // CNPJ vem em IDSCOPE no OFX
+  
+  // Tentar extrair CNPJ de outras tags se IDSCOPE estiver vazio
+  if (!cnpj || cnpj.trim().length === 0) {
+    cnpj = extractTag(content, 'IDORG'); // Alternativa: IDORG
+  }
+  if (!cnpj || cnpj.trim().length === 0) {
+    // Procurar por padrão CNPJ no formato XX.XXX.XXX/XXXX-XX
+    const cnpjMatch = content.match(/(\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2})/i);
+    if (cnpjMatch) cnpj = cnpjMatch[1];
+  }
+  
+  // Limpar accountId: remover caracteres especiais e espaços
+  if (accountId) {
+    accountId = accountId.trim().replace(/[^0-9]/g, '');
+  }
 
   // Período do extrato
   const dtStartRaw = extractTag(content, 'DTSTART');
