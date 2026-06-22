@@ -137,7 +137,7 @@ export default function Dashboard() {
   const monthsScrollRef = useRef<HTMLDivElement>(null);
 
   const cnpjMap: Record<string, string> = {
-    'mp': '12.345.678/0001-90',
+    'mp': '24.853.275/0001-36',
     'mmp': '51.621.925/0001-90',
   };
 
