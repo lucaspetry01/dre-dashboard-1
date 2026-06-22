@@ -14,6 +14,29 @@ import {
 } from '../db/transacoes';
 import { getCategoriaIdPorNome, criarRegra, aplicarRegrasRetroativamente } from '../db/regras';
 import type { InsertTransacao } from '../../drizzle/schema';
+import { db } from '../db';
+import { transacoes } from '../../drizzle/schema';
+import { eq, isNull, or, and } from 'drizzle-orm';
+import { z } from 'zod';
+
+const accountToCnpjMap: Record<string, string> = {
+  '30085-5': '51.621.925/0001-90',
+  '88828-6': '24.853.275/0001-36',
+};
+
+async function fillCnpjByAccount() {
+  for (const [conta, cnpj] of Object.entries(accountToCnpjMap)) {
+    await db
+      .update(transacoes)
+      .set({ cnpj })
+      .where(
+        and(
+          eq(transacoes.conta, conta),
+          or(isNull(transacoes.cnpj), eq(transacoes.cnpj, ''))
+        )
+      );
+  }
+}
 
 /**
  * Cria o hash único da transação. Quando houver FITID (vindo do OFX),
@@ -117,6 +140,9 @@ export const ofxRouter = router({
 
       // Inserir em lote
       await insertTransacoes(novosRegistros);
+
+      // Preencher CNPJ retroativamente baseado na conta
+      await fillCnpjByAccount();
 
       return {
         success: true,
