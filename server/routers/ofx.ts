@@ -14,7 +14,7 @@ import {
 } from '../db/transacoes';
 import { getCategoriaIdPorNome, criarRegra, aplicarRegrasRetroativamente } from '../db/regras';
 import type { InsertTransacao } from '../../drizzle/schema';
-import { db } from '../db';
+import { getDb } from '../db';
 import { transacoes } from '../../drizzle/schema';
 import { eq, isNull, or, and } from 'drizzle-orm';
 import { z } from 'zod';
@@ -25,6 +25,9 @@ const accountToCnpjMap: Record<string, string> = {
 };
 
 async function fillCnpjByAccount() {
+  const db = await getDb();
+  if (!db) return;
+  
   for (const [conta, cnpj] of Object.entries(accountToCnpjMap)) {
     await db
       .update(transacoes)
