@@ -136,6 +136,11 @@ export default function Dashboard() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const monthsScrollRef = useRef<HTMLDivElement>(null);
 
+  const cnpjMap: Record<string, string> = {
+    'mp': '12.345.678/0001-90',
+    'mmp': '51.621.925/0001-90',
+  };
+
   const filteredDetalhes = useMemo(() => {
     if (selectedAccounts.length === 0) return detalhes;
     const entries = Object.entries(detalhes as Record<string, any>)
@@ -200,11 +205,6 @@ export default function Dashboard() {
     }
     return '2026-05-27';
   })();
-
-  const cnpjMap: Record<string, string> = {
-    'mp': '12.345.678/0001-90',
-    'mmp': '51.621.925/0001-90',
-  };
 
   const toggleAccount = (accountId: string) => {
     setSelectedAccounts((prev) =>
