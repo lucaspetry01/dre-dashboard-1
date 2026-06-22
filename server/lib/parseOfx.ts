@@ -39,6 +39,7 @@ export interface OfxParseResult {
  */
 const accountToCnpjMap: Record<string, string> = {
   '0101300855': '51.621.925/0001-90', // MMP - Sicredi
+  '88828': '24.853.275/0001-36', // M&P - Itaú (conta 88828-6)
   // Adicione outros mapeamentos conforme necessário
 };
 
