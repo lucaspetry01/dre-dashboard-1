@@ -62,8 +62,6 @@ const simplifyCategoriName = (name: string): string => {
 const accountOptions = [
   { id: 'mp', label: 'M&P', icon: Landmark, tone: 'from-amber-500/15 to-amber-400/5 border-amber-400/40' },
   { id: 'mmp', label: 'MMP', icon: Landmark, tone: 'from-amber-500/15 to-amber-400/5 border-amber-400/40' },
-  { id: 'itau', label: 'Itaú', icon: Building2, tone: 'from-blue-500/15 to-blue-400/5 border-blue-400/40' },
-  { id: 'nubank', label: 'Nubank', icon: Wallet, tone: 'from-violet-500/15 to-violet-400/5 border-violet-400/40' },
 ];
 
 const getAccountBucket = (value: string) => {
