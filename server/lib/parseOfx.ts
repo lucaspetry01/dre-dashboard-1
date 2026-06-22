@@ -134,9 +134,9 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   
   // Se CNPJ ainda está vazio, tentar usar mapeamento de agência/conta
   if (!cnpj || cnpj.trim().length === 0) {
-    const accountKey = cleanAccountId.substring(4); // Pega tudo após agência
-    if (accountKey && accountToCnpjMap[agencia + accountKey]) {
-      cnpj = accountToCnpjMap[agencia + accountKey];
+    // Usar cleanAccountId (sem formatação) para o mapeamento
+    if (cleanAccountId && accountToCnpjMap[cleanAccountId]) {
+      cnpj = accountToCnpjMap[cleanAccountId];
     }
   }
   
