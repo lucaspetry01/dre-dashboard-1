@@ -147,6 +147,7 @@ export interface ResumoAgregado {
         valor: number;
         saldo: number;
         categoria: string;
+        cnpj: string;
       }>;
     }
   >;
@@ -188,6 +189,7 @@ interface AggregateRow {
   valor: number | string;
   saldo: number | string;
   categoria: string;
+  cnpj?: string;
 }
 
 /**
@@ -298,6 +300,7 @@ export function aggregateRows(rows: AggregateRow[]): ResumoAgregado | null {
       valor,
       saldo,
       categoria: row.categoria,
+      cnpj: row.cnpj || '',
     });
   }
 

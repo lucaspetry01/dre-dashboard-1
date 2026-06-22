@@ -137,41 +137,34 @@ export default function Dashboard() {
   const monthsScrollRef = useRef<HTMLDivElement>(null);
 
   const filteredDetalhes = useMemo(() => {
-    // TODO: Implementar filtro de banco
-    // Por enquanto, retornar todos os detalhes sem filtrar
-    // if (selectedAccounts.length === 0) return detalhes;
-    // const entries = Object.entries(detalhes as Record<string, any>)
-    //   .map(([categoria, data]: [string, any]) => {
-    //     const registros = (data?.registros || []).filter((item: any) =>
-    //       selectedAccounts.includes(getAccountIdForItem(item))
-    //     );
-    //     return [categoria, {
-    //       ...(data || {}),
-    //       registros,
-    //       total: registros.reduce((acc: number, item: any) => acc + Number(item.valor || 0), 0),
-    //       quantidade: registros.length,
-    //     }] as [string, any];
-    //   })
-    //   .filter(([, data]: [string, any]) => (data?.registros?.length ?? 0) > 0);
-    // return Object.fromEntries(entries) as Record<string, any>;
-    return detalhes;
-  }, [detalhes]);
+    if (selectedAccounts.length === 0) return detalhes;
+    const entries = Object.entries(detalhes as Record<string, any>)
+      .map(([categoria, data]: [string, any]) => {
+        const registros = (data?.registros || []).filter((item: any) => {
+          const itemCnpj = item?.cnpj || '';
+          return selectedAccounts.some(accountId => cnpjMap[accountId] === itemCnpj);
+        });
+        return [categoria, {
+          ...(data || {}),
+          registros,
+          total: registros.reduce((acc: number, item: any) => acc + Number(item.valor || 0), 0),
+          quantidade: registros.length,
+        }] as [string, any];
+      })
+      .filter(([, data]: [string, any]) => (data?.registros?.length ?? 0) > 0);
+    return Object.fromEntries(entries) as Record<string, any>;
+  }, [detalhes, selectedAccounts]);
 
   const filteredCategorias = useMemo(() => {
-    // TODO: Implementar filtro de banco
-    // Por enquanto, retornar todas as categorias sem filtrar
-    // if (selectedAccounts.length === 0) return categorias;
-
-    return categorias;
-    // TODO: Implementar filtro de banco
-    // return Object.entries(filteredDetalhes).map(([nome, data]: [string, any]) => ({
-    //   nome,
-    //   valor: data?.total || 0,
-    //   valor_abs: Math.abs(data?.total || 0),
-    //   percentual: 0,
-    //   quantidade: data?.quantidade || 0,
-    // })).sort((a, b) => b.valor_abs - a.valor_abs);
-  }, [categorias]);
+    if (selectedAccounts.length === 0) return categorias;
+    return Object.entries(filteredDetalhes).map(([nome, data]: [string, any]) => ({
+      nome,
+      valor: data?.total || 0,
+      valor_abs: Math.abs(data?.total || 0),
+      percentual: 0,
+      quantidade: data?.quantidade || 0,
+    })).sort((a, b) => b.valor_abs - a.valor_abs);
+  }, [filteredDetalhes, selectedAccounts]);
 
   const filteredResumo = useMemo(() => {
     const totals = Object.values(filteredDetalhes).reduce((acc: { receitas: number; despesas: number; qtdReceitas: number; qtdDespesas: number }, data: any) => {
@@ -208,12 +201,15 @@ export default function Dashboard() {
     return '2026-05-27';
   })();
 
+  const cnpjMap: Record<string, string> = {
+    'mp': '12.345.678/0001-90',
+    'mmp': '51.621.925/0001-90',
+  };
+
   const toggleAccount = (accountId: string) => {
-    // TODO: Implementar filtro de banco (BB, Itaú, Nubank)
-    // Por enquanto, apenas deixar o botão visual sem funcionalidade
-    // setSelectedAccounts((prev) =>
-    //   prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]
-    // );
+    setSelectedAccounts((prev) =>
+      prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]
+    );
   };
 
   const quickFilters = [
@@ -344,6 +340,7 @@ export default function Dashboard() {
     setEndDate('');
     setActiveQuickFilter(null);
     setSelectedMonths([]);
+    setSelectedAccounts([]);
     setIsFiltering(false);
   };
 
@@ -746,22 +743,21 @@ const categoriasComDados = useMemo(() => {
           <div className="flex flex-wrap gap-2 mb-3">
             {accountOptions.map((account) => {
               const Icon = account.icon;
-              // TODO: Implementar filtro de banco
-              const isActive = false; // selectedAccounts.includes(account.id);
+              const isActive = selectedAccounts.includes(account.id);
               return (
                 <button
                   key={account.id}
                   type="button"
-                  onClick={() => {
-                    // TODO: Implementar filtro de banco
-                    // toggleAccount(account.id);
-                  }}
-                  className="flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-500"
+                  onClick={() => toggleAccount(account.id)}
+                  className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'border-amber-400 bg-amber-500/20 text-amber-300'
+                      : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-500'
+                  }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   {account.label}
-                  {/* TODO: Mostrar X quando filtro estiver ativo */}
-                  {/* {isActive && <X className="w-3 h-3 opacity-70" />} */}
+                  {isActive && <X className="w-3 h-3 opacity-70" />}
                 </button>
               );
             })}
@@ -792,7 +788,7 @@ const categoriasComDados = useMemo(() => {
           </div>
 
           {/* Botão Limpar Filtros */}
-          {(startDate || endDate || selectedMonths.length > 0) && (
+          {(startDate || endDate || selectedMonths.length > 0 || selectedAccounts.length > 0) && (
             <button
               onClick={resetFilters}
               className="w-full mt-2 px-2 py-1.5 rounded-lg text-xs font-semibold bg-red-900/30 text-red-400 hover:bg-red-900/50 transition-all"
