@@ -59,6 +59,7 @@ export async function listTransacoes(filters?: {
   startDate?: Date;
   endDate?: Date;
   categoria?: string;
+  banco?: string;
 }) {
   const db = await getDb();
   if (!db) return [];
@@ -67,6 +68,7 @@ export async function listTransacoes(filters?: {
   if (filters?.startDate) conditions.push(gte(transacoes.dataTimestamp, filters.startDate));
   if (filters?.endDate) conditions.push(lte(transacoes.dataTimestamp, filters.endDate));
   if (filters?.categoria) conditions.push(eq(transacoes.categoria, filters.categoria));
+  if (filters?.banco) conditions.push(eq(transacoes.banco, filters.banco));
 
   const query = db
     .select()

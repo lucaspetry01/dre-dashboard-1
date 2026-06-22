@@ -57,6 +57,13 @@
       "when": 1780901553770,
       "tag": "0007_jittery_killmonger",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1782094381682,
+      "tag": "0008_goofy_secret_warriors",
+      "breakpoints": true
     }
   ]
 }

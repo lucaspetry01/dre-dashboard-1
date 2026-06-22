@@ -86,6 +86,9 @@ export const ofxRouter = router({
           tipo: t.tipo,
           categoria,
           hashUnico,
+          banco: parsed.bankId || 'DESCONHECIDO',
+          conta: parsed.accountId || '',
+          cnpj: parsed.cnpj || '',
         });
       }
 
@@ -137,6 +140,7 @@ export const ofxRouter = router({
           startDate: z.string().optional(),
           endDate: z.string().optional(),
           categoria: z.string().optional(),
+          banco: z.string().optional(),
         })
         .optional()
     )
@@ -145,6 +149,7 @@ export const ofxRouter = router({
         startDate: input?.startDate ? new Date(input.startDate) : undefined,
         endDate: input?.endDate ? new Date(input.endDate) : undefined,
         categoria: input?.categoria,
+        banco: input?.banco,
       });
     }),
 

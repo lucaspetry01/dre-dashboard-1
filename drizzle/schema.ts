@@ -71,6 +71,9 @@ export const transacoes = mysqlTable("transacoes", {
 	categoria: varchar({ length: 100 }).default('OUTROS').notNull(),
 	hashUnico: varchar({ length: 64 }).notNull(),
 	uploadId: int(),
+	banco: varchar({ length: 50 }).default('DESCONHECIDO'),
+	conta: varchar({ length: 50 }).default(''),
+	cnpj: varchar({ length: 20 }).default(''),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 },
 (table) => [

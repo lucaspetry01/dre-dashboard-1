@@ -25,6 +25,7 @@ export interface OfxTransaction {
 export interface OfxParseResult {
   bankId?: string;
   accountId?: string;
+  cnpj?: string; // CNPJ da empresa
   periodoInicio?: string;
   periodoFim?: string;
   saldoFinal?: number; // Saldo final da conta (LEDGERBAL/BALAMT)
@@ -82,6 +83,7 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   // Extrair informações da conta
   const bankId = extractTag(content, 'BANKID');
   const accountId = extractTag(content, 'ACCTID');
+  const cnpj = extractTag(content, 'IDSCOPE'); // CNPJ vem em IDSCOPE no OFX
 
   // Período do extrato
   const dtStartRaw = extractTag(content, 'DTSTART');
@@ -155,6 +157,7 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   return {
     bankId,
     accountId,
+    cnpj,
     periodoInicio,
     periodoFim,
     saldoFinal,
