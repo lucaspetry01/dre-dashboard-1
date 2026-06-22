@@ -25,12 +25,22 @@ export interface OfxTransaction {
 export interface OfxParseResult {
   bankId?: string;
   accountId?: string;
+  agencia?: string; // Agência extraída da conta
   cnpj?: string; // CNPJ da empresa
   periodoInicio?: string;
   periodoFim?: string;
   saldoFinal?: number; // Saldo final da conta (LEDGERBAL/BALAMT)
   transactions: OfxTransaction[];
 }
+
+/**
+ * Mapeamento de agência/conta para CNPJ.
+ * Usado quando o OFX não contém CNPJ explicitamente.
+ */
+const accountToCnpjMap: Record<string, string> = {
+  '0101300855': '51.621.925/0001-90', // MMP - Sicredi
+  // Adicione outros mapeamentos conforme necessário
+};
 
 /**
  * Converte data OFX (YYYYMMDD ou YYYYMMDDHHMMSS) para Date.
@@ -96,9 +106,26 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   }
   
   // Limpar accountId: remover caracteres especiais e espaços
+  let cleanAccountId = '';
   if (accountId) {
-    accountId = accountId.trim().replace(/[^0-9]/g, '');
+    cleanAccountId = accountId.trim().replace(/[^0-9]/g, '');
   }
+  
+  // Extrair agência (primeiros 4 dígitos) e conta (últimos 7 dígitos)
+  let agencia = '';
+  if (cleanAccountId.length >= 4) {
+    agencia = cleanAccountId.substring(0, 4);
+  }
+  
+  // Se CNPJ ainda está vazio, tentar usar mapeamento de agência/conta
+  if (!cnpj || cnpj.trim().length === 0) {
+    const accountKey = cleanAccountId.substring(4); // Pega tudo após agência
+    if (accountKey && accountToCnpjMap[agencia + accountKey]) {
+      cnpj = accountToCnpjMap[agencia + accountKey];
+    }
+  }
+  
+  accountId = cleanAccountId;
 
   // Período do extrato
   const dtStartRaw = extractTag(content, 'DTSTART');
@@ -172,6 +199,7 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   return {
     bankId,
     accountId,
+    agencia,
     cnpj,
     periodoInicio,
     periodoFim,
