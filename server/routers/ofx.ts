@@ -1,57 +1,16 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../_core/trpc';
-import { parseOfx } from '../lib/parseOfx';
-import { categorizarDinamico } from '../lib/categorizarDinamico';
+import { processOfxFile } from '../services/ofxProcessor';
 import {
   buildResumoAgregado,
   countTransacoes,
-  createUpload,
-  getExistingHashes,
-  insertTransacoes,
   listTransacoes,
   listUploads,
   updateTransacaoCategoria,
 } from '../db/transacoes';
 import { getCategoriaIdPorNome, criarRegra, aplicarRegrasRetroativamente } from '../db/regras';
-import type { InsertTransacao } from '../../drizzle/schema';
-import { getDb } from '../db';
-import { transacoes } from '../../drizzle/schema';
-import { eq, isNull, or, and } from 'drizzle-orm';
-import { z } from 'zod';
 
-const accountToCnpjMap: Record<string, string> = {
-  '30085-5': '51.621.925/0001-90',
-  '88828-6': '24.853.275/0001-36',
-};
-
-async function fillCnpjByAccount() {
-  const db = await getDb();
-  if (!db) return;
-  
-  for (const [conta, cnpj] of Object.entries(accountToCnpjMap)) {
-    await db
-      .update(transacoes)
-      .set({ cnpj })
-      .where(
-        and(
-          eq(transacoes.conta, conta),
-          or(isNull(transacoes.cnpj), eq(transacoes.cnpj, ''))
-        )
-      );
-  }
-}
-
-/**
- * Cria o hash único da transação. Quando houver FITID (vindo do OFX),
- * usamos diretamente — é o ID nativo do banco e único por extrato.
- * Caso contrário, fallback para combinação data+descrição+valor.
- */
-function buildHash(fitId: string | null | undefined, data: string, descricao: string, valor: number): string {
-  if (fitId && fitId.trim().length > 0) {
-    return `OFX:${fitId.trim()}`;
-  }
-  return `LEGACY:${data}|${descricao}|${valor.toFixed(2)}`;
-}
+// Lógica de processamento movida para server/services/ofxProcessor.ts
 
 export const ofxRouter = router({
   /**
@@ -66,97 +25,7 @@ export const ofxRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      // Decodificar base64
-      const buffer = Buffer.from(input.fileBase64, 'base64');
-      const ofxContent = buffer.toString('utf-8');
-
-      // Parse OFX
-      const parsed = parseOfx(ofxContent);
-
-      if (parsed.transactions.length === 0) {
-        return {
-          success: false,
-          totalProcessado: 0,
-          totalNovos: 0,
-          totalDuplicatas: 0,
-          mensagem: 'Nenhuma transação encontrada no arquivo OFX.',
-        };
-      }
-
-      // Calcular hashes e identificar duplicatas
-      const hashes = parsed.transactions.map((t) => buildHash(t.fitId, t.data, t.descricao, t.valor));
-      const existingHashes = await getExistingHashes(hashes);
-
-      // Construir registros para inserir (apenas os não-duplicados)
-      const novosRegistros: InsertTransacao[] = [];
-      let duplicatas = 0;
-
-      for (let i = 0; i < parsed.transactions.length; i++) {
-        const t = parsed.transactions[i];
-        const hashUnico = hashes[i];
-
-        if (existingHashes.has(hashUnico)) {
-          duplicatas++;
-          continue;
-        }
-
-        const categoria = await categorizarDinamico(t.descricao, t.valor);
-
-        novosRegistros.push({
-          data: t.data,
-          dataTimestamp: t.dataTimestamp,
-          descricao: t.descricao,
-          documento: t.fitId,
-          valor: t.valor.toFixed(2),
-          saldo: '0',
-          tipo: t.tipo,
-          categoria,
-          hashUnico,
-          banco: parsed.bankId || 'DESCONHECIDO',
-          conta: parsed.accountId || '',
-          cnpj: parsed.cnpj || '',
-        });
-      }
-
-      // Se temos saldoFinal e transacoes novas, preencher o saldo da ultima transacao
-      if (parsed.saldoFinal && novosRegistros.length > 0) {
-        novosRegistros[novosRegistros.length - 1].saldo = parsed.saldoFinal.toFixed(2);
-      }
-
-      // Criar registro de upload
-      const uploadId = await createUpload({
-        nomeArquivo: input.nomeArquivo || 'extrato.ofx',
-        totalProcessado: parsed.transactions.length,
-        totalNovos: novosRegistros.length,
-        totalDuplicatas: duplicatas,
-        periodoInicio: parsed.periodoInicio,
-        periodoFim: parsed.periodoFim,
-        saldoFinal: parsed.saldoFinal ? parsed.saldoFinal.toFixed(2) : '0',
-      });
-
-      // Associar uploadId aos novos registros
-      if (uploadId !== null) {
-        novosRegistros.forEach((r) => {
-          r.uploadId = uploadId;
-        });
-      }
-
-      // Inserir em lote
-      await insertTransacoes(novosRegistros);
-
-      // Preencher CNPJ retroativamente baseado na conta
-      await fillCnpjByAccount();
-
-      return {
-        success: true,
-        totalProcessado: parsed.transactions.length,
-        totalNovos: novosRegistros.length,
-        totalDuplicatas: duplicatas,
-        periodoInicio: parsed.periodoInicio,
-        periodoFim: parsed.periodoFim,
-        saldoFinal: parsed.saldoFinal ? parsed.saldoFinal.toFixed(2) : '0',
-        mensagem: `${novosRegistros.length} transações importadas, ${duplicatas} duplicatas ignoradas.`,
-      };
+      return await processOfxFile(input.fileBase64, input.nomeArquivo || 'extrato.ofx');
     }),
 
   /**
