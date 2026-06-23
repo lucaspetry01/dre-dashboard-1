@@ -1,3 +1,5 @@
+import { ACCOUNT_TO_CNPJ_MAP } from './accountMaps';
+
 /**
  * Parser de extratos OFX (Open Financial Exchange).
  *
@@ -32,17 +34,6 @@ export interface OfxParseResult {
   saldoFinal?: number; // Saldo final da conta (LEDGERBAL/BALAMT)
   transactions: OfxTransaction[];
 }
-
-/**
- * Mapeamento de agência/conta para CNPJ.
- * Usado quando o OFX não contém CNPJ explicitamente.
- */
-const accountToCnpjMap: Record<string, string> = {
-  '0101300855': '51.621.925/0001-90', // MMP - Sicredi
-  '88828': '24.853.275/0001-36', // M&P - Itaú (conta 88828-6)
-  '300855': '51.621.925/0001-90', // MMP - Itaú (conta 30085-5)
-  // Adicione outros mapeamentos conforme necessário
-};
 
 /**
  * Converte data OFX (YYYYMMDD ou YYYYMMDDHHMMSS) para Date.
@@ -137,8 +128,8 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   // Se CNPJ ainda está vazio, tentar usar mapeamento de agência/conta
   if (!cnpj || cnpj.trim().length === 0) {
     // Usar cleanAccountId (sem formatação) para o mapeamento
-    if (cleanAccountId && accountToCnpjMap[cleanAccountId]) {
-      cnpj = accountToCnpjMap[cleanAccountId];
+    if (cleanAccountId && ACCOUNT_TO_CNPJ_MAP[cleanAccountId]) {
+      cnpj = ACCOUNT_TO_CNPJ_MAP[cleanAccountId];
     }
   }
   

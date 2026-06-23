@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, lte, sql, isNull, or } from 'drizzle-orm';
 import { getDb } from '../db';
 import { transacoes, uploads, type InsertTransacao, type InsertUpload } from '../../drizzle/schema';
 
@@ -392,6 +392,26 @@ export async function buildResumoAgregado(): Promise<ResumoAgregado | null> {
   return resumo;
 }
 
+
+/**
+ * Preenche CNPJ retroativamente baseado no mapeamento de contas.
+ */
+export async function fillCnpjByAccount(accountMap: Record<string, string>) {
+  const db = await getDb();
+  if (!db) return;
+  
+  for (const [conta, cnpj] of Object.entries(accountMap)) {
+    await db
+      .update(transacoes)
+      .set({ cnpj })
+      .where(
+        and(
+          eq(transacoes.conta, conta),
+          or(isNull(transacoes.cnpj), eq(transacoes.cnpj, ''))
+        )
+      );
+  }
+}
 
 /**
  * Atualiza a categoria de uma transação específica.
