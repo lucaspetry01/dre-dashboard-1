@@ -113,15 +113,8 @@ export function parseOfx(ofxContent: string): OfxParseResult {
   // Extrair agência (primeiros 4 dígitos) e conta (últimos 7 dígitos)
   let agencia = '';
   let formattedAccount = '';
-
-  // Caso o ACCTID já venha curto e formatado como XXXXX-X (ex.: "12345-6"),
-  // preservar a formatação original em vez de tratar como agência+conta.
-  const trimmedAccount = accountId ? accountId.trim() : '';
-  const isShortFormatted = /^\d{1,6}-\d$/.test(trimmedAccount);
-
-  if (isShortFormatted) {
-    formattedAccount = trimmedAccount;
-  } else if (cleanAccountId.length >= 4) {
+  
+  if (cleanAccountId.length >= 4) {
     agencia = cleanAccountId.substring(0, 4);
     // Pega os dígitos após agência e formata como XXXXX-X (5 dígitos + hífen + 1 dígito verificador)
     const accountPart = cleanAccountId.substring(4);
