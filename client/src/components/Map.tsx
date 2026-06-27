@@ -76,8 +76,7 @@
 
 /// <reference types="@types/google.maps" />
 
-import { useEffect, useRef } from "react";
-import { usePersistFn } from "@/hooks/usePersistFn";
+import { useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 declare global {
@@ -125,7 +124,7 @@ export function MapView({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
 
-  const init = usePersistFn(async () => {
+  const init = useCallback(async () => {
     await loadMapScript();
     if (!mapContainer.current) {
       console.error("Map container not found");
