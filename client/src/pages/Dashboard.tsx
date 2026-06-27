@@ -16,13 +16,11 @@ import { trpc } from '@/lib/trpc';
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import {
-  extractNomeProprio,
   simplifyCategoriName,
   groupRegistrosByDescription,
   filterDetalhesByAccounts,
   calculateFilteredCategorias,
   calculateFilteredResumo,
-  getAccountBucket
 } from '@/lib/dashboardFilters';
 
 // Paleta usada pelo BarChartWithLabels (mantida para coerência visual futura)
@@ -39,7 +37,6 @@ const accountOptions = [
   { id: 'mmp', label: 'MMP', icon: Landmark, tone: 'from-amber-500/15 to-amber-400/5 border-amber-400/40' },
 ];
 
-const getAccountIdForItem = (item: any) => accountOptions[getAccountBucket(item?.descricao || item?.categoria || 'bank', accountOptions.length)].id;
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
