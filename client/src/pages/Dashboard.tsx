@@ -1,47 +1,28 @@
+'use client';
 import dashboardData from '@/data/dashboard.json';
 import detalhesData from '@/data/detalhes.json';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, Truck, Landmark, Building2, Wallet, SlidersHorizontal, Bell, RefreshCw } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Upload, Calendar, Clock, Sun, Zap, Search, X, Fuel, MoreVertical, Truck, Landmark, Building2, Wallet, SlidersHorizontal, Bell, RefreshCw } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BarChartWithLabels from '@/components/BarChartWithLabels';
 import CategoryIcon from '@/components/CategoryIcon';
 import MonthCard from '@/components/MonthCard';
 import { CategoryDetailView } from '@/components/CategoryDetailView';
-import { MovimentarCategoriaButton } from '@/components/MovimentarCategoriaButton';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { useFilteredData } from '@/hooks/useFilteredData';
-import { useDateFilter } from '@/hooks/useDateFilter';
-import { useAccountFilter } from '@/hooks/useAccountFilter';
 
-// ─────────────────────────────────────────────────────────────
-// Constantes
-// ─────────────────────────────────────────────────────────────
-
+// Paleta usada pelo BarChartWithLabels (mantida para coerência visual futura)
 const COLORS = [
   '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
   '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#06B6D4', '#84CC16'
 ];
 
-const CNPJ_MAP: Record<string, string> = {
-  'mp': '24.853.275/0001-36',
-  'mmp': '51.621.925/0001-90',
-};
-
-const ACCOUNT_OPTIONS = [
-  { id: 'mp', label: 'M&P', icon: Landmark, tone: 'from-amber-500/15 to-amber-400/5 border-amber-400/40' },
-  { id: 'mmp', label: 'MMP', icon: Landmark, tone: 'from-amber-500/15 to-amber-400/5 border-amber-400/40' },
-];
-
-// ─────────────────────────────────────────────────────────────
-// Funções Utilitárias
-// ─────────────────────────────────────────────────────────────
-
+// Extrair nome proprio da descricao
 const extractNomeProprio = (descricao: string): string => {
   const parts = descricao.trim().split(/\s+/);
   let cpfCnpjIndex = -1;
@@ -58,6 +39,7 @@ const extractNomeProprio = (descricao: string): string => {
   return descricao;
 };
 
+// Simplificar nomes de categorias para exibição
 const simplifyCategoriName = (name: string): string => {
   const mappings: Record<string, string> = {
     'RECEITAS OPERACIONAIS': 'Receita',
@@ -76,17 +58,22 @@ const simplifyCategoriName = (name: string): string => {
   return mappings[name] || name;
 };
 
+// Agrupar registros por descricao
+const accountOptions = [
+  { id: 'mp', label: 'M&P', icon: Landmark, tone: 'from-amber-500/15 to-amber-400/5 border-amber-400/40' },
+  { id: 'mmp', label: 'MMP', icon: Landmark, tone: 'from-amber-500/15 to-amber-400/5 border-amber-400/40' },
+];
+
 const getAccountBucket = (value: string) => {
   const normalized = value.toLowerCase();
   let hash = 0;
   for (let i = 0; i < normalized.length; i += 1) {
     hash = (hash * 31 + normalized.charCodeAt(i)) % 1000;
   }
-  return hash % ACCOUNT_OPTIONS.length;
+  return hash % accountOptions.length;
 };
 
-const getAccountIdForItem = (item: any) => 
-  ACCOUNT_OPTIONS[getAccountBucket(item?.descricao || item?.categoria || 'bank')].id;
+const getAccountIdForItem = (item: any) => accountOptions[getAccountBucket(item?.descricao || item?.categoria || 'bank')].id;
 
 const groupRegistrosByDescription = (registros: any[], groupByDescription: boolean) => {
   if (!groupByDescription) return registros;
@@ -112,29 +99,6 @@ const groupRegistrosByDescription = (registros: any[], groupByDescription: boole
   return Object.values(grouped).sort((a, b) => Math.abs(b.valor) - Math.abs(a.valor));
 };
 
-const formatMoney = (value: number | string): string => {
-  const num = typeof value === 'string' ? parseFloat(value) : value;
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(num);
-};
-
-const parseRegistroDate = (data: string): string => {
-  if (!data) return '';
-  const parts = data.split('/');
-  if (parts.length === 3) {
-    return `${parts[0]}/${parts[1]}`;
-  }
-  return data;
-};
-
-// ─────────────────────────────────────────────────────────────
-// Componente Principal
-// ─────────────────────────────────────────────────────────────
-
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const utils = trpc.useUtils();
@@ -142,7 +106,6 @@ export default function Dashboard() {
     refetchOnWindowFocus: false,
   });
 
-  // Dados
   const usandoBanco = !!(resumoBanco && resumoBanco.totalRegistros > 0);
   const resumo = usandoBanco ? resumoBanco!.resumo : dashboardData.resumo;
   const saldoFinal = usandoBanco ? resumoBanco!.saldoFinal : undefined;
@@ -151,26 +114,13 @@ export default function Dashboard() {
   const timeline_categorias = (dashboardData as unknown as { timeline_categorias?: unknown[] }).timeline_categorias ?? [];
   const detalhes = (usandoBanco ? resumoBanco!.detalhes : detalhesData) as Record<string, any>;
 
-  // Hooks customizados
-  const { selectedAccounts, toggleAccount } = useAccountFilter();
-  const dateFilter = useDateFilter(
-    usandoBanco && resumoBanco?.diario.length > 0
-      ? resumoBanco!.diario[resumoBanco!.diario.length - 1].data_full
-      : dashboardData.diario.length > 0
-      ? dashboardData.diario[dashboardData.diario.length - 1].data_full
-      : '2026-05-27'
-  );
-  const { filteredDetalhes, filteredCategorias, filteredResumo } = useFilteredData(
-    detalhes,
-    categorias,
-    resumo,
-    selectedAccounts,
-    CNPJ_MAP
-  );
-
-  // Estados locais
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
+  const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
+  const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [isFiltering, setIsFiltering] = useState(false);
   const [groupByDescription, setGroupByDescription] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -181,18 +131,114 @@ export default function Dashboard() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const [hasNewCategoryChanges, setHasNewCategoryChanges] = useState(false);
-
   const searchInputRef = useRef<HTMLInputElement>(null);
   const monthsScrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll ao mês com dados
+  const cnpjMap: Record<string, string> = {
+    'mp': '24.853.275/0001-36',
+    'mmp': '51.621.925/0001-90',
+  };
+
+  const filteredDetalhes = useMemo(() => {
+    if (selectedAccounts.length === 0) return detalhes;
+    const entries = Object.entries(detalhes as Record<string, any>)
+      .map(([categoria, data]: [string, any]) => {
+        const registros = (data?.registros || []).filter((item: any) => {
+          const itemCnpj = item?.cnpj || '';
+          return selectedAccounts.some(accountId => cnpjMap[accountId] === itemCnpj);
+        });
+        return [categoria, {
+          ...(data || {}),
+          registros,
+          total: registros.reduce((acc: number, item: any) => acc + Number(item.valor || 0), 0),
+          quantidade: registros.length,
+        }] as [string, any];
+      })
+      .filter(([, data]: [string, any]) => (data?.registros?.length ?? 0) > 0);
+    return Object.fromEntries(entries) as Record<string, any>;
+  }, [detalhes, selectedAccounts]);
+
+  const filteredCategorias = useMemo(() => {
+    if (selectedAccounts.length === 0) return categorias;
+    return Object.entries(filteredDetalhes).map(([nome, data]: [string, any]) => ({
+      nome,
+      valor: data?.total || 0,
+      valor_abs: Math.abs(data?.total || 0),
+      percentual: 0,
+      quantidade: data?.quantidade || 0,
+    })).sort((a, b) => b.valor_abs - a.valor_abs);
+  }, [filteredDetalhes, selectedAccounts]);
+
+  const filteredResumo = useMemo(() => {
+    const totals = Object.values(filteredDetalhes).reduce((acc: { receitas: number; despesas: number; qtdReceitas: number; qtdDespesas: number }, data: any) => {
+      (data?.registros || []).forEach((item: any) => {
+        const value = Number(item.valor || 0);
+        if (value > 0) {
+          acc.receitas += value;
+          acc.qtdReceitas += 1;
+        } else if (value < 0) {
+          acc.despesas += Math.abs(value);
+          acc.qtdDespesas += 1;
+        }
+      });
+      return acc;
+    }, { receitas: 0, despesas: 0, qtdReceitas: 0, qtdDespesas: 0 });
+
+    return {
+      ...resumo,
+      total_receitas: totals.receitas,
+      total_despesas: -totals.despesas,
+      resultado: totals.receitas - totals.despesas,
+      qtd_receitas: totals.qtdReceitas,
+      qtd_despesas: totals.qtdDespesas,
+    };
+  }, [filteredDetalhes, resumo]);
+
+  const REFERENCE_DATE = (() => {
+    if (usandoBanco && resumoBanco!.diario.length > 0) {
+      return resumoBanco!.diario[resumoBanco!.diario.length - 1].data_full;
+    }
+    if (dashboardData.diario.length > 0) {
+      return dashboardData.diario[dashboardData.diario.length - 1].data_full;
+    }
+    return '2026-05-27';
+  })();
+
+  const toggleAccount = (accountId: string) => {
+    setSelectedAccounts((prev) =>
+      prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]
+    );
+  };
+
+  const quickFilters = [
+    { id: 'hoje', label: 'Hoje', days: 0 },
+    { id: 'sem', label: 'Sem', days: 7 },
+    { id: 'trim', label: 'Trim', days: 90 },
+    { id: 'ano', label: 'Ano', daysFromNow: true },
+  ];
+
+  const months = [
+    { id: 'jan', label: 'Jan', month: 0 },
+    { id: 'fev', label: 'Fev', month: 1 },
+    { id: 'mar', label: 'Mar', month: 2 },
+    { id: 'abr', label: 'Abr', month: 3 },
+    { id: 'mai', label: 'Mai', month: 4 },
+    { id: 'jun', label: 'Jun', month: 5 },
+    { id: 'jul', label: 'Jul', month: 6 },
+    { id: 'ago', label: 'Ago', month: 7 },
+    { id: 'set', label: 'Set', month: 8 },
+    { id: 'out', label: 'Out', month: 9 },
+    { id: 'nov', label: 'Nov', month: 10 },
+    { id: 'dez', label: 'Dez', month: 11 },
+  ];
+
   const lastMonthWithData = useMemo(() => {
     if (!usandoBanco || !resumoBanco?.diario || resumoBanco.diario.length === 0) return null;
     const lastDate = resumoBanco.diario[resumoBanco.diario.length - 1].data_full;
     const lastDateObj = new Date(lastDate + 'T00:00:00');
     const monthIndex = lastDateObj.getMonth();
-    return dateFilter.months[monthIndex]?.id || null;
-  }, [usandoBanco, resumoBanco, dateFilter.months]);
+    return months[monthIndex]?.id || null;
+  }, [usandoBanco, resumoBanco]);
 
   useMemo(() => {
     if (lastMonthWithData && monthsScrollRef.current) {
@@ -209,46 +255,387 @@ export default function Dashboard() {
     }
   }, [lastMonthWithData]);
 
-  // Handlers
+  const applyQuickFilter = (filterId: string) => {
+    const filter = quickFilters.find(f => f.id === filterId);
+    const monthFilter = months.find(m => m.id === filterId);
+    
+    if (!filter && !monthFilter) return;
+    
+    if (monthFilter) {
+      setSelectedMonths(prev => {
+        if (prev.includes(filterId)) {
+          return prev.filter(m => m !== filterId);
+        } else {
+          return [...prev, filterId];
+        }
+      });
+      setActiveQuickFilter(null);
+      return;
+    }
+    
+    setSelectedMonths([]);
+    setActiveQuickFilter(filterId);
+    
+    const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
+    
+    if ((filter as any).daysFromNow) {
+      const start = new Date(refDate);
+      start.setFullYear(start.getFullYear());
+      start.setMonth(0);
+      start.setDate(1);
+      
+      setStartDate(start.toISOString().split('T')[0]);
+      setEndDate(REFERENCE_DATE);
+      return;
+    }
+
+    const start = new Date(refDate);
+    start.setDate(start.getDate() - (filter as any).days);
+    
+    setStartDate(start.toISOString().split('T')[0]);
+    setEndDate(REFERENCE_DATE);
+  };
+
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       toast.error('Digite algo para buscar');
       return;
     }
-    toast.info(`Buscando: ${searchQuery}`);
+
+    for (const [categoryName, categoryData] of Object.entries(filteredDetalhes)) {
+      const items = (categoryData as any)?.registros || [];
+      const found = items.find((item: any) => 
+        item.descricao.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      
+      if (found) {
+        setSearchOpen(false);
+        setSearchQuery('');
+        setExpandedCategory(categoryName);
+        
+        setTimeout(() => {
+          const element = document.getElementById(`category-${categoryName}`);
+          element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+        
+        toast.success(`Encontrado: ${found.descricao}`);
+        return;
+      }
+    }
+    
+    toast.error('Nenhum registro encontrado');
   };
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const formatMoney = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
+  const resetFilters = () => {
+    setStartDate('');
+    setEndDate('');
+    setActiveQuickFilter(null);
+    setSelectedMonths([]);
+    setSelectedAccounts([]);
+    setIsFiltering(false);
+  };
+
+  useMemo(() => {
+    if (selectedMonths.length === 0 && !activeQuickFilter) {
+      setStartDate('');
+      setEndDate('');
+      return;
+    }
+    
+    if (activeQuickFilter) {
+      return;
+    }
+
+    const refDate = new Date(REFERENCE_DATE + 'T00:00:00');
+    const selectedMonthNumbers = selectedMonths.map(m => months.find(month => month.id === m)?.month).filter(m => m !== undefined);
+    
+    if (selectedMonthNumbers.length === 0) return;
+
+    const minMonth = Math.min(...selectedMonthNumbers);
+    const maxMonth = Math.max(...selectedMonthNumbers);
+
+    const start = new Date(refDate);
+    start.setMonth(minMonth);
+    start.setDate(1);
+
+    const end = new Date(refDate);
+    end.setMonth(maxMonth + 1);
+    end.setDate(0);
+
+    setStartDate(start.toISOString().split('T')[0]);
+    setEndDate(end.toISOString().split('T')[0]);
+  }, [selectedMonths, activeQuickFilter]);
+
+  const filteredDiario = useMemo(() => {
+    if (!startDate && !endDate) return diario;
+    return diario.filter(d => {
+      if (startDate && d.data_full < startDate) return false;
+      if (endDate && d.data_full > endDate) return false;
+      return true;
+    });
+  }, [diario, startDate, endDate]);
+
+  const parseRegistroDate = (dataStr: string): Date | null => {
+    if (!dataStr) return null;
+    
+    // Formato ISO: YYYY-MM-DD ou YYYY-MM-DDTHH:mm:ss
+    if (dataStr.includes('-') && !dataStr.includes('/')) {
+      try {
+        const date = new Date(dataStr);
+        if (!isNaN(date.getTime())) {
+          return date;
+        }
+      } catch (e) {
+        // Continua para tentar outro formato
+      }
+    }
+    
+    // Formato brasileiro: DD/MM/YYYY ou DD/MM
+    const parts = dataStr.split('/');
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00`);
+    }
+    if (parts.length === 2) {
+      const [day, month] = parts;
+      return new Date(`2026-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00`);
+    }
+    return null;
+  };
+
+  const resumoFiltrado = useMemo(() => {
+    const result = {
+      receitas: 0,
+      despesas: 0,
+      lucro: 0,
+      resultado: 0,
+      qtd_receitas: 0,
+      qtd_despesas: 0,
+      periodo_inicio: filteredResumo.periodo_inicio,
+      periodo_fim: filteredResumo.periodo_fim,
+    };
+
+    if (!startDate && !endDate) {
+      result.receitas = filteredResumo.total_receitas || 0;
+      result.despesas = Math.abs(filteredResumo.total_despesas || 0);
+      result.qtd_receitas = filteredResumo.qtd_receitas || 0;
+      result.qtd_despesas = filteredResumo.qtd_despesas || 0;
+    } else {
+      const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
+      const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
+
+      Object.values(filteredDetalhes || {}).forEach((categoryData: any) => {
+          const items = categoryData?.registros ?? [];
+                items.forEach((item: any) => {
+          const itemDate = parseRegistroDate(item.data);
+          if (!itemDate) return;
+          if (startObj && itemDate < startObj) return;
+          if (endObj && itemDate > endObj) return;
+
+          const valor = Number(item.valor) || 0;
+          if (valor > 0) {
+            result.receitas += valor;
+            result.qtd_receitas += 1;
+          } else if (valor < 0) {
+            result.despesas += Math.abs(valor);
+            result.qtd_despesas += 1;
+          }
+        });
+      });
+    }
+
+    result.lucro = result.receitas - result.despesas;
+    result.resultado = result.receitas - result.despesas;
+
+    return result;
+  }, [filteredDetalhes, filteredResumo, startDate, endDate]);
+
+  const lucroByMonth = useMemo(() => {
+    const result: Record<string, number> = {};
+    
+    months.forEach(month => {
+      const monthNum = month.month;
+      const year = 2026;
+      let receitas = 0;
+      let despesas = 0;
+      
+      Object.values(filteredDetalhes || {}).forEach((categoryData: any) => {
+  const items = categoryData?.registros ?? [];
+        items.forEach((item: any) => {
+          const itemDate = parseRegistroDate(item.data);
+          if (!itemDate) return;
+          if (itemDate.getMonth() !== monthNum || itemDate.getFullYear() !== year) return;
+          
+          const valor = Number(item.valor) || 0;
+          if (valor > 0) {
+            receitas += valor;
+          } else if (valor < 0) {
+            despesas += Math.abs(valor);
+          }
+        });
+      });
+      
+      result[month.id] = receitas - despesas;
+    });
+    
+    return result;
+  }, [filteredDetalhes]);
+
+const categoriasComDados = useMemo(() => {
+  if (!startDate && !endDate) {
+    // Recalcula sempre a partir dos detalhes reais para garantir consistência
+    const result: any[] = [];
+    Object.entries(filteredDetalhes || {}).forEach(([nome, data]: [string, any]) => {
+      const items = data?.registros ?? [];
+      let total = 0;
+      items.forEach((item: any) => { total += Number(item.valor) || 0; });
+      if (items.length > 0 && total !== 0) {
+        result.push({
+          nome,
+          valor: total,
+          valor_abs: Math.abs(total),
+          quantidade: items.length,
+        });
+      }
+    });
+    return result.sort((a, b) => b.valor_abs - a.valor_abs);
+  }
+
+    const startObj = startDate ? new Date(startDate + 'T00:00:00') : null;
+    const endObj = endDate ? new Date(endDate + 'T23:59:59') : null;
+    const result: any[] = [];
+
+    Object.entries(filteredDetalhes || {}).forEach(([nome, data]: [string, any]) => {
+  const items = data?.registros ?? [];
+      let total = 0;
+      let count = 0;
+
+      items.forEach((item: any) => {
+        const itemDate = parseRegistroDate(item.data);
+        if (!itemDate) return;
+        if (startObj && itemDate < startObj) return;
+        if (endObj && itemDate > endObj) return;
+        total += Number(item.valor) || 0;
+        count++;
+      });
+
+      if (count > 0 && total !== 0) {
+        result.push({
+          nome,
+          valor: total,
+          valor_abs: Math.abs(total),
+          quantidade: count,
+        });
+      }
+    });
+
+    return result.sort((a, b) => b.valor_abs - a.valor_abs);
+  }, [filteredCategorias, filteredDetalhes, startDate, endDate]);
+
+  const uploadMutation = trpc.ofx.processOFX.useMutation();
+  const { data: uploadsHistory } = trpc.ofx.historicoUploads.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    const handleOfxUploadEvent = async (event: any) => {
+      const file = event.detail?.file;
+      if (!file) return;
+
+      setIsUploading(true);
+      try {
+        const text = await file.text();
+        const result = await uploadMutation.mutateAsync({ fileBase64: btoa(text), nomeArquivo: file.name });
+        if (result.success) {
+          setHasNewNotification(true);
+          setLastImportInfo(result);
+        }
+        toast.success('OFX importado com sucesso!');
+        await utils.ofx.resumoCompleto.invalidate();
+      } catch (error) {
+        toast.error('Erro ao importar OFX');
+        console.error(error);
+      } finally {
+        setIsUploading(false);
+      }
+    };
+
+    window.addEventListener('ofx-upload', handleOfxUploadEvent);
+    return () => window.removeEventListener('ofx-upload', handleOfxUploadEvent);
+  }, [uploadMutation, utils]);
+
+  const handleOfxUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
     try {
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const content = event.target?.result as string;
-        const base64 = content.split(',')[1] || content;
-
-        const result = await utils.client.ofx.processOFX.mutate({
-          fileBase64: base64,
-          nomeArquivo: file.name,
-        });
-
-        if (result.success) {
-          toast.success(`${result.totalNovos} transações importadas!`);
-          setHasNewNotification(true);
-          setLastImportInfo(result);
-          utils.ofx.resumoCompleto.invalidate();
-        } else {
-          toast.error(result.mensagem || 'Erro ao processar OFX');
-        }
-      };
-      reader.readAsDataURL(file);
+      const text = await file.text();
+      const result = await uploadMutation.mutateAsync({ fileBase64: btoa(text), nomeArquivo: file.name });
+      if (result.success) {
+        setHasNewNotification(true);
+        setLastImportInfo(result);
+      }
+      toast.success('OFX importado com sucesso!');
+      await utils.ofx.resumoCompleto.invalidate();
     } catch (error) {
-      toast.error('Erro ao ler arquivo');
+      toast.error('Erro ao importar OFX');
+      console.error(error);
     } finally {
       setIsUploading(false);
-      e.target.value = '';
+    }
+  };
+
+  const handleNotificationClick = () => {
+    setNotificationOpen(true);
+    setHasNewNotification(false);
+  };
+
+  const syncMutation = trpc.ofx.aplicarRegrasRetroativas.useMutation();
+
+  const handleSync = async () => {
+    setIsSyncing(true);
+    setSyncProgress(0);
+    
+    try {
+      // Simular progresso inicial
+      const progressInterval = setInterval(() => {
+        setSyncProgress(prev => Math.min(prev + Math.random() * 30, 90));
+      }, 300);
+      
+      // Aplicar regras retroativamente
+      const result = await syncMutation.mutateAsync();
+      
+      clearInterval(progressInterval);
+      setSyncProgress(95);
+      
+      // Invalidar cache para recarregar dados
+      await utils.ofx.resumoCompleto.invalidate();
+      
+      setSyncProgress(100);
+      setHasNewCategoryChanges(false);
+      
+      if (result.sucesso) {
+        toast.success(`Sincronizado! ${result.mensagem}`);
+      } else {
+        toast.error(result.mensagem);
+      }
+      
+      // Limpar progresso após 1s
+      setTimeout(() => setSyncProgress(0), 1000);
+    } catch (error) {
+      toast.error('Erro ao sincronizar dados');
+      console.error(error);
+      setSyncProgress(0);
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -256,263 +643,266 @@ export default function Dashboard() {
     setHasNewCategoryChanges(true);
   };
 
-  const handleSync = async () => {
-    setIsSyncing(true);
-    setSyncProgress(0);
-    try {
-      await utils.ofx.resumoCompleto.invalidate();
-      setSyncProgress(100);
-      setHasNewCategoryChanges(false);
-      toast.success('Sincronizado!');
-    } catch (error) {
-      toast.error('Erro ao sincronizar');
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
-  const { data: uploadsHistory } = trpc.ofx.listUploads.useQuery();
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold text-slate-100">Balanço Financeiro TR. Petry Ltda.</h1>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="relative"
-              onClick={handleSync}
-              disabled={isSyncing}
-            >
-              <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-              {hasNewCategoryChanges && <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full" />}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="relative"
-              onClick={() => setNotificationOpen(true)}
-            >
-              <Bell className="w-4 h-4" />
-              {hasNewNotification && <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setSearchOpen(!searchOpen)}
-            >
-              <Search className="w-4 h-4" />
-            </Button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 pb-28">
+      <div className="max-w-7xl mx-auto">
+        {/* BLOCO SUPERIOR: Cabeçalho */}
+        <div className="mb-4 entrance-fade delay-0">
+
+          {/* Título centralizado */}
+          <div className="text-center mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
+              Balanço Financeiro TR. Petry Ltda.
+            </h1>
           </div>
+
+          {/* Barra de busca + avatar + sino */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Buscar transação..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                onClick={() => setSearchOpen(true)}
+                readOnly
+                className="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+              />
+            </div>
+            <button className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              TM
+            </button>
+            <div className="relative">
+              <button
+                onClick={handleSync}
+                disabled={isSyncing}
+                className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                title="Sincronizar dados"
+              >
+                {syncProgress > 0 && (
+                  <div
+                    className="absolute inset-0 bg-blue-500/30 rounded-full transition-all duration-300"
+                    style={{ width: `${syncProgress}%` }}
+                  />
+                )}
+                <RefreshCw className={`w-4 h-4 text-slate-300 relative z-10 ${isSyncing ? 'animate-spin' : ''}`} />
+                {hasNewCategoryChanges && !isSyncing && (
+                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-yellow-500 rounded-full border border-slate-900 animate-pulse" />
+                )}
+              </button>
+              {isSyncing && (
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-slate-900 text-slate-100 text-xs px-2 py-1 rounded whitespace-nowrap z-50">
+                  {Math.round(syncProgress)}%
+                </div>
+              )}
+            </div>
+            <button
+              onClick={handleNotificationClick}
+              className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 relative hover:bg-slate-700 transition-colors"
+            >
+              <Bell className="w-4 h-4 text-slate-300" />
+              {hasNewNotification && (
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-slate-900 animate-pulse" />
+              )}
+            </button>
+          </div>
+
+          {/* Inputs de Data */}
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-400 mb-1">Início</label>
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => { setStartDate(e.target.value); setActiveQuickFilter(null); }}
+                  className="w-full text-xs h-9 px-2 pr-8 bg-slate-800 border-slate-700 text-slate-100 rounded-lg"
+                />
+                <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+            <div className="min-w-0">
+              <label className="block text-xs font-medium text-slate-400 mb-1">Fim</label>
+              <div className="relative flex items-center">
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => { setEndDate(e.target.value); setActiveQuickFilter(null); }}
+                  className="w-full text-xs h-9 px-2 pr-8 bg-slate-800 border-slate-700 text-slate-100 rounded-lg"
+                />
+                <Calendar className="absolute right-2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+          </div>
+
+          {/* Filtro de Contas / Bancos */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {accountOptions.map((account) => {
+              const Icon = account.icon;
+              const isActive = selectedAccounts.includes(account.id);
+              return (
+                <button
+                  key={account.id}
+                  type="button"
+                  onClick={() => toggleAccount(account.id)}
+                  className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'border-amber-400 bg-amber-500/20 text-amber-300'
+                      : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-500'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {account.label}
+                  {isActive && <X className="w-3 h-3 opacity-70" />}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Barra de Meses */}
+          <div
+            ref={monthsScrollRef}
+            className="flex gap-1.5 mb-2 overflow-x-auto pb-2"
+            style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {months.map((month) => (
+              <div
+                key={month.id}
+                id={`month-${month.id}`}
+                className="flex-shrink-0"
+                style={{ width: '80px', minWidth: '80px' }}
+              >
+                <MonthCard
+                  month={month.label}
+                  monthId={month.id}
+                  lucro={lucroByMonth[month.id] || 0}
+                  isSelected={selectedMonths.includes(month.id)}
+                  onClick={() => applyQuickFilter(month.id)}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Botão Limpar Filtros */}
+          {(startDate || endDate || selectedMonths.length > 0 || selectedAccounts.length > 0) && (
+            <button
+              onClick={resetFilters}
+              className="w-full mt-2 px-2 py-1.5 rounded-lg text-xs font-semibold bg-red-900/30 text-red-400 hover:bg-red-900/50 transition-all"
+            >
+              Limpar Filtros
+            </button>
+          )}
         </div>
 
-        {/* Search Bar */}
-        {searchOpen && (
-          <div className="mt-3 flex gap-2">
-            <Input
-              ref={searchInputRef}
-              placeholder="Buscar transação..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="bg-slate-800 border-slate-700"
-            />
-            <Button size="sm" onClick={handleSearch}>
-              Buscar
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        {/* Upload Section */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Upload className="w-4 h-4" />
-              Importar Extrato OFX
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <label className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-slate-700 rounded-lg cursor-pointer hover:border-slate-600 transition-colors">
-              <span className="text-sm text-slate-400">
-                {isUploading ? 'Processando...' : 'Clique ou arraste um arquivo OFX'}
-              </span>
-              <input
-                type="file"
-                accept=".ofx"
-                onChange={handleUpload}
-                disabled={isUploading}
-                className="hidden"
+        {/* Modal de Busca */}
+        <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+          <DialogContent className="bg-slate-900 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-slate-100">Buscar Registro</DialogTitle>
+            </DialogHeader>
+            <div className="flex gap-2">
+              <Input
+                ref={searchInputRef}
+                placeholder="Digite uma palavra..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="bg-slate-800 border-slate-700 text-slate-100"
+                autoFocus
               />
-            </label>
-          </CardContent>
-        </Card>
-
-        {/* Filter Section */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4" />
-              Filtros
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {/* Account Filter */}
-            <div className="flex gap-2 flex-wrap">
-              {ACCOUNT_OPTIONS.map(account => (
-                <Button
-                  key={account.id}
-                  size="sm"
-                  variant={selectedAccounts.includes(account.id) ? 'default' : 'outline'}
-                  onClick={() => toggleAccount(account.id)}
-                  className="text-xs"
-                >
-                  {account.label}
-                </Button>
-              ))}
+              <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700">
+                <Search className="w-4 h-4" />
+              </Button>
             </div>
+          </DialogContent>
+        </Dialog>
 
-            {/* Quick Filters */}
-            <div className="flex gap-2 flex-wrap">
-              {dateFilter.quickFilters.map(filter => (
-                <Button
-                  key={filter.id}
-                  size="sm"
-                  variant={dateFilter.activeQuickFilter === filter.id ? 'default' : 'outline'}
-                  onClick={() => dateFilter.applyQuickFilter(filter.id)}
-                  className="text-xs"
-                >
-                  {filter.label}
-                </Button>
-              ))}
+        {/* KPI HERO: 4 Cards em Grid 2x2 */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 entrance-animate" style={{ animationDelay: '0.1s' }}>
+          {/* Card Lucro */}
+          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
+            resumoFiltrado.lucro >= 0
+              ? 'bg-gradient-to-br from-emerald-500 to-emerald-700'
+              : 'bg-gradient-to-br from-red-500 to-red-700'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">💰 LUCRO</span>
+              {resumoFiltrado.lucro >= 0 ? (
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+              ) : (
+                <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5" />
+              )}
             </div>
-
-            {/* Month Filter */}
-            <div ref={monthsScrollRef} className="flex gap-2 overflow-x-auto pb-2">
-              {dateFilter.months.map(month => (
-                <MonthCard
-                  key={month.id}
-                  id={`month-${month.id}`}
-                  month={month.label}
-                  value={0}
-                  isSelected={dateFilter.selectedMonths.includes(month.id)}
-                  onClick={() => dateFilter.toggleMonth(month.id)}
-                />
-              ))}
-            </div>
-
-            {/* Date Range */}
-            {(dateFilter.startDate || dateFilter.endDate) && (
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <Calendar className="w-4 h-4" />
-                <span>{dateFilter.startDate} a {dateFilter.endDate}</span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={dateFilter.clearFilters}
-                  className="ml-auto"
-                >
-                  <X className="w-3 h-3" />
-                </Button>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.lucro)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.lucro >= 0 ? 'POSITIVO' : 'NEGATIVO'}</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-white/20">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-red-900/20 border-red-800/50">
-            <CardContent className="pt-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-xs text-red-400 mb-1">LUCRO</p>
-                  <p className="text-lg font-bold text-red-400">{formatMoney(filteredResumo.resultado)}</p>
-                  <p className="text-xs text-red-600 mt-1">NEGATIVO</p>
-                </div>
-                <TrendingDown className="w-5 h-5 text-red-600" />
-              </div>
-            </CardContent>
-          </Card>
+          {/* Card Saldo */}
+          <div className={`kpi-card-3d rounded-lg p-4 sm:p-6 text-white shadow-lg ${
+            saldoFinal !== null && saldoFinal !== undefined && saldoFinal < 0
+              ? 'bg-gradient-to-br from-red-500 to-red-700'
+              : 'bg-gradient-to-br from-blue-500 to-blue-700'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">🏦 SALDO</span>
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{saldoFinal ? formatMoney(saldoFinal) : 'R$ 0,00'}</div>
+            <div className="text-xs sm:text-sm opacity-90">
+              {resumoBanco?.lastImportDate
+                ? `${new Date(resumoBanco.lastImportDate).toLocaleDateString('pt-BR')} ${new Date(resumoBanco.lastImportDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+                : 'Nenhuma atualização'}
+            </div>
+          </div>
 
-          <Card className="bg-blue-900/20 border-blue-800/50">
-            <CardContent className="pt-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-xs text-blue-400 mb-1">SALDO</p>
-                  <p className="text-lg font-bold text-blue-400">{formatMoney(saldoFinal || 0)}</p>
-                  {saldoFinal && <p className="text-xs text-blue-600 mt-1">{new Date().toLocaleDateString('pt-BR')}</p>}
-                </div>
+          {/* Card Receitas */}
+          <div className="kpi-card-3d bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-emerald-500/30">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">📈 Receitas</span>
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">{formatMoney(resumoFiltrado.receitas)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_receitas} entradas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-emerald-400/30">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
 
-          <Card className="bg-green-900/20 border-green-800/50">
-            <CardContent className="pt-4">
-              <div>
-                <p className="text-xs text-green-400 mb-1">RECEITAS</p>
-                <p className="text-lg font-bold text-green-400">{formatMoney(filteredResumo.total_receitas)}</p>
-                <p className="text-xs text-green-600 mt-1">{filteredResumo.qtd_receitas} entradas</p>
+          {/* Card Despesas */}
+          <div className="kpi-card-3d bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4 sm:p-6 text-white shadow-lg border border-red-500/30">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm font-semibold opacity-90">📉 Despesas</span>
+              <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <div className="text-lg sm:text-2xl font-bold mb-1">-{formatMoney(resumoFiltrado.despesas)}</div>
+            <div className="text-xs sm:text-sm opacity-90">{resumoFiltrado.qtd_despesas} saídas</div>
+            {(startDate || endDate) && (
+              <div className="text-xs opacity-75 mt-2 pt-2 border-t border-red-400/30">
+                {startDate && endDate ? `${startDate.split('-')[2]}/${startDate.split('-')[1]} a ${endDate.split('-')[2]}/${endDate.split('-')[1]}` : 'Período customizado'}
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-red-900/20 border-red-800/50">
-            <CardContent className="pt-4">
-              <div>
-                <p className="text-xs text-red-400 mb-1">DESPESAS</p>
-                <p className="text-lg font-bold text-red-400">{formatMoney(filteredResumo.total_despesas)}</p>
-                <p className="text-xs text-red-600 mt-1">{filteredResumo.qtd_despesas} saídas</p>
-              </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
         </div>
 
-        {/* Charts and Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Chart */}
-          <Card className="lg:col-span-2 bg-slate-900 border-slate-800">
-            <CardHeader>
-              <CardTitle className="text-sm">Gráfico de Categorias</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BarChartWithLabels data={filteredCategorias} colors={COLORS} />
-            </CardContent>
-          </Card>
-
-          {/* Category Details */}
-          <Card className="bg-slate-900 border-slate-800">
-            <CardHeader>
-              <CardTitle className="text-sm">Categorias</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 max-h-96 overflow-y-auto">
-              {filteredCategorias.slice(0, 10).map((cat, idx) => (
-                <div key={idx} className="flex items-center justify-between text-xs p-2 rounded bg-slate-800/50">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <CategoryIcon categoryName={cat.nome} />
-                    <span className="truncate">{simplifyCategoriName(cat.nome)}</span>
-                  </div>
-                  <span className="font-bold text-slate-300 flex-shrink-0">{formatMoney(cat.valor)}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Category Details View */}
+        {/* Detalhamento de Categorias */}
         <CategoryDetailView
-          categoriasComDados={filteredCategorias}
+          categoriasComDados={categoriasComDados}
           detalhes={filteredDetalhes}
           expandedCategory={expandedCategory}
           setExpandedCategory={setExpandedCategory}
           groupByDescription={groupByDescription}
           setGroupByDescription={setGroupByDescription}
-          startDate={dateFilter.startDate}
-          endDate={dateFilter.endDate}
+          startDate={startDate}
+          endDate={endDate}
           formatMoney={formatMoney}
           simplifyCategoriName={simplifyCategoriName}
           parseRegistroDate={parseRegistroDate}
@@ -531,6 +921,7 @@ export default function Dashboard() {
               const isGrouped = item.count > 1;
               const transacaoId = item.id;
               const categoriaAtual = item.categoria;
+              // ← Agora qualquer categoria pode ser movida (não apenas OUTROS e PAGAMENTOS)
               const podeMovimentar = !isGrouped && !!transacaoId;
 
               return (
@@ -560,9 +951,10 @@ export default function Dashboard() {
             });
           }}
         />
+
       </div>
 
-      {/* Notification Dialog */}
+      {/* Dialog de Notificacoes */}
       <Dialog open={notificationOpen} onOpenChange={setNotificationOpen}>
         <DialogContent className="bg-slate-900 border border-slate-700 max-w-md">
           <DialogHeader>
@@ -614,5 +1006,200 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Componente: botão de mover transação com modal de regra
+// ─────────────────────────────────────────────────────────────
+function MovimentarCategoriaButton({
+  transacaoId,
+  categoriaAtual,
+  descricao,
+  onSuccess,
+}: {
+  transacaoId: number;
+  categoriaAtual: string;
+  descricao: string;
+  onSuccess: () => void;
+}) {
+  const mutation = trpc.ofx.moverComRegra.useMutation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [novaCategoria, setNovaCategoria] = useState('');
+  const [tipoRegra, setTipoRegra] = useState<'KEYWORD' | 'NOME_EXATO' | 'SEM_REGRA'>('SEM_REGRA');
+  const [valorRegra, setValorRegra] = useState('');
+
+  const categoriasDisponiveis = [
+    'RECEITAS OPERACIONAIS',
+    'COMBUSTÍVEL / POSTO',
+    'CHAPA / OPERACIONAL PF',
+    'PRÓ-LABORE / SOCIETÁRIO',
+    'MECÂNICA / MANUTENÇÃO',
+    'PEDÁGIOS / TAGS',
+    'IMPOSTOS / TRIBUTOS / OUTROS',
+    'CONTA / BOLETO',
+    'CONSÓRCIO / FINANCIAMENTO',
+    'CUSTO OPERACIONAL ESPECÍFICO',
+    'PAGAMENTOS',
+    'SAÍDAS NÃO CATEGORIZADAS',
+  ];
+
+  // Sugestão de keyword: primeira palavra com mais de 3 letras que não seja número
+  const sugestaoKeyword = descricao
+    .trim()
+    .split(/\s+/)
+    .find(p => p.length > 3 && !/^\d+$/.test(p)) ?? descricao.split(' ')[0];
+
+  const abrirModal = (categoria: string) => {
+    setNovaCategoria(categoria);
+    setMenuOpen(false);
+    setValorRegra(sugestaoKeyword);
+    setTipoRegra('SEM_REGRA');
+    setModalOpen(true);
+  };
+
+  const confirmar = useCallback(() => {
+    mutation.mutate(
+      {
+        transacaoId,
+        novaCategoria,
+        criarRegra: tipoRegra !== 'SEM_REGRA',
+        tipoRegra: tipoRegra !== 'SEM_REGRA' ? tipoRegra : undefined,
+        valorRegra: tipoRegra !== 'SEM_REGRA' ? valorRegra : undefined,
+      },
+      {
+        onSuccess: (result) => {
+          if (result.sucesso) {
+            toast.success(
+              tipoRegra !== 'SEM_REGRA'
+                ? `Movido para "${novaCategoria}" e regra criada!`
+                : `Movido para "${novaCategoria}"`
+            );
+            setModalOpen(false);
+            onSuccess();
+            handleCategoryChange();
+          } else {
+            toast.error(result.mensagem || 'Erro ao mover');
+          }
+        },
+        onError: () => toast.error('Erro ao mover transação'),
+      }
+    );
+  }, [transacaoId, novaCategoria, tipoRegra, valorRegra, mutation, onSuccess]);
+
+  return (
+    <>
+      {/* Menu de seleção de categoria */}
+      <Select open={menuOpen} onOpenChange={setMenuOpen}>
+        <SelectTrigger className="w-8 h-6 p-0 border-0 bg-slate-700 hover:bg-slate-600">
+          <MoreVertical className="w-3 h-3" />
+        </SelectTrigger>
+        <SelectContent>
+          {categoriasDisponiveis
+            .filter(cat => cat !== categoriaAtual)
+            .map(cat => (
+              <SelectItem key={cat} value={cat} onPointerDown={() => abrirModal(cat)}>
+                {cat}
+              </SelectItem>
+            ))}
+        </SelectContent>
+      </Select>
+
+      {/* Modal de confirmação e criação de regra */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-slate-100 text-sm">
+              Mover para: <span className="text-blue-400">{novaCategoria}</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-3 text-xs text-slate-300">
+            {/* Descrição da transação */}
+            <p className="text-slate-400 break-words italic">"{descricao}"</p>
+
+            <p className="font-semibold text-slate-200">Criar regra automática?</p>
+            <p className="text-slate-500 text-xs">
+              Uma regra faz com que futuras transações similares sejam categorizadas automaticamente.
+            </p>
+
+            {/* Opção: sem regra */}
+            <button
+              onClick={() => setTipoRegra('SEM_REGRA')}
+              className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
+                tipoRegra === 'SEM_REGRA'
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-300'
+                  : 'border-slate-700 bg-slate-800 hover:border-slate-500'
+              }`}
+            >
+              🚫 Só mover essa transação
+            </button>
+
+            {/* Opção: keyword */}
+            <button
+              onClick={() => setTipoRegra('KEYWORD')}
+              className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
+                tipoRegra === 'KEYWORD'
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-300'
+                  : 'border-slate-700 bg-slate-800 hover:border-slate-500'
+              }`}
+            >
+              🔑 Criar regra por palavra-chave
+              <span className="block text-slate-500 text-xs mt-0.5">
+                Ex: toda transação com "FARMACIA" vai para esta categoria
+              </span>
+            </button>
+
+            {/* Opção: nome exato */}
+            <button
+              onClick={() => setTipoRegra('NOME_EXATO')}
+              className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
+                tipoRegra === 'NOME_EXATO'
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-300'
+                  : 'border-slate-700 bg-slate-800 hover:border-slate-500'
+              }`}
+            >
+              🎯 Criar regra por nome exato
+              <span className="block text-slate-500 text-xs mt-0.5">
+                Só transações com descrição idêntica serão afetadas
+              </span>
+            </button>
+
+            {/* Input do valor da regra */}
+            {tipoRegra !== 'SEM_REGRA' && (
+              <div>
+                <label className="text-slate-400 mb-1 block">
+                  {tipoRegra === 'KEYWORD' ? 'Palavra-chave:' : 'Nome exato:'}
+                </label>
+                <input
+                  type="text"
+                  value={valorRegra}
+                  onChange={e => setValorRegra(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-600 text-slate-100 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Botões */}
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="flex-1 px-3 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs hover:bg-slate-700 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={confirmar}
+              disabled={mutation.isPending || (tipoRegra !== 'SEM_REGRA' && !valorRegra.trim())}
+              className="flex-1 px-3 py-2 rounded-lg bg-blue-600 text-white text-xs hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              {mutation.isPending ? 'Salvando...' : 'Confirmar'}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
