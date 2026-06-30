@@ -906,7 +906,7 @@ export default function Cargas() {
                       return (
                       <>
                         {showWeekSeparator && (
-                          <tr>
+                          <tr key={`separator-${carga.id}`}>
                             <td colSpan={6} className="h-0.5 bg-gradient-to-r from-red-900/30 via-red-600/40 to-red-900/30 p-0"></td>
                           </tr>
                         )}
