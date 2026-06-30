@@ -99,14 +99,14 @@ export function DetailedAnalyticsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-slate-700 max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-slate-700 max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            📊 Análise Detalhada - {pasta}
+          <DialogTitle className="text-lg font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            📊 Análise - {pasta}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 mt-4">
+        <div className="space-y-2 mt-2">
           {/* Métricas Principais - Compacto */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             <Card className="bg-gradient-to-br from-blue-900/40 to-blue-800/20 border-blue-700/50 p-2">
@@ -133,25 +133,25 @@ export function DetailedAnalyticsModal({
           </div>
 
           {/* Distribuição de Custos */}
-          <Card className="bg-slate-800/50 border-slate-700/50 p-6">
-            <h3 className="text-lg font-bold text-slate-100 mb-4">📊 Distribuição de Custos</h3>
-            <div className="space-y-3">
+          <Card className="bg-slate-800/50 border-slate-700/50 p-3">
+            <h3 className="text-sm font-bold text-slate-100 mb-2">📈 Custos</h3>
+            <div className="space-y-1">
               {costBreakdown.map((item) => {
                 const percentage = analytics.totalCusto > 0 ? (item.value / analytics.totalCusto) * 100 : 0;
                 const barWidth = analytics.totalCusto > 0 ? (item.value / maxCost) * 100 : 0;
                 
                 return (
-                  <div key={item.label} className="space-y-1">
+                  <div key={item.label} className="space-y-0.5">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-semibold text-slate-300">
+                      <span className="text-xs font-semibold text-slate-300">
                         {item.icon} {item.label}
                       </span>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-slate-100">{formatBRL(item.value)}</span>
-                        <span className="text-xs text-slate-400 ml-2">({percentage.toFixed(1)}%)</span>
+                        <span className="text-xs font-bold text-slate-100">{formatBRL(item.value)}</span>
+                        <span className="text-xs text-slate-400 ml-1">({percentage.toFixed(0)}%)</span>
                       </div>
                     </div>
-                    <div className="w-full bg-slate-700/50 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-slate-700/50 rounded-full h-1 overflow-hidden">
                       <div
                         className={`h-full bg-gradient-to-r ${item.color} transition-all duration-500`}
                         style={{ width: `${barWidth}%` }}
@@ -164,18 +164,18 @@ export function DetailedAnalyticsModal({
           </Card>
 
           {/* Tabela de Cargas */}
-          <Card className="bg-slate-800/50 border-slate-700/50 p-6">
-            <h3 className="text-lg font-bold text-slate-100 mb-4">📋 Detalhamento por Carga</h3>
+          <Card className="bg-slate-800/50 border-slate-700/50 p-3">
+            <h3 className="text-sm font-bold text-slate-100 mb-2">📋 Cargas</h3>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-slate-700">
-                    <th className="text-left py-2 px-3 text-slate-300 font-semibold">Data</th>
-                    <th className="text-left py-2 px-3 text-slate-300 font-semibold">Rota</th>
-                    <th className="text-left py-2 px-3 text-slate-300 font-semibold">Motorista</th>
-                    <th className="text-right py-2 px-3 text-slate-300 font-semibold">Frete</th>
-                    <th className="text-right py-2 px-3 text-slate-300 font-semibold">Custo</th>
-                    <th className="text-right py-2 px-3 text-slate-300 font-semibold">Lucro</th>
+                    <th className="text-left py-1 px-2 text-slate-300 font-semibold text-xs">Data</th>
+                    <th className="text-left py-1 px-2 text-slate-300 font-semibold text-xs">Rota</th>
+                    <th className="text-left py-1 px-2 text-slate-300 font-semibold text-xs">Motorista</th>
+                    <th className="text-right py-1 px-2 text-slate-300 font-semibold text-xs">Frete</th>
+                    <th className="text-right py-1 px-2 text-slate-300 font-semibold text-xs">Custo</th>
+                    <th className="text-right py-1 px-2 text-slate-300 font-semibold text-xs">Lucro</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -191,12 +191,12 @@ export function DetailedAnalyticsModal({
 
                     return (
                       <tr key={carga.id} className="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors">
-                        <td className="py-2 px-3 text-slate-300">{carga.data}</td>
-                        <td className="py-2 px-3 text-slate-300">{carga.rota}</td>
-                        <td className="py-2 px-3 text-slate-300">{carga.motorista}</td>
-                        <td className="py-2 px-3 text-right text-green-400 font-semibold">{formatBRL(frete)}</td>
-                        <td className="py-2 px-3 text-right text-red-400 font-semibold">{formatBRL(totalCusto)}</td>
-                        <td className={`py-2 px-3 text-right font-semibold ${lucro >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        <td className="py-1 px-2 text-slate-300 text-xs">{carga.data}</td>
+                        <td className="py-1 px-2 text-slate-300 text-xs">{carga.rota}</td>
+                        <td className="py-1 px-2 text-slate-300 text-xs">{carga.motorista}</td>
+                        <td className="py-1 px-2 text-right text-green-400 font-semibold text-xs">{formatBRL(frete)}</td>
+                        <td className="py-1 px-2 text-right text-red-400 font-semibold text-xs">{formatBRL(totalCusto)}</td>
+                        <td className={`py-1 px-2 text-right font-semibold text-xs ${lucro >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {formatBRL(lucro)}
                         </td>
                       </tr>
@@ -209,12 +209,12 @@ export function DetailedAnalyticsModal({
 
           {/* Insights */}
           {analytics.lucroPercentual < 10 && (
-            <Card className="bg-gradient-to-r from-yellow-900/40 to-orange-900/40 border-yellow-700/50 p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <Card className="bg-gradient-to-r from-yellow-900/40 to-orange-900/40 border-yellow-700/50 p-2">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0" />
                 <div>
-                  <p className="text-sm font-semibold text-yellow-300">⚠️ Atenção</p>
-                  <p className="text-xs text-yellow-200 mt-1">
+                  <p className="text-xs font-semibold text-yellow-300">⚠️ Atenção</p>
+                  <p className="text-xs text-yellow-200 mt-0.5">
                     Margem de lucro abaixo de 10%. Considere revisar custos ou aumentar valores de frete.
                   </p>
                 </div>
