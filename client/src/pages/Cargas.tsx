@@ -903,35 +903,37 @@ export default function Cargas() {
                         showWeekSeparator = currentWeek !== prevWeek || dataObj.getFullYear() !== prevDataObj.getFullYear();
                       }
                       
-                      return (
-                      <>
-                        {showWeekSeparator && (
+                      const rows = [];
+                      if (showWeekSeparator) {
+                        rows.push(
                           <tr key={`separator-${carga.id}`}>
                             <td colSpan={6} className="h-0.5 bg-gradient-to-r from-red-900/30 via-red-600/40 to-red-900/30 p-0"></td>
                           </tr>
-                        )}
-                      <tr key={carga.id} className="border-b border-slate-700 hover:bg-slate-700/50">
-                        <td className="py-1 px-1">
-                          <input
-                            type="checkbox"
-                            className="w-4 h-4"
-                            checked={selectedForDelete.has(carga.id)}
-                            onChange={() => handleToggleCheckbox(carga.id)}
-                          />
-                        </td>
-                        <td className="py-2 px-2 text-sm">
-                          <div className="flex items-center gap-1">
-                            <span className="text-slate-400 text-xs font-semibold">{diaSemana}</span>
-                            <span>{dataEncurtada}</span>
-                          </div>
-                        </td>
-                        <td className="py-2 px-2 text-sm">{carga.rota}</td>
-                        <td className="py-2 px-2 text-sm">{carga.motorista}</td>
-                        <td className="py-2 px-2 text-sm font-semibold">{carga.pasta}</td>
-                        <td className="text-right py-2 px-2 text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
-                      </tr>
-                      </>
-                    );
+                        );
+                      }
+                      rows.push(
+                        <tr key={carga.id} className="border-b border-slate-700 hover:bg-slate-700/50">
+                          <td className="py-1 px-1">
+                            <input
+                              type="checkbox"
+                              className="w-4 h-4"
+                              checked={selectedForDelete.has(carga.id)}
+                              onChange={() => handleToggleCheckbox(carga.id)}
+                            />
+                          </td>
+                          <td className="py-2 px-2 text-sm">
+                            <div className="flex items-center gap-1">
+                              <span className="text-slate-400 text-xs font-semibold">{diaSemana}</span>
+                              <span>{dataEncurtada}</span>
+                            </div>
+                          </td>
+                          <td className="py-2 px-2 text-sm">{carga.rota}</td>
+                          <td className="py-2 px-2 text-sm">{carga.motorista}</td>
+                          <td className="py-2 px-2 text-sm font-semibold">{carga.pasta}</td>
+                          <td className="text-right py-2 px-2 text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
+                        </tr>
+                      );
+                      return rows;
                     })}
                   </tbody>
 
