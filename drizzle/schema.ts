@@ -23,6 +23,7 @@ export const protocolosSincronizados = mysqlTable("protocolos_sincronizados", {
 export const cargas = mysqlTable("cargas", {
 	id: int().autoincrement().notNull(),
 	pasta: mysqlEnum(['IES','IJD','DAJ','MFF','IGU']).notNull(),
+	tipo: mysqlEnum(['SAO_LEO','ESTEIO']).default('SAO_LEO').notNull(),
 	// you can use { mode: 'date' }, if you want to have Date as type for this column
 	data: date({ mode: 'string' }).notNull(),
 	rota: varchar({ length: 100 }),
@@ -42,12 +43,13 @@ export const cargas = mysqlTable("cargas", {
 	valorRetido: decimal({ precision: 10, scale: 2 }).default('0'),
 	valorLiquidoFrete: decimal({ precision: 10, scale: 2 }).default('0'),
 },
-(table) => [
-	index("cargas_pasta_idx").on(table.pasta),
-	index("cargas_data_idx").on(table.data),
-	index("cargas_rota_idx").on(table.rota),
-	index("cargas_motorista_idx").on(table.motorista),
-]);
+	(table) => [
+		index("cargas_pasta_idx").on(table.pasta),
+		index("cargas_tipo_idx").on(table.tipo),
+		index("cargas_data_idx").on(table.data),
+		index("cargas_rota_idx").on(table.rota),
+		index("cargas_motorista_idx").on(table.motorista),
+	]);
 
 export const categorias = mysqlTable("categorias", {
 	id: int().autoincrement().notNull(),

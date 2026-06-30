@@ -38,6 +38,7 @@ export default function Cargas() {
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     data: '',
+    tipo: 'SAO_LEO',
     rota: '',
     rotaCustom: '',
     motorista: '',
@@ -622,6 +623,20 @@ export default function Cargas() {
 
 
 
+                  {/* Tipo - São Leo ou Esteio */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Tipo</label>
+                    <select
+                      value={formData.tipo || 'SAO_LEO'}
+                      onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
+                      className="w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2 h-10"
+                      required
+                    >
+                      <option value="SAO_LEO">🔵 São Leo</option>
+                      <option value="ESTEIO">🟡 Esteio</option>
+                    </select>
+                  </div>
+
                   {/* Rota - Select com opções pré-definidas */}
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Rota</label>
@@ -846,6 +861,18 @@ export default function Cargas() {
             </div>
           </CardHeader>
 
+          {/* Legenda de Tipos */}
+          <div className="px-4 pt-2 pb-2 flex gap-4 text-xs">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-blue-500 rounded"></div>
+              <span className="text-slate-300">São Leo</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+              <span className="text-slate-300">Esteio</span>
+            </div>
+          </div>
+
           <CardContent className="p-4">
             {isLoading ? (
               <div className="text-center text-slate-400">Carregando cargas...</div>
@@ -911,8 +938,9 @@ export default function Cargas() {
                           </tr>
                         );
                       }
+                      const bgColor = carga.tipo === 'SAO_LEO' ? 'bg-blue-950/20' : 'bg-yellow-950/20';
                       rows.push(
-                        <tr key={carga.id} className="border-b border-slate-700 hover:bg-slate-700/50">
+                        <tr key={carga.id} className={`border-b border-slate-700 hover:bg-slate-700/50 ${bgColor}`}>
                           <td className="py-1 px-1">
                             <input
                               type="checkbox"
