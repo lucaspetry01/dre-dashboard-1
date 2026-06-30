@@ -317,8 +317,9 @@
 - [x] Configurar URL de redirecionamento no Google Cloud Console
 - [ ] Aguardar propagação de configurações do Google (até 5 minutos)
 - [ ] Testar fluxo completo após propagação
-- [x] Corrigir cálculo de Custo Total: Diesel + Chapa + Custos Outros (SEM frete)
-- [x] Corrigir cálculo de Lucro: Frete - Custo Total (NAO usa frete líquido)
+- [x] Corrigir cálculo de Custo Total: Diesel + Chapa + Custos Outros + Valor Retido
+- [x] Corrigir cálculo de Lucro: Frete - Custo Total
+- [x] Remover duplicação de variáveis
 - [x] 126 testes continuam passando
 
 ## Bug Fix - Cálculo de Custo Total, Tabela e Formulário (Sessão atual)

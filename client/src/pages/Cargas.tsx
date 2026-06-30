@@ -176,13 +176,12 @@ export default function Cargas() {
 
   // Cálculo de custo total: soma apenas combustvel, manutenção e custos outros
   const valorChapa = (formData.chapa1 && formData.chapa1.trim() !== '' ? 180 : 0) + (formData.chapa2 && formData.chapa2.trim() !== '' ? 180 : 0);
-  const custoTotalCalculado = valorCombustivelCalculado + valorChapa + Number(formData.custoOutros || 0);
-  
-  // Cálculo de retenção e frete líquido
   const valorFrete = Number(formData.valorFrete || 0);
   const valorRetido = valorFrete * 0.15; // 15% de retenção
   const valorLiquidoFrete = valorFrete - valorRetido;
-  // Lucro = Frete - Custo Total (NAO usa frete liquido)
+  // Cálculo de custo total: Diesel + Chapa + Custos Outros + Valor Retido
+  const custoTotalCalculado = valorCombustivelCalculado + valorChapa + Number(formData.custoOutros || 0) + valorRetido;
+  // Lucro = Frete - Custo Total
   const lucroCalculado = valorFrete - custoTotalCalculado;
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
