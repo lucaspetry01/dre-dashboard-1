@@ -317,3 +317,11 @@
 - [x] Configurar URL de redirecionamento no Google Cloud Console
 - [ ] Aguardar propagação de configurações do Google (até 5 minutos)
 - [ ] Testar fluxo completo após propagação
+
+## Bug Fix - Cálculo de Custo Total (Sessão atual)
+
+- [x] Remover custos fixos (motorista + chapas) do cálculo de custo total
+- [x] Custo Total agora = Combustível + Manutenção + Custos Outros
+- [x] Coluna de Custo na tabela de listagem já exibe os valores corretos
+- [x] Lucro recalculado corretamente (Frete Líquido - Custo Total)
+- [x] 126 testes continuam passando

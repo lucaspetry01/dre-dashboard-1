@@ -174,17 +174,14 @@ export default function Cargas() {
     (parseFloat(formData.valorLitroDiesel) || 0) *
     (parseFloat(formData.litrosCombustivel) || 0);
 
-  // Cálculo dinâmico de custos fixos
-  const custoMotorista = 220; // Sempre R$ 220
-  const custoChapa1 = formData.chapa1 && formData.chapa1.trim() !== '' ? 180 : 0; // R$ 180 se selecionada
-  const custoChapa2 = formData.chapa2 && formData.chapa2.trim() !== '' ? 180 : 0; // R$ 180 se selecionada
-  const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
-  const custoTotalCalculado = valorCombustivelCalculado + Number(formData.manutencao || 0) + Number(formData.custoOutros || 0) + custoFixo;
+  // Cálculo de custo total: soma apenas combustvel, manutenção e custos outros
+  const custoTotalCalculado = valorCombustivelCalculado + Number(formData.manutencao || 0) + Number(formData.custoOutros || 0);
   
   // Cálculo de retenção e frete líquido
   const valorFrete = Number(formData.valorFrete || 0);
   const valorRetido = valorFrete * 0.15; // 15% de retenção
   const valorLiquidoFrete = valorFrete - valorRetido;
+  // Lucro = Frete Líquido - Custo Total
   const lucroCalculado = valorLiquidoFrete - custoTotalCalculado;
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
