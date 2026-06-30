@@ -515,16 +515,16 @@ export default function Cargas() {
                 <>
                   <Button
                     size="icon"
-                    className="bg-purple-600 hover:bg-purple-700 text-white h-7 w-7 md:h-9 md:w-9"
+                    className="bg-purple-600 hover:bg-purple-700 text-white h-8 w-8"
                     onClick={() => setIsAnalyticsModalOpen(true)}
                     title="Visualizar análise detalhada"
                   >
-                    <Eye className="w-3 h-3 md:w-4 md:h-4" />
+                    <Eye className="w-4 h-4" />
                   </Button>
                   {selectedForDelete.size === 1 && (
                     <Button
                       size="icon"
-                      className="bg-blue-600 hover:bg-blue-700 text-white h-7 w-7 md:h-9 md:w-9"
+                      className="bg-blue-600 hover:bg-blue-700 text-white h-8 w-8"
                       onClick={() => {
                         const id = Array.from(selectedForDelete)[0];
                         const carga = cargas?.find((c: any) => c.id === id);
@@ -535,16 +535,16 @@ export default function Cargas() {
                       }}
                       title="Editar carga"
                     >
-                      <Pencil className="w-3 h-3 md:w-4 md:h-4" />
+                      <Pencil className="w-4 h-4" />
                     </Button>
                   )}
                   <Button
                     size="icon"
-                    className="bg-red-600 hover:bg-red-700 text-white h-7 w-7 md:h-9 md:w-9"
+                    className="bg-red-600 hover:bg-red-700 text-white h-8 w-8"
                     onClick={handleDeleteSelected}
                     title="Excluir cargas"
                   >
-                    <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 </>
               )}
@@ -854,12 +854,12 @@ export default function Cargas() {
                 <table className="w-full text-xs md:text-sm text-slate-300">
                   <thead className="border-b border-slate-700">
                     <tr>
-                      <th className="text-left py-1 md:py-2 px-0.5 md:px-1 w-5"></th>
+                      <th className="text-left py-1 md:py-2 px-0 md:px-0.5 w-5"></th>
                       <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Data</th>
                       <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Rota</th>
                       <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Motorista</th>
                       <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Placa</th>
-                      <th className="hidden md:table-cell text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Frete</th>
+                      <th className="text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Frete</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -930,7 +930,7 @@ export default function Cargas() {
                         <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm truncate">{carga.rota}</td>
                         <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm truncate">{carga.motorista}</td>
                         <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm font-semibold">{carga.pasta}</td>
-                        <td className="hidden md:table-cell text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
+                        <td className="text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
                         </tr>
                       );
                       return rows;
