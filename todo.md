@@ -321,6 +321,7 @@
 - [x] Corrigir cálculo de Lucro: Frete - Custo Total
 - [x] Remover duplicação de variáveis
 - [x] Adicionar tooltip informativo ao "Valor Retido (15%)"
+- [x] Corrigir valor do Litro Diesel para manter dados ao editar
 - [x] 126 testes continuam passando
 
 ## Bug Fix - Cálculo de Custo Total, Tabela e Formulário (Sessão atual)

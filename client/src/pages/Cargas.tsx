@@ -257,7 +257,7 @@ export default function Cargas() {
     const rotaEhPadrao = rotasPadrao.includes(carga.rota);
     const valorComb = Number(carga.valorCombustivel) || 0;
     const litros = Number(carga.litrosCombustivel) || 0;
-    const valorLitro = litros > 0 ? formatBRL(valorComb / litros) : '';
+    const valorLitro = litros > 0 ? (valorComb / litros).toFixed(2) : '0.00';
 
     setEditingId(carga.id);
     // Converter data para string se for Date object
