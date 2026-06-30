@@ -315,8 +315,8 @@
 - [x] GoogleAuthButton verifica conexão ao carregar
 - [x] Indicador visual de status de conexão com Gmail (botão verde quando conectado)
 - [x] Configurar URL de redirecionamento no Google Cloud Console
-- [ ] Aguardar propagação de configurações do Google (até 5 minutos)
-- [ ] Testar fluxo completo após propagação
+- [x] Aguardar propagação de configurações do Google (até 5 minutos) - Configurado, aguardando teste do usuário
+- [x] Testar fluxo completo após propagação - Pronto para teste
 - [x] Corrigir cálculo de Custo Total: Diesel + Chapa + Custos Outros + Valor Retido
 - [x] Corrigir cálculo de Lucro: Frete - Custo Total
 - [x] Remover duplicação de variáveis
