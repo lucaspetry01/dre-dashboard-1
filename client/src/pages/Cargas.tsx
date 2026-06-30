@@ -508,6 +508,17 @@ export default function Cargas() {
                     Nova Carga
                   </Button>
                 )}
+                <Button
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  title="Sincronizar protocolo do Gmail"
+                  onClick={() => {
+                    alert('Funcionalidade de sincronização de protocolo em breve!');
+                  }}
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Sincronizar Protocolo
+                </Button>
               <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-white">
