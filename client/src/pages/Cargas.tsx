@@ -105,14 +105,14 @@ export default function Cargas() {
 
   // Cálculo dinâmico de custos fixos
   const custoMotorista = 220; // Sempre R$ 220
-  const custoChapa1 = formData.chapa1 && formData.chapa1.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
-  const custoChapa2 = formData.chapa2 && formData.chapa2.trim() !== '' ? 150 : 0; // R$ 150 se selecionada
+  const custoChapa1 = formData.chapa1 && formData.chapa1.trim() !== '' ? 180 : 0; // R$ 180 se selecionada
+  const custoChapa2 = formData.chapa2 && formData.chapa2.trim() !== '' ? 180 : 0; // R$ 180 se selecionada
   const custoFixo = custoMotorista + custoChapa1 + custoChapa2;
   const custoTotalCalculado = valorCombustivelCalculado + Number(formData.manutencao || 0) + Number(formData.custoOutros || 0) + custoFixo;
   
   // Cálculo de retenção e frete líquido
   const valorFrete = Number(formData.valorFrete || 0);
-  const valorRetido = valorFrete * 0.1; // 10% de retenção
+  const valorRetido = valorFrete * 0.15; // 15% de retenção
   const valorLiquidoFrete = valorFrete - valorRetido;
   const lucroCalculado = valorLiquidoFrete - custoTotalCalculado;
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
@@ -617,7 +617,7 @@ export default function Cargas() {
                   {/* Chapas - Selects */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 1 {formData.chapa1 && formData.chapa1.trim() !== '' && <span className="text-green-400 text-xs">(+R$ 150)</span>}</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 1 {formData.chapa1 && formData.chapa1.trim() !== '' && <span className="text-green-400 text-xs">(+R$ 180)</span>}</label>
                       <select
                         value={formData.chapa1}
                         onChange={(e) => setFormData({ ...formData, chapa1: e.target.value })}
@@ -630,7 +630,7 @@ export default function Cargas() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 2 {formData.chapa2 && formData.chapa2.trim() !== '' && <span className="text-green-400 text-xs">(+R$ 150)</span>}</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Chapa 2 {formData.chapa2 && formData.chapa2.trim() !== '' && <span className="text-green-400 text-xs">(+R$ 180)</span>}</label>
                       <select
                         value={formData.chapa2}
                         onChange={(e) => setFormData({ ...formData, chapa2: e.target.value })}
@@ -703,7 +703,7 @@ export default function Cargas() {
                       <span className="text-blue-400 font-semibold">R$ {formatBRL(valorFrete)}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-300">Valor Retido (10%):</span>
+                      <span className="text-slate-300">Valor Retido (15%):</span>
                       <span className="text-yellow-400 font-semibold">R$ {formatBRL(valorRetido)}</span>
                     </div>
                     <div className="flex justify-between items-center">
