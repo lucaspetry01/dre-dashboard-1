@@ -276,3 +276,19 @@
 - [x] Usar useMutation (sincronizarProtocolosMutation.mutateAsync) em vez de .mutate direto
 - [x] Usar utils.cargas.obterProtocolosSincronizados.fetch em vez de .query direto
 - [x] Todos os 125 testes continuam passando
+
+## Feature - Tela de Revisão de Protocolos (Sessão atual)
+- [x] Criar componente ProtocolReviewDialog para exibir lista de protocolos encontrados
+- [x] Mostrar checkbox para cada protocolo (marcar/desmarcar para incluir)
+- [x] Exibir dados: data, número protocolo, valor frete, peso
+- [x] Botão "Confirmar Seleção" para gravar cargas marcadas
+- [x] Botão "Cancelar" para descartar sincronização
+- [x] Contador: "X de Y protocolos selecionados"
+
+## Feature - Sistema de Toasts (Sessão atual)
+- [x] Criar componente ToastContainer para exibir notificações
+- [x] Substituir alert() por toast no handleSincronizarProtocolos
+- [x] Toast de sucesso: "X cargas criadas, Y duplicadas ignoradas"
+- [x] Toast de erro: mostrar mensagem de erro com detalhe
+- [x] Toast de info: "Sincronizando... aguarde"
+- [x] Toasts desaparecem automaticamente após 4 segundos

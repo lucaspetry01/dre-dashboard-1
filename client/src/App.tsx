@@ -9,6 +9,7 @@ import Nfe from './pages/Nfe';
 
 import Cargas from "./pages/Cargas";
 import StickyFooter from "./components/StickyFooter";
+import { ToastContainer } from "./components/ToastContainer";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -38,6 +39,7 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
+          <ToastContainer />
           <Router />
           <StickyFooter />
         </TooltipProvider>

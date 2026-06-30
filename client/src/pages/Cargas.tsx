@@ -1,4 +1,3 @@
-import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Eye, Trash2, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
+import { useLocation } from 'wouter';
+import { ProtocolReviewDialog } from '@/components/ProtocolReviewDialog';
+import { showToast } from '@/components/ToastContainer';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
 
@@ -28,6 +30,8 @@ export default function Cargas() {
   const [filterPeriod, setFilterPeriod] = useState<'semana' | 'mes' | 'mesAnterior' | 'semestre' | 'hoje' | null>(null);
   const [filterRota, setFilterRota] = useState<string | null>(null);
   const [isSincronizando, setIsSincronizando] = useState(false);
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
+  const [protocolosParaRevisao, setProtocolosParaRevisao] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     data: '',
     rota: '',
@@ -102,42 +106,65 @@ export default function Cargas() {
   // Funcao para sincronizar protocolos (usa hooks tRPC definidos abaixo)
   const handleSincronizarProtocolos = async () => {
     setIsSincronizando(true);
+    showToast('Sincronizando protocolos...', 'info');
     try {
       const resultado = await sincronizarProtocolosMutation.mutateAsync({ diasAtras: 30 });
       if (resultado.sucesso) {
-        alert(`Sincronizacao concluida! ${resultado.processados} protocolo(s) processado(s).`);
-        // Buscar protocolos sincronizados para pre-preenchimento
-        await buscarProtocolosSincronizados();
+        const novos = resultado.protocolos?.filter((p: any) => !p.isDuplicate).length || 0;
+        const duplicados = resultado.protocolos?.filter((p: any) => p.isDuplicate).length || 0;
+        
+        if (novos > 0) {
+          setProtocolosParaRevisao(resultado.protocolos);
+          setIsReviewDialogOpen(true);
+          showToast(`${novos} protocolo(s) encontrado(s)`, 'success');
+        } else if (duplicados > 0) {
+          showToast(`${duplicados} protocolo(s) já sincronizado(s)`, 'info');
+        } else {
+          showToast('Nenhum protocolo encontrado', 'info');
+        }
       } else {
-        alert(`Erro na sincronizacao: ${resultado.erros.join(', ')}`);
+        showToast(`Erro: ${resultado.erros?.join(', ') || 'Erro desconhecido'}`, 'error');
       }
     } catch (error) {
       console.error('Erro ao sincronizar:', error);
-      alert('Erro ao sincronizar protocolos. Verifique o console.');
+      showToast('Erro ao sincronizar protocolos', 'error');
     } finally {
       setIsSincronizando(false);
     }
   };
 
-  // Funcao para buscar protocolos sincronizados e pre-preencher formulario
-  const buscarProtocolosSincronizados = async () => {
+  // Funcao para confirmar e salvar protocolos selecionados
+  const handleConfirmProtocolos = async (selectedIds: string[]) => {
     try {
-      const protocolos = await utils.cargas.obterProtocolosSincronizados.fetch({});
-      if (protocolos && protocolos.length > 0) {
-        // Pre-preencher com o primeiro protocolo disponivel
-        const protocolo = protocolos[0];
-        setFormData(prev => ({
-          ...prev,
-          data: protocolo.data,
-          numeroProtocolo: protocolo.numeroProtocolo,
-          valorFrete: protocolo.valorFrete.toString(),
-          motorista: protocolo.motorista || '',
-        }));
-        // Abrir dialog para que o usuario possa revisar e editar
-        setIsDialogOpen(true);
+      const protocolosSelecionados = protocolosParaRevisao.filter(p => selectedIds.includes(p.id));
+      let sucessos = 0;
+      
+      for (const protocolo of protocolosSelecionados) {
+        try {
+          await createMutation.mutateAsync({
+            pasta: selectedPasta || 'IES',
+            data: protocolo.data,
+            valorCombustivel: 0,
+            litrosCombustivel: 0,
+            manutencao: 0,
+            custoOutros: 0,
+            valorFrete: protocolo.valorFrete,
+            numeroProtocolo: protocolo.numeroProtocolo,
+            motorista: protocolo.motorista,
+          });
+          sucessos++;
+        } catch (err) {
+          console.error('Erro ao salvar protocolo:', err);
+        }
       }
+      
+      setIsReviewDialogOpen(false);
+      showToast(`${sucessos} carga(s) criada(s) com sucesso!`, 'success');
+      
+      if (selectedPasta) utils.cargas.listarPorPasta.invalidate(selectedPasta);
     } catch (error) {
-      console.error('Erro ao buscar protocolos sincronizados:', error);
+      console.error('Erro ao salvar protocolos:', error);
+      showToast('Erro ao salvar cargas', 'error');
     }
   };
 
@@ -927,6 +954,15 @@ export default function Cargas() {
             </CardContent>
           </Card>
         )}
+        
+        {/* Dialog de Revisão de Protocolos */}
+        <ProtocolReviewDialog
+          isOpen={isReviewDialogOpen}
+          protocolos={protocolosParaRevisao}
+          onConfirm={handleConfirmProtocolos}
+          onCancel={() => setIsReviewDialogOpen(false)}
+          isLoading={false}
+        />
       </div>
     </div>
   );
