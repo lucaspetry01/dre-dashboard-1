@@ -106,34 +106,28 @@ export function DetailedAnalyticsModal({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 mt-6">
-          {/* Métricas Principais */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-br from-blue-900/40 to-blue-800/20 border-blue-700/50 p-4">
-              <div className="text-sm text-blue-300 font-semibold mb-2">Total de Cargas</div>
-              <div className="text-3xl font-bold text-blue-100">{analytics.totalCargas}</div>
-              <div className="text-xs text-blue-400 mt-2">📦 Registros</div>
+        <div className="space-y-4 mt-4">
+          {/* Métricas Principais - Compacto */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <Card className="bg-gradient-to-br from-blue-900/40 to-blue-800/20 border-blue-700/50 p-2">
+              <div className="text-xs text-blue-300 font-semibold">Cargas</div>
+              <div className="text-lg font-bold text-blue-100">{analytics.totalCargas}</div>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-900/40 to-green-800/20 border-green-700/50 p-4">
-              <div className="text-sm text-green-300 font-semibold mb-2">Faturado</div>
-              <div className="text-2xl font-bold text-green-100">{formatBRL(analytics.totalFaturado)}</div>
-              <div className="text-xs text-green-400 mt-2">💰 Receita</div>
+            <Card className="bg-gradient-to-br from-green-900/40 to-green-800/20 border-green-700/50 p-2">
+              <div className="text-xs text-green-300 font-semibold">Faturado</div>
+              <div className="text-sm font-bold text-green-100">{formatBRL(analytics.totalFaturado)}</div>
             </Card>
 
-            <Card className="bg-gradient-to-br from-red-900/40 to-red-800/20 border-red-700/50 p-4">
-              <div className="text-sm text-red-300 font-semibold mb-2">Custo Total</div>
-              <div className="text-2xl font-bold text-red-100">{formatBRL(analytics.totalCusto)}</div>
-              <div className="text-xs text-red-400 mt-2">💸 Despesas</div>
+            <Card className="bg-gradient-to-br from-red-900/40 to-red-800/20 border-red-700/50 p-2">
+              <div className="text-xs text-red-300 font-semibold">Custo</div>
+              <div className="text-sm font-bold text-red-100">{formatBRL(analytics.totalCusto)}</div>
             </Card>
 
-            <Card className={`bg-gradient-to-br ${analytics.totalLucro >= 0 ? 'from-emerald-900/40 to-emerald-800/20 border-emerald-700/50' : 'from-rose-900/40 to-rose-800/20 border-rose-700/50'} p-4`}>
-              <div className={`text-sm ${analytics.totalLucro >= 0 ? 'text-emerald-300' : 'text-rose-300'} font-semibold mb-2`}>Lucro Líquido</div>
-              <div className={`text-2xl font-bold ${analytics.totalLucro >= 0 ? 'text-emerald-100' : 'text-rose-100'}`}>
+            <Card className={`bg-gradient-to-br ${analytics.totalLucro >= 0 ? 'from-emerald-900/40 to-emerald-800/20 border-emerald-700/50' : 'from-rose-900/40 to-rose-800/20 border-rose-700/50'} p-2`}>
+              <div className={`text-xs ${analytics.totalLucro >= 0 ? 'text-emerald-300' : 'text-rose-300'} font-semibold`}>Lucro</div>
+              <div className={`text-sm font-bold ${analytics.totalLucro >= 0 ? 'text-emerald-100' : 'text-rose-100'}`}>
                 {formatBRL(analytics.totalLucro)}
-              </div>
-              <div className={`text-xs ${analytics.totalLucro >= 0 ? 'text-emerald-400' : 'text-rose-400'} mt-2`}>
-                {analytics.totalLucro >= 0 ? '📈' : '📉'} {analytics.lucroPercentual.toFixed(1)}%
               </div>
             </Card>
           </div>
