@@ -862,7 +862,7 @@ export default function Cargas() {
           </CardHeader>
 
           {/* Legenda de Tipos */}
-          <div className="px-4 pt-2 pb-2 flex gap-4 text-xs">
+          <div className="px-4 py-1 flex gap-4 text-xs">
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 bg-blue-500 rounded"></div>
               <span className="text-slate-300">São Leo</span>
@@ -873,7 +873,7 @@ export default function Cargas() {
             </div>
           </div>
 
-          <CardContent className="p-4">
+          <CardContent className="p-4 pt-2">
             {isLoading ? (
               <div className="text-center text-slate-400">Carregando cargas...</div>
             ) : cargas && cargas.length > 0 ? (
