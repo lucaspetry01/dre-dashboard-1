@@ -1,6 +1,6 @@
 import { getDb } from '../db.js';
 import { protocolosSincronizados } from '../../drizzle/schema.js';
-import { eq } from 'drizzle-orm';
+import { eq, and, gte, lte } from 'drizzle-orm';
 import { extrairDadosProtocolo, validarDadosProtocolo, type ProtocoloData } from './protocoloExtractor.js';
 
 /**
@@ -19,25 +19,42 @@ export interface GmailSearchResult {
 }
 
 /**
+ * Extrai o texto de um PDF (Buffer) usando pdf-parse
+ */
+async function extrairTextoPdf(buffer: Buffer): Promise<string> {
+  try {
+    const mod: any = await import('pdf-parse');
+    const pdfParse = mod.default || mod;
+    const result = await pdfParse(buffer);
+    return result.text || '';
+  } catch (error) {
+    console.error('Erro ao extrair texto do PDF:', error);
+    return '';
+  }
+}
+
+/**
  * Busca PDFs de protocolos no Gmail dos últimos N dias
+ * Usa as credenciais do Gmail já conectadas no Manus via Forge API
  */
 export async function buscarProtocolosDoGmail(diasAtras: number = 30): Promise<GmailSearchResult[]> {
   try {
     console.log(`Buscando protocolos do Gmail dos últimos ${diasAtras} dias...`);
-    
+
     const dataFim = new Date();
     const dataInicio = new Date(dataFim.getTime() - diasAtras * 24 * 60 * 60 * 1000);
     const formatoData = (d: Date) => d.toISOString().split('T')[0];
-    
+
     const forgeApiUrl = process.env.BUILT_IN_FORGE_API_URL;
     const forgeApiKey = process.env.BUILT_IN_FORGE_API_KEY;
-    
+
     if (!forgeApiUrl || !forgeApiKey) {
-      throw new Error('Credenciais do Manus não configuradas');
+      console.warn('Credenciais do Manus não configuradas. Retornando array vazio.');
+      return [];
     }
-    
+
     const query = `has:attachment filename:pdf after:${formatoData(dataInicio)} before:${formatoData(dataFim)}`;
-    
+
     const response = await fetch(`${forgeApiUrl}/gmail/messages`, {
       method: 'POST',
       headers: {
@@ -50,20 +67,22 @@ export async function buscarProtocolosDoGmail(diasAtras: number = 30): Promise<G
         includeAttachments: true,
       }),
     });
-    
+
     if (!response.ok) {
       console.warn(`Gmail API retornou ${response.status}: ${response.statusText}. Retornando array vazio.`);
       return [];
     }
-    
+
     const data = await response.json();
     const messages = data.messages || [];
-    
+
     const resultados: GmailSearchResult[] = [];
-    
+
     for (const msg of messages) {
-      const attachments = msg.attachments?.filter((att: any) => att.filename?.toLowerCase().endsWith('.pdf')) || [];
-      
+      const attachments = (msg.attachments || []).filter(
+        (att: any) => att.filename?.toLowerCase().endsWith('.pdf')
+      );
+
       if (attachments.length > 0) {
         resultados.push({
           messageId: msg.id,
@@ -78,12 +97,12 @@ export async function buscarProtocolosDoGmail(diasAtras: number = 30): Promise<G
         });
       }
     }
-    
+
     console.log(`Encontrados ${resultados.length} e-mail(s) com PDF(s) de protocolo`);
     return resultados;
   } catch (error) {
     console.error('Erro ao buscar protocolos do Gmail:', error);
-    throw error;
+    return [];
   }
 }
 
@@ -98,7 +117,7 @@ export async function verificarDuplicata(numeroProtocolo: string): Promise<boole
       .from(protocolosSincronizados)
       .where(eq(protocolosSincronizados.numeroProtocolo, numeroProtocolo))
       .limit(1);
-    
+
     return resultado.length > 0;
   } catch (error) {
     console.error('Erro ao verificar duplicata:', error);
@@ -107,49 +126,54 @@ export async function verificarDuplicata(numeroProtocolo: string): Promise<boole
 }
 
 /**
- * Sincroniza protocolos do Gmail
+ * Sincroniza protocolos do Gmail: busca PDFs, extrai dados, grava novos protocolos
  */
 export async function sincronizarProtocolosDoGmail(diasAtras: number = 30) {
   try {
     const gmailResults = await buscarProtocolosDoGmail(diasAtras);
     const db = getDb();
     const protocolosProcessados: any[] = [];
-    let sucessos = 0;
-    let erros: string[] = [];
-    
+    const erros: string[] = [];
+    let novos = 0;
+    let duplicados = 0;
+
     for (const result of gmailResults) {
       for (const attachment of result.attachments) {
         try {
-          const dados = extrairDadosProtocolo(attachment.data);
-          
+          const texto = await extrairTextoPdf(attachment.data);
+          const dados: ProtocoloData = extrairDadosProtocolo(texto);
+
           if (!validarDadosProtocolo(dados)) {
-            erros.push(`Protocolo inválido em ${attachment.filename}`);
+            erros.push(`Dados inválidos em ${attachment.filename}`);
             continue;
           }
-          
+
           const isDuplicate = await verificarDuplicata(dados.numeroProtocolo);
-          
+
           if (!isDuplicate) {
             await db.insert(protocolosSincronizados).values({
               numeroProtocolo: dados.numeroProtocolo,
               data: dados.data,
-              valorFrete: dados.valorFrete,
-              peso: dados.peso,
-              motorista: dados.motorista || '',
-              emitente: dados.emitente || '',
-              cnpj: dados.cnpj || '',
-              sincronizadoEm: new Date(),
+              valorFrete: String(dados.valorFrete),
+              pesoTotal: String(dados.pesoTotal),
+              clientes: JSON.stringify(dados.clientes || []),
+              motorista: dados.motorista || null,
+              gmailMessageId: result.messageId,
+              pdfUrl: null,
             });
-            sucessos++;
+            novos++;
+          } else {
+            duplicados++;
           }
-          
+
           protocolosProcessados.push({
             id: dados.numeroProtocolo,
             numeroProtocolo: dados.numeroProtocolo,
             data: dados.data,
             valorFrete: dados.valorFrete,
-            peso: dados.peso,
-            motorista: dados.motorista,
+            pesoTotal: dados.pesoTotal,
+            clientes: dados.clientes,
+            motorista: dados.motorista || '',
             isDuplicate,
           });
         } catch (err) {
@@ -157,10 +181,12 @@ export async function sincronizarProtocolosDoGmail(diasAtras: number = 30) {
         }
       }
     }
-    
+
     return {
       sucesso: true,
-      processados: sucessos,
+      processados: novos,
+      novos,
+      duplicados,
       protocolos: protocolosProcessados,
       erros,
     };
@@ -169,8 +195,47 @@ export async function sincronizarProtocolosDoGmail(diasAtras: number = 30) {
     return {
       sucesso: false,
       processados: 0,
+      novos: 0,
+      duplicados: 0,
       protocolos: [],
       erros: [String(error)],
     };
+  }
+}
+
+/**
+ * Obtém protocolos sincronizados do banco, com filtro de data opcional
+ */
+export async function obterProtocolosSincronizados(dataInicio?: string, dataFim?: string) {
+  try {
+    const db = getDb();
+    const condicoes = [];
+
+    if (dataInicio) {
+      condicoes.push(gte(protocolosSincronizados.data, dataInicio));
+    }
+    if (dataFim) {
+      condicoes.push(lte(protocolosSincronizados.data, dataFim));
+    }
+
+    const query = db.select().from(protocolosSincronizados);
+
+    const resultado = condicoes.length > 0
+      ? await query.where(and(...condicoes))
+      : await query;
+
+    return resultado.map((p) => ({
+      ...p,
+      clientes: (() => {
+        try {
+          return JSON.parse(p.clientes);
+        } catch {
+          return [];
+        }
+      })(),
+    }));
+  } catch (error) {
+    console.error('Erro ao obter protocolos sincronizados:', error);
+    return [];
   }
 }

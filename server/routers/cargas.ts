@@ -113,8 +113,8 @@ export const cargasRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const { sincronizarTodosProtocolos } = await import('../services/gmailProtocoloIntegration.js');
-      return sincronizarTodosProtocolos(input.diasAtras);
+      const { sincronizarProtocolosDoGmail } = await import('../services/gmailProtocoloIntegration.js');
+      return sincronizarProtocolosDoGmail(input.diasAtras);
     }),
 
   /**
