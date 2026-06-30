@@ -877,6 +877,7 @@ export default function Cargas() {
                       }
                       const dateParts = dataObj.toLocaleDateString('pt-BR').split('/');
                       const dataEncurtada = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]?.slice(-2)}`;
+                      const diaSemana = dataObj.toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3).toUpperCase();
                       return (
                       <tr key={carga.id} className="border-b border-slate-700 hover:bg-slate-700/50">
                         <td className="py-1 px-1">
@@ -887,7 +888,12 @@ export default function Cargas() {
                             onChange={() => handleToggleCheckbox(carga.id)}
                           />
                         </td>
-                        <td className="py-2 px-2 text-sm">{dataEncurtada}</td>
+                        <td className="py-2 px-2 text-sm">
+                          <div className="flex items-center gap-1">
+                            <span className="text-slate-400 text-xs font-semibold">{diaSemana}</span>
+                            <span>{dataEncurtada}</span>
+                          </div>
+                        </td>
                         <td className="py-2 px-2 text-sm">{carga.rota}</td>
                         <td className="py-2 px-2 text-sm">{carga.motorista}</td>
                         <td className="py-2 px-2 text-sm font-semibold">{carga.pasta}</td>
