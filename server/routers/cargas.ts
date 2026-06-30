@@ -113,7 +113,22 @@ export const cargasRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const { sincronizarProtocolos } = await import('../services/gmailProtocoloSync.js');
-      return sincronizarProtocolos(input.diasAtras);
+      const { sincronizarTodosProtocolos } = await import('../services/gmailProtocoloIntegration.js');
+      return sincronizarTodosProtocolos(input.diasAtras);
+    }),
+
+  /**
+   * Obtem protocolos sincronizados para pre-preenchimento
+   */
+  obterProtocolosSincronizados: publicProcedure
+    .input(
+      z.object({
+        dataInicio: z.string().optional(),
+        dataFim: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { obterProtocolosSincronizados } = await import('../services/gmailProtocoloIntegration.js');
+      return obterProtocolosSincronizados(input.dataInicio, input.dataFim);
     }),
 });

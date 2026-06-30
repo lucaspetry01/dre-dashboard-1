@@ -270,3 +270,9 @@
 - [x] Manter reatividade aos filtros de data
 - [x] Testar responsividade em mobile
 - [x] Todos os 88 testes continuam passando
+
+## Bugfix - Sincronização Protocolos (Sessão atual)
+- [x] Corrigir erro "hooks[lastArg] is not a function" no botão Sincronizar Protocolo
+- [x] Usar useMutation (sincronizarProtocolosMutation.mutateAsync) em vez de .mutate direto
+- [x] Usar utils.cargas.obterProtocolosSincronizados.fetch em vez de .query direto
+- [x] Todos os 125 testes continuam passando

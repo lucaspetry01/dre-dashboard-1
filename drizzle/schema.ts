@@ -1,6 +1,25 @@
 import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, int, mysqlEnum, date, varchar, timestamp, decimal, text } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
+export const protocolosSincronizados = mysqlTable("protocolos_sincronizados", {
+	id: int().autoincrement().notNull().primaryKey(),
+	numeroProtocolo: varchar({ length: 50 }).notNull().unique(),
+	data: date({ mode: 'string' }).notNull(),
+	valorFrete: decimal({ precision: 10, scale: 2 }).notNull(),
+	pesoTotal: decimal({ precision: 10, scale: 2 }).notNull(),
+	clientes: text().notNull(),
+	motorista: varchar({ length: 100 }),
+	gmailMessageId: varchar({ length: 255 }).notNull(),
+	pdfUrl: text(),
+	sinronizadoEm: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	cargaId: int(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+},
+(table) => [
+	index("protocolo_numero_idx").on(table.numeroProtocolo),
+	index("protocolo_data_idx").on(table.data),
+]);
+
 export const cargas = mysqlTable("cargas", {
 	id: int().autoincrement().notNull(),
 	pasta: mysqlEnum(['IES','IJD','DAJ','MFF','IGU']).notNull(),

@@ -99,21 +99,45 @@ export default function Cargas() {
     return cargasData.filter(carga => carga.rota === filterRota);
   };
 
-  // Função para sincronizar protocolos
+  // Funcao para sincronizar protocolos (usa hooks tRPC definidos abaixo)
   const handleSincronizarProtocolos = async () => {
     setIsSincronizando(true);
     try {
-      const resultado = await trpc.cargas.sincronizarProtocolos.mutate({ diasAtras: 30 });
+      const resultado = await sincronizarProtocolosMutation.mutateAsync({ diasAtras: 30 });
       if (resultado.sucesso) {
-        alert(`Sincronização concluída! ${resultado.processados} protocolo(s) processado(s).`);
+        alert(`Sincronizacao concluida! ${resultado.processados} protocolo(s) processado(s).`);
+        // Buscar protocolos sincronizados para pre-preenchimento
+        await buscarProtocolosSincronizados();
       } else {
-        alert(`Erro na sincronização: ${resultado.erros.join(', ')}`);
+        alert(`Erro na sincronizacao: ${resultado.erros.join(', ')}`);
       }
     } catch (error) {
       console.error('Erro ao sincronizar:', error);
       alert('Erro ao sincronizar protocolos. Verifique o console.');
     } finally {
       setIsSincronizando(false);
+    }
+  };
+
+  // Funcao para buscar protocolos sincronizados e pre-preencher formulario
+  const buscarProtocolosSincronizados = async () => {
+    try {
+      const protocolos = await utils.cargas.obterProtocolosSincronizados.fetch({});
+      if (protocolos && protocolos.length > 0) {
+        // Pre-preencher com o primeiro protocolo disponivel
+        const protocolo = protocolos[0];
+        setFormData(prev => ({
+          ...prev,
+          data: protocolo.data,
+          numeroProtocolo: protocolo.numeroProtocolo,
+          valorFrete: protocolo.valorFrete.toString(),
+          motorista: protocolo.motorista || '',
+        }));
+        // Abrir dialog para que o usuario possa revisar e editar
+        setIsDialogOpen(true);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar protocolos sincronizados:', error);
     }
   };
 
@@ -198,6 +222,9 @@ export default function Cargas() {
       console.error('Erro ao atualizar carga:', error.message);
     },
   });
+
+  // Mutation para sincronizar protocolos do Gmail
+  const sincronizarProtocolosMutation = trpc.cargas.sincronizarProtocolos.useMutation();
 
   const handleEditCarga = (carga: any) => {
     const rotasPadrao = ['GRAMADO', 'CAXIAS', 'FAZENDA', 'CD'];
