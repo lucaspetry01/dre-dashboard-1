@@ -78,6 +78,13 @@
       "when": 1782805711410,
       "tag": "0010_far_moon_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1782806470326,
+      "tag": "0011_normal_gabe_jones",
+      "breakpoints": true
     }
   ]
 }

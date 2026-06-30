@@ -50,6 +50,7 @@ export default function Cargas() {
     manutencao: '',
     numeroProtocolo: '',
     valorFrete: '',
+    pedagio: '',
   });
 
   // Opções pré-definidas
@@ -277,6 +278,7 @@ export default function Cargas() {
       manutencao: (Number(carga.manutencao) || 0).toString(),
       numeroProtocolo: carga.numeroProtocolo || '',
       valorFrete: (Number(carga.valorFrete) || 0).toString(),
+      pedagio: (Number(carga.pedagio) || 0).toString(),
     });
     setIsDialogOpen(true);
   };
@@ -299,6 +301,7 @@ export default function Cargas() {
         manutencao: parseFloat(formData.manutencao) || 0,
         numeroProtocolo: formData.numeroProtocolo,
         valorFrete: parseFloat(formData.valorFrete) || 0,
+        pedagio: parseFloat(formData.pedagio) || 0,
       });
     } else if (selectedPasta) {
       createMutation.mutate({
@@ -315,6 +318,7 @@ export default function Cargas() {
         manutencao: parseFloat(formData.manutencao) || 0,
         numeroProtocolo: formData.numeroProtocolo,
         valorFrete: parseFloat(formData.valorFrete) || 0,
+        pedagio: parseFloat(formData.pedagio) || 0,
       });
     }
   };
@@ -335,6 +339,7 @@ export default function Cargas() {
       manutencao: '',
       numeroProtocolo: '',
       valorFrete: '',
+      pedagio: '',
     });
   };
 
@@ -799,6 +804,17 @@ export default function Cargas() {
                         onChange={(e) => setFormData({ ...formData, valorFrete: e.target.value })}
                         className="bg-slate-700 border-slate-600 text-white"
                         required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Pedágio (R$)</label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={formData.pedagio}
+                        onChange={(e) => setFormData({ ...formData, pedagio: e.target.value })}
+                        className="bg-slate-700 border-slate-600 text-white"
                       />
                     </div>
                   </div>

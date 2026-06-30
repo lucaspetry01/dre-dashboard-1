@@ -18,6 +18,7 @@ export async function criarCarga(data: {
   manutencao: number;
   custoOutros: number;
   valorFrete: number;
+  pedagio?: number;
   numeroProtocolo?: string;
 }) {
   const db = await getDb();
@@ -49,6 +50,7 @@ export async function criarCarga(data: {
     manutencao: data.manutencao.toString() as any,
     custoOutros: data.custoOutros.toString() as any,
     valorFrete: data.valorFrete.toString() as any,
+    pedagio: (data.pedagio || 0).toString() as any,
     valorRetido: valorRetido.toString() as any,
     valorLiquidoFrete: valorLiquidoFrete.toString() as any,
     numeroProtocolo: data.numeroProtocolo || null,
@@ -75,6 +77,7 @@ export async function atualizarCarga(
     manutencao?: number;
     custoOutros?: number;
     valorFrete?: number;
+    pedagio?: number;
     numeroProtocolo?: string;
   }
 ) {
@@ -135,6 +138,7 @@ export async function atualizarCarga(
   if (data.manutencao !== undefined) updateData.manutencao = data.manutencao.toString();
   if (data.custoOutros !== undefined) updateData.custoOutros = data.custoOutros.toString();
   if (data.valorFrete !== undefined) updateData.valorFrete = data.valorFrete.toString();
+  if (data.pedagio !== undefined) updateData.pedagio = data.pedagio.toString();
   if (data.numeroProtocolo !== undefined)
     updateData.numeroProtocolo = data.numeroProtocolo || null;
 

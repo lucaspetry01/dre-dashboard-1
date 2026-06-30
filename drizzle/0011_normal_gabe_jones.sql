@@ -1,0 +1,1 @@
+ALTER TABLE `cargas` ADD `pedagio` decimal(10,2) DEFAULT '0';

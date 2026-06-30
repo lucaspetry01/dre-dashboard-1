@@ -29,6 +29,7 @@ export const cargasRouter = router({
         manutencao: z.number(),
         custoOutros: z.number(),
         valorFrete: z.number(),
+        pedagio: z.number().optional().default(0),
         numeroProtocolo: z.string().optional(),
       })
     )
@@ -53,6 +54,7 @@ export const cargasRouter = router({
         manutencao: z.number().optional(),
         custoOutros: z.number().optional(),
         valorFrete: z.number().optional(),
+        pedagio: z.number().optional(),
         numeroProtocolo: z.string().optional(),
       })
     )
