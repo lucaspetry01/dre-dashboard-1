@@ -508,23 +508,23 @@ export default function Cargas() {
       {/* Formulário e Tabela de Cargas - Ocupando todo o espaço */}
       <div className="grid grid-cols-1 gap-6 flex-1 min-h-[500px]">
         <Card className="bg-slate-800 border-slate-700 flex flex-col flex-1">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-white">Cargas - {selectedPasta} {filterPeriod && `(${filterPeriod === 'semana' ? 'Semana' : filterPeriod === 'mes' ? 'Mês' : 'Semestre'})`} {filterRota && `- ${filterRota}`}</CardTitle>
-            <div className="flex gap-2">
+          <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+            <CardTitle className="text-white text-sm md:text-base">Cargas - {selectedPasta} {filterPeriod && `(${filterPeriod === 'semana' ? 'Semana' : filterPeriod === 'mes' ? 'Mês' : 'Semestre'})`} {filterRota && `- ${filterRota}`}</CardTitle>
+            <div className="flex gap-1 md:gap-2 flex-wrap">
               {selectedForDelete.size > 0 && (
                 <>
                   <Button
                     size="icon"
-                    className="bg-purple-600 hover:bg-purple-700 text-white h-9 w-9"
+                    className="bg-purple-600 hover:bg-purple-700 text-white h-7 w-7 md:h-9 md:w-9"
                     onClick={() => setIsAnalyticsModalOpen(true)}
                     title="Visualizar análise detalhada"
                   >
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-3 h-3 md:w-4 md:h-4" />
                   </Button>
                   {selectedForDelete.size === 1 && (
                     <Button
                       size="icon"
-                      className="bg-blue-600 hover:bg-blue-700 text-white h-9 w-9"
+                      className="bg-blue-600 hover:bg-blue-700 text-white h-7 w-7 md:h-9 md:w-9"
                       onClick={() => {
                         const id = Array.from(selectedForDelete)[0];
                         const carga = cargas?.find((c: any) => c.id === id);
@@ -535,16 +535,16 @@ export default function Cargas() {
                       }}
                       title="Editar carga"
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="w-3 h-3 md:w-4 md:h-4" />
                     </Button>
                   )}
                   <Button
                     size="icon"
-                    className="bg-red-600 hover:bg-red-700 text-white h-9 w-9"
+                    className="bg-red-600 hover:bg-red-700 text-white h-7 w-7 md:h-9 md:w-9"
                     onClick={handleDeleteSelected}
                     title="Excluir cargas"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
                   </Button>
                 </>
               )}
@@ -588,14 +588,14 @@ export default function Cargas() {
                   />
                   <Button
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 text-xs md:text-sm px-2 md:px-4"
+                    className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 text-xs h-7 md:h-auto px-2 md:px-4"
                     title="Sincronizar protocolo do Gmail"
                     onClick={handleSincronizarProtocolos}
                     disabled={isSincronizando}
                   >
-                    <RefreshCw className={`w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 ${isSincronizando ? 'animate-spin' : ''}`} />
+                    <RefreshCw className={`w-3 h-3 md:w-4 md:h-4 mr-1 ${isSincronizando ? 'animate-spin' : ''}`} />
                     <span className="hidden md:inline">{isSincronizando ? 'Sincronizando...' : 'Sincronizar'}</span>
-                    <span className="md:hidden">{isSincronizando ? 'Sinc...' : 'Sinc'}</span>
+                    <span className="md:hidden">Sinc</span>
                   </Button>
                 </div>
               <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -851,15 +851,15 @@ export default function Cargas() {
               <div className="text-center text-slate-400">Carregando cargas...</div>
             ) : cargas && cargas.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-slate-300">
+                <table className="w-full text-xs md:text-sm text-slate-300">
                   <thead className="border-b border-slate-700">
                     <tr>
-                      <th className="text-left py-2 px-2 w-6"></th>
-                      <th className="text-left py-2 px-2 text-sm">Data</th>
-                      <th className="text-left py-2 px-2 text-sm">Rota</th>
-                      <th className="text-left py-2 px-2 text-sm">Motorista</th>
-                      <th className="text-left py-2 px-2 text-sm">Placa</th>
-                      <th className="text-right py-2 px-2 text-sm">Frete</th>
+                      <th className="text-left py-1 md:py-2 px-1 md:px-2 w-6"></th>
+                      <th className="text-left py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Data</th>
+                      <th className="text-left py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Rota</th>
+                      <th className="text-left py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Motorista</th>
+                      <th className="text-left py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Placa</th>
+                      <th className="hidden md:table-cell text-right py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Frete</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -876,8 +876,8 @@ export default function Cargas() {
                         dataObj = new Date();
                       }
                       const dateParts = dataObj.toLocaleDateString('pt-BR').split('/');
-                      const dataEncurtada = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]?.slice(-2)}`;
-                      const diaSemana = dataObj.toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3).toUpperCase();
+                      const dataEncurtada = `${dateParts[0]}/${dateParts[1]}`;
+                      const diaSemana = dataObj.toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 1).toUpperCase();
                       
                       // Verificar se a semana mudou em relação ao registro anterior
                       let showWeekSeparator = false;
@@ -921,16 +921,16 @@ export default function Cargas() {
                               onChange={() => handleToggleCheckbox(carga.id)}
                             />
                           </td>
-                          <td className="py-2 px-2 text-sm">
-                            <div className="flex items-center gap-1">
-                              <span className="text-slate-400 text-xs font-semibold">{diaSemana}</span>
-                              <span>{dataEncurtada}</span>
-                            </div>
-                          </td>
-                          <td className="py-2 px-2 text-sm">{carga.rota}</td>
-                          <td className="py-2 px-2 text-sm">{carga.motorista}</td>
-                          <td className="py-2 px-2 text-sm font-semibold">{carga.pasta}</td>
-                          <td className="text-right py-2 px-2 text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
+                        <td className="py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">
+                          <div className="flex items-center gap-0.5 md:gap-1">
+                            <span className="text-slate-400 text-xs font-semibold">{diaSemana}</span>
+                            <span className="whitespace-nowrap">{dataEncurtada}</span>
+                          </div>
+                        </td>
+                        <td className="py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm truncate">{carga.rota}</td>
+                        <td className="py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm truncate">{carga.motorista}</td>
+                        <td className="py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm font-semibold">{carga.pasta}</td>
+                        <td className="hidden md:table-cell text-right py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
                         </tr>
                       );
                       return rows;
