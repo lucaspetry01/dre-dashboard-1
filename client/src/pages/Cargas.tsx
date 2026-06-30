@@ -854,12 +854,12 @@ export default function Cargas() {
                 <table className="w-full text-xs md:text-sm text-slate-300">
                   <thead className="border-b border-slate-700">
                     <tr>
-                      <th className="text-left py-1 md:py-2 px-1 md:px-2 w-6"></th>
-                      <th className="text-left py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Data</th>
-                      <th className="text-left py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Rota</th>
-                      <th className="text-left py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Motorista</th>
-                      <th className="text-left py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Placa</th>
-                      <th className="hidden md:table-cell text-right py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">Frete</th>
+                      <th className="text-left py-1 md:py-2 px-0.5 md:px-1 w-5"></th>
+                      <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Data</th>
+                      <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Rota</th>
+                      <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Motorista</th>
+                      <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Placa</th>
+                      <th className="hidden md:table-cell text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Frete</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -877,7 +877,7 @@ export default function Cargas() {
                       }
                       const dateParts = dataObj.toLocaleDateString('pt-BR').split('/');
                       const dataEncurtada = `${dateParts[0]}/${dateParts[1]}`;
-                      const diaSemana = dataObj.toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 1).toUpperCase();
+                      const diaSemana = dataObj.toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3).toUpperCase();
                       
                       // Verificar se a semana mudou em relação ao registro anterior
                       let showWeekSeparator = false;
@@ -921,16 +921,16 @@ export default function Cargas() {
                               onChange={() => handleToggleCheckbox(carga.id)}
                             />
                           </td>
-                        <td className="py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm">
-                          <div className="flex items-center gap-0.5 md:gap-1">
+                        <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">
+                          <div className="flex items-center gap-0.5">
                             <span className="text-slate-400 text-xs font-semibold">{diaSemana}</span>
                             <span className="whitespace-nowrap">{dataEncurtada}</span>
                           </div>
                         </td>
-                        <td className="py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm truncate">{carga.rota}</td>
-                        <td className="py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm truncate">{carga.motorista}</td>
-                        <td className="py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm font-semibold">{carga.pasta}</td>
-                        <td className="hidden md:table-cell text-right py-1 md:py-2 px-1 md:px-2 text-xs md:text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
+                        <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm truncate">{carga.rota}</td>
+                        <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm truncate">{carga.motorista}</td>
+                        <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm font-semibold">{carga.pasta}</td>
+                        <td className="hidden md:table-cell text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
                         </tr>
                       );
                       return rows;
