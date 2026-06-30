@@ -18,8 +18,12 @@ export interface ProtocoloData {
  */
 export function extrairDadosProtocolo(pdfText: string): ProtocoloData {
   try {
-    // Extrair número do protocolo (formato: "Protocolo: 112193")
-    const protocoloMatch = pdfText.match(/Protocolo[:\s]+([\d]+)/i);
+    // Extrair número do protocolo. No layout real, o rótulo "Protocolo:" aparece
+    // e o número (4+ dígitos) vem em uma linha seguinte. Evita capturar o "1" de "1 / 1".
+    const protocoloMatch =
+      pdfText.match(/Protocolo:\s*[\r\n]+[\s\S]*?(\d{4,})/i) ||
+      pdfText.match(/Protocolo[:\s]+(\d{4,})/i) ||
+      pdfText.match(/Protocolo[:\s]+([\d]+)/i);
     const numeroProtocolo = protocoloMatch ? protocoloMatch[1] : '';
 
     // Extrair data (formato: "26 de julho de 2026" ou "26/07/2026")

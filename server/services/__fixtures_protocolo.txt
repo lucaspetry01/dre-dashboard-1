@@ -1,0 +1,35 @@
+                                                                                                                                                                                                                          Página: 1
+                                                                                                           Administração de Vendas
+                                                                                                                  Protocolo de Entregas                                                     Protocolo:
+1 / 1 - ALISUL ALIMENTOS S.A. - SAO LEOPOLDO                                                                                                                                                   112193
+
+                         Recebi as mercadorias constantes nas notas fiscais eletrônicas abaixo relacionadas, para o devido transporte e entrega nos endereços dos clientes
+                         especificados nos respectivos documentos emitidos pela ALISUL ALIMENTOS S.A..
+                                                         Dados da Nota Fiscal                                                                                 Identificação e Assinatura do Cliente
+
+Nro. NF      Cliente                                                      Valor NF        Vl. Frete/Tipo     Peso Liquido       Data                  Nome          CNPJ/CPF                                 Assinatura
+
+581.106      COOP SANTA CLARA LTDA                                         6.367,16             552,20/B         2.500,000
+
+581.107      MOINHO GUARESE LTDA                                            807,64               34,64/B          150,000
+
+                    Contagem NF-e(s): 2                                      Valor Total NF-e: 7.174,80          Valor Total Frete:                  586,84                              Peso Bruto Total:    2.660,600
+                                                                                                                                                                                       Peso Líquido Total:    2.650,000
+
+                    Transportador: (190999) - TRANSPORTES MORAES & PETRY LTDA ME                                                                                Placa: IJD 3H51
+                    Motorista:
+                    Endereço: RUA CACAPAVA, 370
+                    Cidade: LINDOLFO COLLOR           UF: RS
+
+                                                                                                                SAO LEOPOLDO, 26 de junho de 2026.
+
+
+
+
+                                                                                                  DEVOLVER ASSINADO E CARIMBADO
+
+
+
+
+SysTeam - 9.9.10.183 - NFE03G01 - CR9 - 11052026 - crpRelato - FATSLO - 26/06/2026 - 10:19 - \Lançamentos\Protocolos Entregas
+

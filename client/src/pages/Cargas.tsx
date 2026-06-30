@@ -7,6 +7,7 @@ import { Plus, Pencil, Eye, Trash2, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { ProtocolReviewDialog } from '@/components/ProtocolReviewDialog';
+import { GoogleAuthButton } from '@/components/GoogleAuthButton';
 import { showToast } from '@/components/ToastContainer';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
@@ -581,6 +582,10 @@ export default function Cargas() {
                     Nova Carga
                   </Button>
                 )}
+                <GoogleAuthButton
+                  onSuccess={() => showToast('Gmail conectado com sucesso!', 'success')}
+                  onError={(error) => showToast(`Erro ao conectar Gmail: ${error}`, 'error')}
+                />
                 <Button
                   size="sm"
                   className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"

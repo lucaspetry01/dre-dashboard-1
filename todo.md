@@ -292,3 +292,23 @@
 - [x] Toast de erro: mostrar mensagem de erro com detalhe
 - [x] Toast de info: "Sincronizando... aguarde"
 - [x] Toasts desaparecem automaticamente após 4 segundos
+
+## Feature - Integração com Google OAuth (Sessão atual)
+
+- [x] Instalar dependências googleapis e google-auth-library
+- [x] Criar serviço googleOAuthService.ts com funções de autorização
+- [x] Implementar getAuthorizationUrl() para gerar URL de login do Google
+- [x] Implementar exchangeCodeForToken() para trocar código por token
+- [x] Implementar getGmailClient() para obter cliente Gmail autenticado
+- [x] Implementar validateGoogleCredentials() para validar credenciais
+- [x] Criar rotas de Google OAuth (authorize, callback, health check)
+- [x] Registrar rotas no servidor Express
+- [x] Configurar credenciais do Google (CLIENT_ID, CLIENT_SECRET)
+- [x] Criar teste de validação das credenciais (3 testes passando)
+- [x] Criar componente GoogleAuthButton para UI
+- [x] Integrar GoogleAuthButton na página de Cargas
+- [ ] Atualizar gmailProtocoloIntegration.ts para usar token autenticado
+- [ ] Testar fluxo completo: Clique em "Conectar Gmail" → Autorizar → Sincronizar protocolos
+- [ ] Armazenar token do Google de forma segura (cookie/sessão)
+- [ ] Implementar refresh token para manter acesso persistente
+- [ ] Adicionar indicador visual de status de conexão com Gmail
