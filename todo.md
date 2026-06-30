@@ -320,6 +320,7 @@
 - [x] Corrigir cálculo de Custo Total: Diesel + Chapa + Custos Outros + Valor Retido
 - [x] Corrigir cálculo de Lucro: Frete - Custo Total
 - [x] Remover duplicação de variáveis
+- [x] Adicionar tooltip informativo ao "Valor Retido (15%)"
 - [x] 126 testes continuam passando
 
 ## Bug Fix - Cálculo de Custo Total, Tabela e Formulário (Sessão atual)

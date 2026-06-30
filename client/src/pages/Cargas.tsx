@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Plus, Pencil, Eye, Trash2, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'wouter';
@@ -787,8 +788,14 @@ export default function Cargas() {
                       <span className="text-slate-300">Valor Frete:</span>
                       <span className="text-blue-400 font-semibold">R$ {formatBRL(valorFrete)}</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-300">Valor Retido (15%):</span>
+                    <div className="flex justify-between items-center group relative">
+                      <span className="text-slate-300 cursor-help flex items-center gap-1">
+                        Valor Retido (15%)
+                        <span className="text-xs text-slate-400">i</span>
+                        <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-slate-900 text-slate-200 text-xs rounded px-2 py-1 whitespace-nowrap border border-slate-600 z-10">
+                          Retencao de 15% do frete
+                        </div>
+                      </span>
                       <span className="text-yellow-400 font-semibold">R$ {formatBRL(valorRetido)}</span>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-slate-600">
