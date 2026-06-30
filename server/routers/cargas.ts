@@ -19,6 +19,7 @@ export const cargasRouter = router({
       z.object({
         pasta: z.enum(['IES', 'IJD', 'DAJ', 'MFF', 'IGU']),
         data: z.string(), // YYYY-MM-DD
+        tipo: z.enum(['SAO_LEO', 'ESTEIO']).default('SAO_LEO'),
         rota: z.string().optional(),
         motorista: z.string().optional(),
         valorCombustivel: z.number(),
@@ -42,6 +43,7 @@ export const cargasRouter = router({
     .input(
       z.object({
         id: z.number(),
+        tipo: z.enum(['SAO_LEO', 'ESTEIO']).optional(),
         rota: z.string().optional(),
         motorista: z.string().optional(),
         valorCombustivel: z.number().optional(),

@@ -288,6 +288,7 @@ export default function Cargas() {
     if (editingId) {
       updateMutation.mutate({
         id: editingId,
+        tipo: formData.tipo,
         rota: rotaFinal,
         motorista: formData.motorista,
         valorCombustivel: valorCombustivelCalculado,
@@ -303,6 +304,7 @@ export default function Cargas() {
       createMutation.mutate({
         pasta: selectedPasta,
         data: formData.data,
+        tipo: formData.tipo,
         rota: rotaFinal,
         motorista: formData.motorista,
         valorCombustivel: valorCombustivelCalculado,

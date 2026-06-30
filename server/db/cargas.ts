@@ -8,6 +8,7 @@ import { eq } from 'drizzle-orm';
 export async function criarCarga(data: {
   pasta: 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
   data: string; // YYYY-MM-DD
+  tipo?: 'SAO_LEO' | 'ESTEIO';
   rota?: string;
   motorista?: string;
   valorCombustivel: number;
@@ -37,6 +38,7 @@ export async function criarCarga(data: {
 
   const result = await db.insert(cargas).values({
     pasta: data.pasta,
+    tipo: (data.tipo || 'SAO_LEO') as any,
     data: data.data as any,
     rota: data.rota || null,
     motorista: data.motorista || null,
@@ -63,6 +65,7 @@ export async function criarCarga(data: {
 export async function atualizarCarga(
   id: number,
   data: {
+    tipo?: 'SAO_LEO' | 'ESTEIO';
     rota?: string;
     motorista?: string;
     valorCombustivel?: number;
@@ -120,6 +123,7 @@ export async function atualizarCarga(
   };
 
   // Adicionar campos opcionais se fornecidos
+  if (data.tipo !== undefined) updateData.tipo = data.tipo;
   if (data.rota !== undefined) updateData.rota = data.rota || null;
   if (data.motorista !== undefined) updateData.motorista = data.motorista || null;
   if (data.valorCombustivel !== undefined)
