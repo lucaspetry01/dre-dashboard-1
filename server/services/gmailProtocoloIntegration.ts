@@ -35,9 +35,9 @@ async function extrairTextoPdf(buffer: Buffer): Promise<string> {
 
 /**
  * Busca PDFs de protocolos no Gmail dos últimos N dias
- * Usa as credenciais do Gmail já conectadas no Manus via Forge API
+ * Tenta usar o Google OAuth token se disponível, senão usa Forge API como fallback
  */
-export async function buscarProtocolosDoGmail(diasAtras: number = 30): Promise<GmailSearchResult[]> {
+export async function buscarProtocolosDoGmail(diasAtras: number = 30, googleAccessToken?: string): Promise<GmailSearchResult[]> {
   try {
     console.log(`Buscando protocolos do Gmail dos últimos ${diasAtras} dias...`);
 
@@ -45,6 +45,12 @@ export async function buscarProtocolosDoGmail(diasAtras: number = 30): Promise<G
     const dataInicio = new Date(dataFim.getTime() - diasAtras * 24 * 60 * 60 * 1000);
     const formatoData = (d: Date) => d.toISOString().split('T')[0];
 
+    // Se temos token do Google OAuth, usa a API do Google diretamente
+    if (googleAccessToken) {
+      return await buscarProtocolosComGoogleAPI(googleAccessToken, dataInicio, dataFim);
+    }
+
+    // Fallback: usa Forge API do Manus
     const forgeApiUrl = process.env.BUILT_IN_FORGE_API_URL;
     const forgeApiKey = process.env.BUILT_IN_FORGE_API_KEY;
 
@@ -107,6 +113,80 @@ export async function buscarProtocolosDoGmail(diasAtras: number = 30): Promise<G
 }
 
 /**
+ * Busca protocolos usando Google Gmail API diretamente com token OAuth
+ */
+async function buscarProtocolosComGoogleAPI(accessToken: string, dataInicio: Date, dataFim: Date): Promise<GmailSearchResult[]> {
+  try {
+    const { getGmailClient } = await import('./googleOAuthService.js');
+    const gmail = getGmailClient(accessToken);
+
+    const formatoData = (d: Date) => d.toISOString().split('T')[0];
+    const query = `has:attachment filename:pdf after:${formatoData(dataInicio)} before:${formatoData(dataFim)}`;
+
+    const response = await gmail.users.messages.list({
+      userId: 'me',
+      q: query,
+      maxResults: 50,
+    });
+
+    const messages = response.data.messages || [];
+    const resultados: GmailSearchResult[] = [];
+
+    for (const msg of messages) {
+      if (!msg.id) continue;
+
+      const fullMessage = await gmail.users.messages.get({
+        userId: 'me',
+        id: msg.id,
+        format: 'full',
+      });
+
+      const headers = fullMessage.data.payload?.headers || [];
+      const from = headers.find((h: any) => h.name === 'From')?.value || '';
+      const subject = headers.find((h: any) => h.name === 'Subject')?.value || '';
+      const date = new Date(headers.find((h: any) => h.name === 'Date')?.value || new Date());
+
+      const attachments: Array<{ filename: string; mimeType: string; data: Buffer }> = [];
+
+      // Procura por attachments
+      const parts = fullMessage.data.payload?.parts || [];
+      for (const part of parts) {
+        if (part.filename && part.filename.toLowerCase().endsWith('.pdf')) {
+          const attachment = await gmail.users.messages.attachments.get({
+            userId: 'me',
+            messageId: msg.id,
+            id: part.body?.attachmentId || '',
+          });
+
+          const data = attachment.data.data || '';
+          attachments.push({
+            filename: part.filename,
+            mimeType: part.mimeType || 'application/pdf',
+            data: Buffer.from(data, 'base64'),
+          });
+        }
+      }
+
+      if (attachments.length > 0) {
+        resultados.push({
+          messageId: msg.id,
+          from,
+          subject,
+          date,
+          attachments,
+        });
+      }
+    }
+
+    console.log(`Encontrados ${resultados.length} e-mail(s) com PDF(s) de protocolo via Google API`);
+    return resultados;
+  } catch (error) {
+    console.error('Erro ao buscar protocolos via Google API:', error);
+    return [];
+  }
+}
+
+/**
  * Valida se protocolo já foi sincronizado
  */
 export async function verificarDuplicata(numeroProtocolo: string): Promise<boolean> {
@@ -128,9 +208,9 @@ export async function verificarDuplicata(numeroProtocolo: string): Promise<boole
 /**
  * Sincroniza protocolos do Gmail: busca PDFs, extrai dados, grava novos protocolos
  */
-export async function sincronizarProtocolosDoGmail(diasAtras: number = 30) {
+export async function sincronizarProtocolosDoGmail(diasAtras: number = 30, googleAccessToken?: string) {
   try {
-    const gmailResults = await buscarProtocolosDoGmail(diasAtras);
+    const gmailResults = await buscarProtocolosDoGmail(diasAtras, googleAccessToken);
     const db = getDb();
     const protocolosProcessados: any[] = [];
     const erros: string[] = [];

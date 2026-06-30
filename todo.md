@@ -307,7 +307,8 @@
 - [x] Criar teste de validação das credenciais (3 testes passando)
 - [x] Criar componente GoogleAuthButton para UI
 - [x] Integrar GoogleAuthButton na página de Cargas
-- [ ] Atualizar gmailProtocoloIntegration.ts para usar token autenticado
+- [x] Atualizar gmailProtocoloIntegration.ts para usar token autenticado
+- [x] Implementar buscarProtocolosComGoogleAPI() para usar Google API diretamente
 - [ ] Testar fluxo completo: Clique em "Conectar Gmail" → Autorizar → Sincronizar protocolos
 - [ ] Armazenar token do Google de forma segura (cookie/sessão)
 - [ ] Implementar refresh token para manter acesso persistente
