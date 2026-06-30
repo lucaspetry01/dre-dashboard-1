@@ -102,4 +102,18 @@ export const cargasRouter = router({
     .query(async ({ input }: any) => {
       return resumoCargasPorPasta(input);
     }),
+
+  /**
+   * Sincroniza protocolos do Gmail
+   */
+  sincronizarProtocolos: publicProcedure
+    .input(
+      z.object({
+        diasAtras: z.number().optional().default(30),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { sincronizarProtocolos } = await import('../services/gmailProtocoloSync.js');
+      return sincronizarProtocolos(input.diasAtras);
+    }),
 });

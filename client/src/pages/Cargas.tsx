@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Eye, Trash2, RefreshCw } from 'lucide-react';
+import { useState } from 'react';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
 
@@ -27,6 +27,7 @@ export default function Cargas() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [filterPeriod, setFilterPeriod] = useState<'semana' | 'mes' | 'mesAnterior' | 'semestre' | 'hoje' | null>(null);
   const [filterRota, setFilterRota] = useState<string | null>(null);
+  const [isSincronizando, setIsSincronizando] = useState(false);
   const [formData, setFormData] = useState({
     data: '',
     rota: '',
@@ -96,6 +97,24 @@ export default function Cargas() {
   const filterCargasByRota = (cargasData: any[]) => {
     if (!filterRota) return cargasData;
     return cargasData.filter(carga => carga.rota === filterRota);
+  };
+
+  // Função para sincronizar protocolos
+  const handleSincronizarProtocolos = async () => {
+    setIsSincronizando(true);
+    try {
+      const resultado = await trpc.cargas.sincronizarProtocolos.mutate({ diasAtras: 30 });
+      if (resultado.sucesso) {
+        alert(`Sincronização concluída! ${resultado.processados} protocolo(s) processado(s).`);
+      } else {
+        alert(`Erro na sincronização: ${resultado.erros.join(', ')}`);
+      }
+    } catch (error) {
+      console.error('Erro ao sincronizar:', error);
+      alert('Erro ao sincronizar protocolos. Verifique o console.');
+    } finally {
+      setIsSincronizando(false);
+    }
   };
 
   // Cálculo automático do valor do combustível
@@ -510,14 +529,13 @@ export default function Cargas() {
                 )}
                 <Button
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
                   title="Sincronizar protocolo do Gmail"
-                  onClick={() => {
-                    alert('Funcionalidade de sincronização de protocolo em breve!');
-                  }}
+                  onClick={handleSincronizarProtocolos}
+                  disabled={isSincronizando}
                 >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Sincronizar Protocolo
+                  <RefreshCw className={`w-4 h-4 mr-2 ${isSincronizando ? 'animate-spin' : ''}`} />
+                  {isSincronizando ? 'Sincronizando...' : 'Sincronizar Protocolo'}
                 </Button>
               <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
