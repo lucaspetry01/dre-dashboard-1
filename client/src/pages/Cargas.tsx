@@ -877,7 +877,11 @@ export default function Cargas() {
                       <th className="text-left py-1 px-1 text-xs">Motorista</th>
                       <th className="text-left py-1 px-1 text-xs">Placa</th>
                       <th className="text-right py-1 px-1 text-xs">Frete</th>
-                      <th className="text-right py-1 px-1 text-xs">Custo</th>
+                      <th className="text-right py-1 px-1 text-xs">Retido (15%)</th>
+                      <th className="text-right py-1 px-1 text-xs">Diesel</th>
+                      <th className="text-right py-1 px-1 text-xs">Chapa</th>
+                      <th className="text-right py-1 px-1 text-xs">Outros</th>
+                      <th className="text-right py-1 px-1 text-xs">Custo Total</th>
                       <th className="text-right py-1 px-1 text-xs">Lucro</th>
                     </tr>
                   </thead>
@@ -911,7 +915,11 @@ export default function Cargas() {
                         <td className="py-1 px-1 text-xs">{carga.motorista}</td>
                         <td className="py-1 px-1 text-xs font-semibold">{carga.pasta}</td>
                         <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
-                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.custoTotal || 0))}</td>
+                        <td className="text-right py-1 px-1 text-xs text-yellow-400">R$ {formatBRL(Number(carga.valorFrete || 0) * 0.15)}</td>
+                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorCombustivel || 0))}</td>
+                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorChapa || 0))}</td>
+                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.custoOutros || 0))}</td>
+                        <td className="text-right py-1 px-1 text-xs font-semibold">R$ {formatBRL(Number(carga.custoTotal || 0))}</td>
                         <td className={`text-right py-1 px-1 text-xs font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                           R$ {formatBRL(Number(carga.lucro || 0))}
                         </td>

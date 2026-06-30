@@ -318,10 +318,13 @@
 - [ ] Aguardar propagação de configurações do Google (até 5 minutos)
 - [ ] Testar fluxo completo após propagação
 
-## Bug Fix - Cálculo de Custo Total (Sessão atual)
+## Bug Fix - Cálculo de Custo Total e Tabela de Listagem (Sessão atual)
 
 - [x] Remover custos fixos (motorista + chapas) do cálculo de custo total
 - [x] Custo Total agora = Combustível + Manutenção + Custos Outros
 - [x] Coluna de Custo na tabela de listagem já exibe os valores corretos
-- [x] Lucro recalculado corretamente (Frete Líquido - Custo Total)
+- [x] Lucro recalculado corretamente (Frete - Custo Total)
+- [x] Adicionar colunas de detalhes na tabela: Retido, Diesel, Chapa, Outros, Custo Total
+- [x] Remover coluna Valor Líquido do Frete
+- [x] Cada carga mostra seus custos individuais na listagem
 - [x] 126 testes continuam passando
