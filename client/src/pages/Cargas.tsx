@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Plus, Pencil, Eye, Trash2, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { ProtocolReviewDialog } from '@/components/ProtocolReviewDialog';
 import { GoogleAuthButton } from '@/components/GoogleAuthButton';
@@ -208,6 +208,22 @@ export default function Cargas() {
   const isLoading = selectedPasta ? isLoadingPorPasta : isLoadingTodas;
 
   const filteredCargas = filterCargasByRota(filterCargasByPeriod(cargas));
+
+  // Query para buscar pedágio automaticamente
+  const { data: pedagioData } = trpc.ofx.buscarPedagio.useQuery(
+    { data: formData.data, placa: formData.chapa1 || '' },
+    { enabled: !!formData.data && !!formData.chapa1 && isDialogOpen }
+  );
+
+  // Auto-preencher pedágio quando encontrado
+  useEffect(() => {
+    if (pedagioData?.valor && isDialogOpen && !editingId) {
+      setFormData(prev => ({
+        ...prev,
+        pedagio: pedagioData.valor.toString()
+      }));
+    }
+  }, [pedagioData, isDialogOpen, editingId]);
 
   // Totalizadores
   const totalFaturado = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.valorFrete || 0), 0) || 0;

@@ -436,3 +436,40 @@ export async function updateTransacaoCategoria(
     return false;
   }
 }
+
+
+/**
+ * Busca o valor total de pedágio para uma placa em uma data específica
+ * Filtra por categoria PEDÁGIOS / TAGS e busca a placa na descrição
+ */
+export async function buscarPedagioPorDataEPlaca(data: string, placa: string): Promise<number> {
+  const db = await getDb();
+  if (!db || !data || !placa) return 0;
+
+  try {
+    // Converter data YYYY-MM-DD para timestamp
+    const dataObj = new Date(data + 'T00:00:00Z');
+    const proximoDia = new Date(dataObj);
+    proximoDia.setDate(proximoDia.getDate() + 1);
+
+    // Buscar transações da data com categoria PEDÁGIOS / TAGS
+    const result = await db
+      .select({ valor: transacoes.valor })
+      .from(transacoes)
+      .where(
+        and(
+          gte(transacoes.dataTimestamp, dataObj),
+          lt(transacoes.dataTimestamp, proximoDia),
+          eq(transacoes.categoria, 'PEDÁGIOS / TAGS'),
+          // Buscar placa na descrição (case-insensitive)
+          sql`LOWER(${transacoes.descricao}) LIKE LOWER(${`%${placa}%`})`
+        )
+      );
+
+    // Somar todos os valores encontrados
+    return result.reduce((sum, row) => sum + Number(row.valor), 0);
+  } catch (error) {
+    console.error('Erro ao buscar pedágio:', error);
+    return 0;
+  }
+}

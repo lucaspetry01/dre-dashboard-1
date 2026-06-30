@@ -7,6 +7,7 @@ import {
   listTransacoes,
   listUploads,
   updateTransacaoCategoria,
+  buscarPedagioPorDataEPlaca,
 } from '../db/transacoes';
 import { getCategoriaIdPorNome, criarRegra, aplicarRegrasRetroativamente } from '../db/regras';
 
@@ -157,4 +158,19 @@ export const ofxRouter = router({
       };
     }
   }),
+
+  /**
+   * Busca o valor total de pedágio para uma placa em uma data específica
+   */
+  buscarPedagio: publicProcedure
+    .input(
+      z.object({
+        data: z.string(), // YYYY-MM-DD
+        placa: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const valor = await buscarPedagioPorDataEPlaca(input.data, input.placa);
+      return { valor };
+    }),
 });
