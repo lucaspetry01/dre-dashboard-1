@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte, sql, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, gte, lte, lt, sql, isNull, or } from 'drizzle-orm';
 import { getDb } from '../db';
 import { transacoes, uploads, type InsertTransacao, type InsertUpload } from '../../drizzle/schema';
 
@@ -459,7 +459,7 @@ export async function buscarPedagioPorDataEPlaca(data: string, placa: string): P
       .where(
         and(
           gte(transacoes.dataTimestamp, dataObj),
-          lt(transacoes.dataTimestamp, proximoDia),
+          lte(transacoes.dataTimestamp, proximoDia),
           eq(transacoes.categoria, 'PEDÁGIOS / TAGS'),
           // Buscar placa na descrição (case-insensitive)
           sql`LOWER(${transacoes.descricao}) LIKE LOWER(${`%${placa}%`})`
@@ -471,5 +471,50 @@ export async function buscarPedagioPorDataEPlaca(data: string, placa: string): P
   } catch (error) {
     console.error('Erro ao buscar pedágio:', error);
     return 0;
+  }
+}
+
+
+/**
+ * Lista todos os pedágios de uma data específica
+ * Retorna array com detalhes de cada transação de pedágio
+ */
+export async function listarPedagiosPorData(data: string): Promise<Array<{
+  id: number;
+  descricao: string;
+  valor: string;
+  data: string;
+  documento: string;
+}>> {
+  const db = await getDb();
+  if (!db || !data) return [];
+
+  try {
+    const dataObj = new Date(data + 'T00:00:00Z');
+    const proximoDia = new Date(dataObj);
+    proximoDia.setDate(proximoDia.getDate() + 1);
+
+    const result = await db
+      .select({
+        id: transacoes.id,
+        descricao: transacoes.descricao,
+        valor: transacoes.valor,
+        data: transacoes.data,
+        documento: transacoes.documento,
+      })
+      .from(transacoes)
+      .where(
+        and(
+          gte(transacoes.dataTimestamp, dataObj),
+          lte(transacoes.dataTimestamp, proximoDia),
+          eq(transacoes.categoria, 'PEDÁGIOS / TAGS')
+        )
+      )
+      .orderBy(transacoes.dataTimestamp);
+
+    return result;
+  } catch (error) {
+    console.error('Erro ao listar pedágios:', error);
+    return [];
   }
 }

@@ -36,6 +36,8 @@ export default function Cargas() {
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const [protocolosParaRevisao, setProtocolosParaRevisao] = useState<any[]>([]);
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
+  const [isPedagioModalOpen, setIsPedagioModalOpen] = useState(false);
+  const [pedagiosSelecionados, setPedagiosSelecionados] = useState<Set<number>>(new Set());
   const [formData, setFormData] = useState({
     data: '',
     tipo: 'SAO_LEO',
@@ -214,6 +216,14 @@ export default function Cargas() {
     { data: formData.data, placa: formData.chapa1 || '' },
     { enabled: !!formData.data && !!formData.chapa1 && isDialogOpen }
   );
+
+  // Query para listar todos os pedagogios da data
+  const { data: pedagiosListaData } = trpc.ofx.listarPedagiosPorDataProc.useQuery(
+    { data: formData.data },
+    { enabled: !!formData.data && isPedagioModalOpen }
+  );
+
+  const pedagiosList = pedagiosListaData?.pedagios || [];
 
   // Auto-preencher pedágio quando encontrado
   useEffect(() => {
@@ -824,14 +834,23 @@ export default function Cargas() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-1">Pedágio (R$)</label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        value={formData.pedagio}
-                        onChange={(e) => setFormData({ ...formData, pedagio: e.target.value })}
-                        className="bg-slate-700 border-slate-600 text-white"
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          value={formData.pedagio}
+                          onChange={(e) => setFormData({ ...formData, pedagio: e.target.value })}
+                          className="bg-slate-700 border-slate-600 text-white flex-1"
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => setIsPedagioModalOpen(true)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 h-10"
+                        >
+                          Pesquisar
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
@@ -1056,3 +1075,70 @@ export default function Cargas() {
     </div>
   );
 }
+
+        {/* Modal de Pesquisa de Pedagogios */}
+        <Dialog open={isPedagioModalOpen} onOpenChange={setIsPedagioModalOpen}>
+          <DialogContent className="max-w-2xl bg-slate-800 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-white">Pedagogios da Data: {formData.data}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {pedagiosList.length === 0 ? (
+                <p className="text-slate-400 text-center py-8">Nenhum pedagio encontrado para esta data</p>
+              ) : (
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {pedagiosList.map((ped: any) => (
+                    <div key={ped.id} className="flex items-center gap-3 p-3 bg-slate-700 rounded">
+                      <input
+                        type="checkbox"
+                        checked={pedagiosSelecionados.has(ped.id)}
+                        onChange={(e) => {
+                          const newSet = new Set(pedagiosSelecionados);
+                          if (e.target.checked) {
+                            newSet.add(ped.id);
+                          } else {
+                            newSet.delete(ped.id);
+                          }
+                          setPedagiosSelecionados(newSet);
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <div className="flex-1">
+                        <p className="text-white text-sm">{ped.descricao}</p>
+                        <p className="text-slate-400 text-xs">{ped.documento}</p>
+                      </div>
+                      <p className="text-green-400 font-semibold">R$ {Number(ped.valor).toFixed(2)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-2 justify-end pt-4 border-t border-slate-600">
+                <Button
+                  onClick={() => {
+                    const total = pedagiosList
+                      .filter((p: any) => pedagiosSelecionados.has(p.id))
+                      .reduce((sum: number, p: any) => sum + Number(p.valor), 0);
+                    setFormData(prev => ({
+                      ...prev,
+                      pedagio: total.toString()
+                    }));
+                    setIsPedagioModalOpen(false);
+                    setPedagiosSelecionados(new Set());
+                  }}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Confirmar Selecao
+                </Button>
+                <Button
+                  onClick={() => {
+                    setIsPedagioModalOpen(false);
+                    setPedagiosSelecionados(new Set());
+                  }}
+                  className="bg-slate-600 hover:bg-slate-700 text-white"
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>

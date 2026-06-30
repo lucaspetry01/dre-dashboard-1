@@ -8,6 +8,7 @@ import {
   listUploads,
   updateTransacaoCategoria,
   buscarPedagioPorDataEPlaca,
+  listarPedagiosPorData,
 } from '../db/transacoes';
 import { getCategoriaIdPorNome, criarRegra, aplicarRegrasRetroativamente } from '../db/regras';
 
@@ -172,5 +173,19 @@ export const ofxRouter = router({
     .query(async ({ input }) => {
       const valor = await buscarPedagioPorDataEPlaca(input.data, input.placa);
       return { valor };
+    }),
+
+  /**
+   * Lista todos os pedagogios de uma data especifica
+   */
+  listarPedagiosPorDataProc: publicProcedure
+    .input(
+      z.object({
+        data: z.string(), // YYYY-MM-DD
+      })
+    )
+    .query(async ({ input }) => {
+      const pedagios = await listarPedagiosPorData(input.data);
+      return { pedagios };
     }),
 });
