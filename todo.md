@@ -314,3 +314,6 @@
 - [x] Implementar rotas para obter e limpar token
 - [x] GoogleAuthButton verifica conexão ao carregar
 - [x] Indicador visual de status de conexão com Gmail (botão verde quando conectado)
+- [x] Configurar URL de redirecionamento no Google Cloud Console
+- [ ] Aguardar propagação de configurações do Google (até 5 minutos)
+- [ ] Testar fluxo completo após propagação
