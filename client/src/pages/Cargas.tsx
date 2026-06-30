@@ -863,7 +863,7 @@ export default function Cargas() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredCargas?.map((carga: any) => {
+                    {filteredCargas?.map((carga: any, index: number) => {
                       // Garantir que a data seja parseada corretamente
                       let dataObj: Date;
                       if (carga.data instanceof Date) {
@@ -878,7 +878,38 @@ export default function Cargas() {
                       const dateParts = dataObj.toLocaleDateString('pt-BR').split('/');
                       const dataEncurtada = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]?.slice(-2)}`;
                       const diaSemana = dataObj.toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3).toUpperCase();
+                      
+                      // Verificar se a semana mudou em relação ao registro anterior
+                      let showWeekSeparator = false;
+                      if (index > 0) {
+                        const prevCarga = filteredCargas[index - 1];
+                        let prevDataObj: Date;
+                        if (prevCarga.data instanceof Date) {
+                          prevDataObj = prevCarga.data;
+                        } else if (typeof prevCarga.data === 'string') {
+                          const [year, month, day] = prevCarga.data.split('-').map(Number);
+                          prevDataObj = new Date(year, month - 1, day);
+                        } else {
+                          prevDataObj = new Date();
+                        }
+                        // Calcular o número da semana para ambas as datas
+                        const getWeekNumber = (date: Date) => {
+                          const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+                          const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
+                          return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+                        };
+                        const currentWeek = getWeekNumber(dataObj);
+                        const prevWeek = getWeekNumber(prevDataObj);
+                        showWeekSeparator = currentWeek !== prevWeek || dataObj.getFullYear() !== prevDataObj.getFullYear();
+                      }
+                      
                       return (
+                      <>
+                        {showWeekSeparator && (
+                          <tr>
+                            <td colSpan={6} className="h-0.5 bg-gradient-to-r from-red-900/30 via-red-600/40 to-red-900/30 p-0"></td>
+                          </tr>
+                        )}
                       <tr key={carga.id} className="border-b border-slate-700 hover:bg-slate-700/50">
                         <td className="py-1 px-1">
                           <input
@@ -899,6 +930,7 @@ export default function Cargas() {
                         <td className="py-2 px-2 text-sm font-semibold">{carga.pasta}</td>
                         <td className="text-right py-2 px-2 text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
                       </tr>
+                      </>
                     );
                     })}
                   </tbody>
