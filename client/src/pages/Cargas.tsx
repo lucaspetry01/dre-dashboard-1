@@ -938,9 +938,9 @@ export default function Cargas() {
                           </tr>
                         );
                       }
-                      const bgColor = carga.tipo === 'SAO_LEO' ? 'bg-blue-950/20' : 'bg-yellow-950/20';
+                      const bgColor = carga.tipo === 'SAO_LEO' ? 'bg-blue-900/30' : 'bg-yellow-900/30';
                       rows.push(
-                        <tr key={carga.id} className={`border-b border-slate-700 hover:bg-slate-700/50 ${bgColor}`}>
+                        <tr key={carga.id} className={`border-b border-slate-700 ${bgColor} hover:opacity-80 transition-opacity`}>
                           <td className="py-1 px-1">
                             <input
                               type="checkbox"
