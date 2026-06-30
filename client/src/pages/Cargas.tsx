@@ -791,9 +791,17 @@ export default function Cargas() {
                       <span className="text-slate-300">Valor Retido (15%):</span>
                       <span className="text-yellow-400 font-semibold">R$ {formatBRL(valorRetido)}</span>
                     </div>
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-600">
+                      <span className="text-slate-300">Diesel:</span>
+                      <span className="text-slate-300 font-semibold">R$ {formatBRL(valorCombustivelCalculado)}</span>
+                    </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-300">Valor Líquido Frete:</span>
-                      <span className="text-green-400 font-semibold">R$ {formatBRL(valorLiquidoFrete)}</span>
+                      <span className="text-slate-300">Chapa (Total):</span>
+                      <span className="text-slate-300 font-semibold">R$ {formatBRL((formData.chapa1 && formData.chapa1.trim() !== '' ? 180 : 0) + (formData.chapa2 && formData.chapa2.trim() !== '' ? 180 : 0))}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Custos Outros:</span>
+                      <span className="text-slate-300 font-semibold">R$ {formatBRL(Number(formData.custoOutros || 0))}</span>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-slate-600">
                       <span className="text-slate-300">Custo Total:</span>
