@@ -35,20 +35,20 @@ export function registerGoogleOAuthRoutes(app: Express) {
     try {
       const accessToken = await exchangeCodeForToken(code);
 
-      // Armazena o token na sessão ou cookie
-      // Por enquanto, vamos apenas redirecionar com sucesso
+      // Armazena o token em um cookie seguro (httpOnly, secure, sameSite)
       res.cookie('google_access_token', accessToken, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 3600 * 1000, // 1 hora
+        path: '/',
       });
 
       // Redireciona de volta para a página de Cargas
       res.redirect('/cargas?gmail_connected=true');
     } catch (error) {
       console.error('[Google OAuth] Callback failed:', error);
-      res.status(500).json({ error: 'Google OAuth callback failed' });
+      res.redirect('/cargas?gmail_error=true');
     }
   });
 
@@ -69,5 +69,22 @@ export function registerGoogleOAuthRoutes(app: Express) {
       console.error('[Google OAuth] Health check failed:', error);
       res.status(500).json({ status: 'error', message: String(error) });
     }
+  });
+
+  /**
+   * Rota para obter o token do Google da sessão
+   * Retorna o token se disponível, senão retorna null
+   */
+  app.get('/api/oauth/google/token', (req: Request, res: Response) => {
+    const token = (req.cookies as Record<string, string>)?.google_access_token || null;
+    res.json({ token });
+  });
+
+  /**
+   * Rota para limpar o token do Google
+   */
+  app.post('/api/oauth/google/logout', (req: Request, res: Response) => {
+    res.clearCookie('google_access_token', { path: '/' });
+    res.json({ success: true });
   });
 }

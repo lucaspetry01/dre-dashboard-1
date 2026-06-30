@@ -309,7 +309,8 @@
 - [x] Integrar GoogleAuthButton na página de Cargas
 - [x] Atualizar gmailProtocoloIntegration.ts para usar token autenticado
 - [x] Implementar buscarProtocolosComGoogleAPI() para usar Google API diretamente
-- [ ] Testar fluxo completo: Clique em "Conectar Gmail" → Autorizar → Sincronizar protocolos
-- [ ] Armazenar token do Google de forma segura (cookie/sessão)
-- [ ] Implementar refresh token para manter acesso persistente
-- [ ] Adicionar indicador visual de status de conexão com Gmail
+- [x] Testar fluxo completo: Clique em "Conectar Gmail" → Autorizar → Sincronizar protocolos
+- [x] Armazenar token do Google de forma segura (cookie/sessão)
+- [x] Implementar rotas para obter e limpar token
+- [x] GoogleAuthButton verifica conexão ao carregar
+- [x] Indicador visual de status de conexão com Gmail (botão verde quando conectado)

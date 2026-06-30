@@ -17,14 +17,31 @@ export function GoogleAuthButton({ onSuccess, onError }: GoogleAuthButtonProps) 
 
   // Verifica se o usuário já está conectado ao Google
   useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        const response = await fetch('/api/oauth/google/token');
+        const data = await response.json();
+        if (data.token) {
+          setIsConnected(true);
+        }
+      } catch (error) {
+        console.error('Erro ao verificar conexão com Google:', error);
+      }
+    };
+
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('gmail_connected') === 'true') {
       setIsConnected(true);
       onSuccess?.();
       // Remove o parâmetro da URL
       window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (urlParams.get('gmail_error') === 'true') {
+      onError?.('Erro ao conectar com Google');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else {
+      checkConnection();
     }
-  }, [onSuccess]);
+  }, [onSuccess, onError]);
 
   const handleClick = async () => {
     try {
