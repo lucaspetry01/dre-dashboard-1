@@ -879,18 +879,12 @@ export default function Cargas() {
                 <table className="w-full text-sm text-slate-300">
                   <thead className="border-b border-slate-700">
                     <tr>
-                      <th className="text-left py-1 px-1 w-6"></th>
-                      <th className="text-left py-1 px-1 text-xs">Data</th>
-                      <th className="text-left py-1 px-1 text-xs">Rota</th>
-                      <th className="text-left py-1 px-1 text-xs">Motorista</th>
-                      <th className="text-left py-1 px-1 text-xs">Placa</th>
-                      <th className="text-right py-1 px-1 text-xs">Frete</th>
-                      <th className="text-right py-1 px-1 text-xs">Retido (15%)</th>
-                      <th className="text-right py-1 px-1 text-xs">Diesel</th>
-                      <th className="text-right py-1 px-1 text-xs">Chapa</th>
-                      <th className="text-right py-1 px-1 text-xs">Outros</th>
-                      <th className="text-right py-1 px-1 text-xs">Custo Total</th>
-                      <th className="text-right py-1 px-1 text-xs">Lucro</th>
+                      <th className="text-left py-2 px-2 w-6"></th>
+                      <th className="text-left py-2 px-2 text-sm">Data</th>
+                      <th className="text-left py-2 px-2 text-sm">Rota</th>
+                      <th className="text-left py-2 px-2 text-sm">Motorista</th>
+                      <th className="text-left py-2 px-2 text-sm">Placa</th>
+                      <th className="text-right py-2 px-2 text-sm">Frete</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -918,19 +912,11 @@ export default function Cargas() {
                             onChange={() => handleToggleCheckbox(carga.id)}
                           />
                         </td>
-                        <td className="py-1 px-1 text-xs">{dataEncurtada}</td>
-                        <td className="py-1 px-1 text-xs">{carga.rota}</td>
-                        <td className="py-1 px-1 text-xs">{carga.motorista}</td>
-                        <td className="py-1 px-1 text-xs font-semibold">{carga.pasta}</td>
-                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
-                        <td className="text-right py-1 px-1 text-xs text-yellow-400">R$ {formatBRL(Number(carga.valorFrete || 0) * 0.15)}</td>
-                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorCombustivel || 0))}</td>
-                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.valorChapa || 0))}</td>
-                        <td className="text-right py-1 px-1 text-xs">R$ {formatBRL(Number(carga.custoOutros || 0))}</td>
-                        <td className="text-right py-1 px-1 text-xs font-semibold">R$ {formatBRL(Number(carga.custoTotal || 0))}</td>
-                        <td className={`text-right py-1 px-1 text-xs font-semibold ${Number(carga.lucro || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          R$ {formatBRL(Number(carga.lucro || 0))}
-                        </td>
+                        <td className="py-2 px-2 text-sm">{dataEncurtada}</td>
+                        <td className="py-2 px-2 text-sm">{carga.rota}</td>
+                        <td className="py-2 px-2 text-sm">{carga.motorista}</td>
+                        <td className="py-2 px-2 text-sm font-semibold">{carga.pasta}</td>
+                        <td className="text-right py-2 px-2 text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
                       </tr>
                     );
                     })}

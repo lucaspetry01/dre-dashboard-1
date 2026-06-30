@@ -329,4 +329,7 @@
 - [x] Cada carga mostra seus custos individuais na listagem
 - [x] Atualizar resumo do formulário com: Diesel, Chapa (Total), Custos Outros
 - [x] Remover "Valor Líquido Frete" do formulário
+- [x] Simplificar tabela de listagem: mostrar apenas Data, Rota, Motorista, Placa, Frete
+- [x] Aumentar tamanho dos valores na tabela (py-2 px-2, text-sm)
+- [x] Formulário já tem Custo Total no resumo
 - [x] 126 testes continuam passando
