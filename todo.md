@@ -340,3 +340,15 @@
 - [x] Aumentar tamanho dos valores na tabela (py-2 px-2, text-sm)
 - [x] Formulário já tem Custo Total no resumo
 - [x] 126 testes continuam passando
+
+
+## Feature - Modal de Detalhamento Analítico (Nova Sessão)
+
+- [x] Criar componente DetailedAnalyticsModal.tsx com layout premium
+- [x] Adicionar cards de métricas (Total Cargas, Faturado, Custo, Lucro)
+- [x] Implementar gráfico de distribuição de custos (Diesel, Chapa, Retido, Outros)
+- [x] Criar tabela detalhada com breakdown de cada carga
+- [x] Adicionar indicadores visuais com cores e ícones
+- [x] Integrar modal ao botão de olho na listagem
+- [x] Testar responsividade no mobile
+- [x] 126 testes continuam passando

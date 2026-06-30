@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { ProtocolReviewDialog } from '@/components/ProtocolReviewDialog';
 import { GoogleAuthButton } from '@/components/GoogleAuthButton';
+import { DetailedAnalyticsModal } from '@/components/DetailedAnalyticsModal';
 import { showToast } from '@/components/ToastContainer';
 
 type Pasta = 'IES' | 'IJD' | 'DAJ' | 'MFF' | 'IGU';
@@ -34,6 +35,7 @@ export default function Cargas() {
   const [isSincronizando, setIsSincronizando] = useState(false);
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const [protocolosParaRevisao, setProtocolosParaRevisao] = useState<any[]>([]);
+  const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     data: '',
     rota: '',
@@ -185,7 +187,6 @@ export default function Cargas() {
   // Lucro = Frete - Custo Total
   const lucroCalculado = valorFrete - custoTotalCalculado;
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
-  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   const utils = trpc.useUtils();
 
@@ -515,8 +516,8 @@ export default function Cargas() {
                   <Button
                     size="icon"
                     className="bg-purple-600 hover:bg-purple-700 text-white h-9 w-9"
-                    onClick={() => setIsViewDialogOpen(true)}
-                    title="Visualizar resumo"
+                    onClick={() => setIsAnalyticsModalOpen(true)}
+                    title="Visualizar análise detalhada"
                   >
                     <Eye className="w-4 h-4" />
                   </Button>
@@ -976,6 +977,14 @@ export default function Cargas() {
           onConfirm={handleConfirmProtocolos}
           onCancel={() => setIsReviewDialogOpen(false)}
           isLoading={false}
+        />
+
+        {/* Modal de Análise Detalhada */}
+        <DetailedAnalyticsModal
+          isOpen={isAnalyticsModalOpen}
+          onClose={() => setIsAnalyticsModalOpen(false)}
+          cargas={cargas?.filter((c: any) => selectedForDelete.has(c.id)) || []}
+          pasta={selectedPasta || 'N/A'}
         />
       </div>
     </div>
