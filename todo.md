@@ -322,6 +322,7 @@
 - [x] Remover duplicação de variáveis
 - [x] Adicionar tooltip informativo ao "Valor Retido (15%)"
 - [x] Corrigir valor do Litro Diesel para manter dados ao editar
+- [x] Reduzir tamanho dos botões Gmail e Sincronizar para mobile
 - [x] 126 testes continuam passando
 
 ## Bug Fix - Cálculo de Custo Total, Tabela e Formulário (Sessão atual)

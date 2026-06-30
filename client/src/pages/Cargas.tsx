@@ -580,20 +580,23 @@ export default function Cargas() {
                     Nova Carga
                   </Button>
                 )}
-                <GoogleAuthButton
-                  onSuccess={() => showToast('Gmail conectado com sucesso!', 'success')}
-                  onError={(error) => showToast(`Erro ao conectar Gmail: ${error}`, 'error')}
-                />
-                <Button
-                  size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
-                  title="Sincronizar protocolo do Gmail"
-                  onClick={handleSincronizarProtocolos}
-                  disabled={isSincronizando}
-                >
-                  <RefreshCw className={`w-4 h-4 mr-2 ${isSincronizando ? 'animate-spin' : ''}`} />
-                  {isSincronizando ? 'Sincronizando...' : 'Sincronizar Protocolo'}
-                </Button>
+                <div className="flex gap-2 flex-wrap">
+                  <GoogleAuthButton
+                    onSuccess={() => showToast('Gmail conectado com sucesso!', 'success')}
+                    onError={(error) => showToast(`Erro ao conectar Gmail: ${error}`, 'error')}
+                  />
+                  <Button
+                    size="sm"
+                    className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 text-xs md:text-sm px-2 md:px-4"
+                    title="Sincronizar protocolo do Gmail"
+                    onClick={handleSincronizarProtocolos}
+                    disabled={isSincronizando}
+                  >
+                    <RefreshCw className={`w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 ${isSincronizando ? 'animate-spin' : ''}`} />
+                    <span className="hidden md:inline">{isSincronizando ? 'Sincronizando...' : 'Sincronizar'}</span>
+                    <span className="md:hidden">{isSincronizando ? 'Sinc...' : 'Sinc'}</span>
+                  </Button>
+                </div>
               <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-white">

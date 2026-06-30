@@ -59,12 +59,13 @@ export function GoogleAuthButton({ onSuccess, onError }: GoogleAuthButtonProps) 
     return (
       <Button
         size="sm"
-        className="bg-green-600 hover:bg-green-700 text-white"
+        className="bg-green-600 hover:bg-green-700 text-white text-xs md:text-sm px-2 md:px-4"
         disabled
         title="Gmail conectado com sucesso"
       >
-        <Mail className="w-4 h-4 mr-2" />
-        Gmail Conectado ✓
+        <Mail className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+        <span className="hidden md:inline">Gmail Conectado ✓</span>
+        <span className="md:hidden">Gmail ✓</span>
       </Button>
     );
   }
@@ -72,13 +73,14 @@ export function GoogleAuthButton({ onSuccess, onError }: GoogleAuthButtonProps) 
   return (
     <Button
       size="sm"
-      className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
+      className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 text-xs md:text-sm px-2 md:px-4"
       onClick={handleClick}
       disabled={isLoading}
       title="Conectar com Google para sincronizar protocolos"
     >
-      <Mail className="w-4 h-4 mr-2" />
-      {isLoading ? 'Conectando...' : 'Conectar Gmail'}
+      <Mail className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+      <span className="hidden md:inline">{isLoading ? 'Conectando...' : 'Conectar Gmail'}</span>
+      <span className="md:hidden">{isLoading ? 'Conectando...' : 'Gmail'}</span>
     </Button>
   );
 }
