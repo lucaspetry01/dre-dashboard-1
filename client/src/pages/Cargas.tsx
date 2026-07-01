@@ -1071,10 +1071,6 @@ export default function Cargas() {
           cargas={cargas?.filter((c: any) => selectedForDelete.has(c.id)) || []}
           pasta={selectedPasta || 'N/A'}
         />
-      </div>
-    </div>
-  );
-}
 
         {/* Modal de Pesquisa de Pedagogios */}
         <Dialog open={isPedagioModalOpen} onOpenChange={setIsPedagioModalOpen}>
@@ -1142,3 +1138,7 @@ export default function Cargas() {
             </div>
           </DialogContent>
         </Dialog>
+      </div>
+    </div>
+  );
+}
