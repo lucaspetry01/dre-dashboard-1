@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Plus, Pencil, Eye, Trash2, RefreshCw } from 'lucide-react';
+import { Plus, Pencil, Eye, Trash2, RefreshCw, TrendingUp } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { ProtocolReviewDialog } from '@/components/ProtocolReviewDialog';
@@ -57,6 +57,14 @@ export default function Cargas() {
 
   // Opções pré-definidas
   const ROTAS = ['GRAMADO', 'CAXIAS', 'FAZENDA', 'CD', 'POA', 'OUTROS'];
+  const ROUTA_LABELS: Record<string, string> = {
+    GRAMADO: 'GRAMADO',
+    CAXIAS: 'CAXIAS',
+    FAZENDA: 'FAZENDA',
+    CD: 'CD',
+    POA: 'POA',
+    OUTROS: 'Motorista',
+  };
   const MOTORISTAS = ['FRED', 'CESAR', 'DOUGLAS', 'ALEX'];
   const CHAPAS = ['DOUGLAS', 'DJOE', 'LUCAS', 'PABLO', 'ALEX'];
 
@@ -240,6 +248,13 @@ export default function Cargas() {
   const totalCusto = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.custoTotal || 0), 0) || 0;
   const totalLucro = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.lucro || 0), 0) || 0;
   const qtdCargas = filteredCargas?.length || 0;
+
+  const selectedCargas = filteredCargas?.filter((c: any) => selectedForDelete.has(c.id)) || [];
+  const displayCargas = selectedForDelete.size > 0 ? selectedCargas : filteredCargas;
+  const displayTotalFaturado = displayCargas.reduce((acc: number, c: any) => acc + Number(c.valorFrete || 0), 0);
+  const displayTotalCusto = displayCargas.reduce((acc: number, c: any) => acc + Number(c.custoTotal || 0), 0);
+  const displayTotalLucro = displayCargas.reduce((acc: number, c: any) => acc + Number(c.lucro || 0), 0);
+  const displayQtdCargas = displayCargas.length;
 
   // Mutations
   const createMutation = trpc.cargas.criar.useMutation({
@@ -449,7 +464,7 @@ export default function Cargas() {
                   : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
               }`}
             >
-              {rota}
+              {ROUTA_LABELS[rota] || rota}
             </Button>
           ))}
           {filterRota && (
@@ -681,7 +696,7 @@ export default function Cargas() {
                     >
                       <option value="">Selecione a rota</option>
                       {ROTAS.map((r) => (
-                        <option key={r} value={r}>{r}</option>
+                        <option key={r} value={r}>{ROUTA_LABELS[r] || r}</option>
                       ))}
                     </select>
                     {formData.rota === 'OUTROS' && (
@@ -796,7 +811,7 @@ export default function Cargas() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1">Custos Outros (R$)</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Motorista (R$)</label>
                       <Input
                         type="number"
                         step="0.01"
@@ -879,7 +894,7 @@ export default function Cargas() {
                       <span className="text-slate-300 font-semibold">R$ {formatBRL((formData.chapa1 && formData.chapa1.trim() !== '' ? 180 : 0) + (formData.chapa2 && formData.chapa2.trim() !== '' ? 180 : 0))}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-300">Custos Outros:</span>
+                      <span className="text-slate-300">Motorista:</span>
                       <span className="text-slate-300 font-semibold">R$ {formatBRL(Number(formData.custoOutros || 0))}</span>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-slate-600">
@@ -940,6 +955,7 @@ export default function Cargas() {
                       <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Motorista</th>
                       <th className="text-left py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Placa</th>
                       <th className="text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Frete</th>
+                      <th className="text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm">Lucro %</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1012,6 +1028,16 @@ export default function Cargas() {
                         <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm truncate">{carga.motorista}</td>
                         <td className="py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm font-semibold">{carga.pasta}</td>
                         <td className="text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm font-semibold">R$ {formatBRL(Number(carga.valorFrete || 0))}</td>
+                        <td className="text-right py-1 md:py-2 px-0.5 md:px-1 text-xs md:text-sm font-semibold text-emerald-300 flex items-center justify-end gap-1">
+                          <TrendingUp className="w-3 h-3 text-emerald-300" />
+                          {(() => {
+                            const frete = Number(carga.valorFrete || 0);
+                            const custo = Number(carga.custoTotal || 0);
+                            const lucro = frete - custo;
+                            const percentual = frete > 0 ? (lucro / frete) * 100 : 0;
+                            return `${percentual.toFixed(0)}%`;
+                          })()}
+                        </td>
                         </tr>
                       );
                       return rows;
@@ -1028,31 +1054,24 @@ export default function Cargas() {
           </CardContent>
         </Card>
 
-        {/* Card de Totalizador Geral */}
+        {/* Totalizadores soltos */}
         {filteredCargas && filteredCargas.length > 0 && !selectedPasta && (
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white text-base">Total Geral</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-2">
-                <div className="bg-slate-700/50 rounded-lg p-2 text-center">
-                  <p className="text-slate-400 text-xs mb-1">Faturado</p>
-                  <p className="text-blue-400 font-bold text-base">R$ {formatBRL(totalFaturado)}</p>
-                </div>
-                <div className="bg-slate-700/50 rounded-lg p-2 text-center">
-                  <p className="text-slate-400 text-xs mb-1">Custo</p>
-                  <p className="text-red-400 font-bold text-base">R$ {formatBRL(totalCusto)}</p>
-                </div>
-                <div className="bg-slate-700/50 rounded-lg p-2 text-center">
-                  <p className="text-slate-400 text-xs mb-1">Lucro</p>
-                  <p className={`font-bold text-base ${totalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    R$ {formatBRL(totalLucro)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-3 text-center">
+              <p className="text-slate-400 text-xs mb-1">Faturado</p>
+              <p className="text-blue-400 font-bold text-base">R$ {formatBRL(displayTotalFaturado)}</p>
+            </div>
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-3 text-center">
+              <p className="text-slate-400 text-xs mb-1">Custo</p>
+              <p className="text-red-400 font-bold text-base">R$ {formatBRL(displayTotalCusto)}</p>
+            </div>
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-3 text-center">
+              <p className="text-slate-400 text-xs mb-1">Lucro</p>
+              <p className={`font-bold text-base ${displayTotalLucro >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                R$ {formatBRL(displayTotalLucro)}
+              </p>
+            </div>
+          </div>
         )}
         
         {/* Dialog de Revisão de Protocolos */}
