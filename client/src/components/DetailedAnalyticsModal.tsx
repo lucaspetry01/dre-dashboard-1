@@ -8,7 +8,7 @@ interface Carga {
   data: string;
   rota: string;
   motorista: string;
-  placa: string;
+  placa?: string | null;
   valorFrete: number;
   valorRetido: number;
   valorCombustivel: number;
@@ -24,7 +24,7 @@ interface Carga {
 interface DetailedAnalyticsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  cargas: Carga[];
+  cargas: any[];
   pasta: string;
 }
 
@@ -61,7 +61,7 @@ export function DetailedAnalyticsModal({
       const chapa2 = c.chapa2 ? 180 : 0;
       return sum + chapa1 + chapa2;
     }, 0);
-    const custoRetido = cargas.reduce((sum, c) => sum + (Number(c.valorRetido) || 0), 0);
+    const custoRetido = cargas.reduce((sum, c) => sum + (Number(c.valorFrete || 0) * 0.15), 0);
     const custoOutros = cargas.reduce((sum, c) => sum + (Number(c.custoOutros) || 0), 0);
     const custoPedagio = cargas.reduce((sum, c) => sum + (Number(c.pedagio) || 0), 0);
     const manutencao = cargas.reduce((sum, c) => sum + (Number(c.manutencao) || 0), 0);

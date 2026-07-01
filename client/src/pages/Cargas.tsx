@@ -38,7 +38,22 @@ export default function Cargas() {
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [isPedagioModalOpen, setIsPedagioModalOpen] = useState(false);
   const [pedagiosSelecionados, setPedagiosSelecionados] = useState<Set<number>>(new Set());
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    data: string;
+    tipo: 'SAO_LEO' | 'ESTEIO';
+    rota: string;
+    rotaCustom: string;
+    motorista: string;
+    valorLitroDiesel: string;
+    litrosCombustivel: string;
+    chapa1: string;
+    chapa2: string;
+    custoOutros: string;
+    manutencao: string;
+    numeroProtocolo: string;
+    valorFrete: string;
+    pedagio: string;
+  }>({
     data: '',
     tipo: 'SAO_LEO',
     rota: '',
@@ -119,6 +134,19 @@ export default function Cargas() {
     return cargasData.filter(carga => carga.rota === filterRota);
   };
 
+  const computeCargaCustoTotal = (carga: any) => {
+    const valorCombustivel = Number(carga.valorCombustivel || 0);
+    const manutencao = Number(carga.manutencao || 0);
+    const custoOutros = Number(carga.custoOutros || 0);
+    const pedagio = Number(carga.pedagio || 0);
+    const valorRetido = Number(carga.valorFrete || 0) * 0.15; // sempre 15% do frete
+    const chapa1 = carga.chapa1 ? 180 : 0;
+    const chapa2 = carga.chapa2 ? 180 : 0;
+    return valorCombustivel + manutencao + custoOutros + pedagio + valorRetido + chapa1 + chapa2;
+  };
+
+  const computeCargaLucro = (carga: any) => Number(carga.valorFrete || 0) - computeCargaCustoTotal(carga);
+
   // Funcao para sincronizar protocolos (usa hooks tRPC definidos abaixo)
   const handleSincronizarProtocolos = async () => {
     setIsSincronizando(true);
@@ -189,13 +217,20 @@ export default function Cargas() {
     (parseFloat(formData.valorLitroDiesel) || 0) *
     (parseFloat(formData.litrosCombustivel) || 0);
 
-  // Cálculo de custo total: soma apenas combustvel, manutenção e custos outros
   const valorChapa = (formData.chapa1 && formData.chapa1.trim() !== '' ? 180 : 0) + (formData.chapa2 && formData.chapa2.trim() !== '' ? 180 : 0);
   const valorFrete = Number(formData.valorFrete || 0);
   const valorRetido = valorFrete * 0.15; // 15% de retenção
   const valorLiquidoFrete = valorFrete - valorRetido;
-  // Cálculo de custo total: Diesel + Chapa + Custos Outros + Valor Retido
-  const custoTotalCalculado = valorCombustivelCalculado + valorChapa + Number(formData.custoOutros || 0) + valorRetido;
+  const valorManutencao = Number(formData.manutencao || 0);
+  const valorPedagio = Number(formData.pedagio || 0);
+  // Cálculo de custo total: Diesel + Chapa + Motorista + Manutenção + Pedágio + Retido
+  const custoTotalCalculado =
+    valorCombustivelCalculado +
+    valorChapa +
+    Number(formData.custoOutros || 0) +
+    valorManutencao +
+    valorPedagio +
+    valorRetido;
   // Lucro = Frete - Custo Total
   const lucroCalculado = valorFrete - custoTotalCalculado;
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
@@ -245,15 +280,15 @@ export default function Cargas() {
 
   // Totalizadores
   const totalFaturado = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.valorFrete || 0), 0) || 0;
-  const totalCusto = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.custoTotal || 0), 0) || 0;
-  const totalLucro = filteredCargas?.reduce((acc: number, c: any) => acc + Number(c.lucro || 0), 0) || 0;
+  const totalCusto = filteredCargas?.reduce((acc: number, c: any) => acc + computeCargaCustoTotal(c), 0) || 0;
+  const totalLucro = filteredCargas?.reduce((acc: number, c: any) => acc + computeCargaLucro(c), 0) || 0;
   const qtdCargas = filteredCargas?.length || 0;
 
   const selectedCargas = filteredCargas?.filter((c: any) => selectedForDelete.has(c.id)) || [];
   const displayCargas = selectedForDelete.size > 0 ? selectedCargas : filteredCargas;
   const displayTotalFaturado = displayCargas.reduce((acc: number, c: any) => acc + Number(c.valorFrete || 0), 0);
-  const displayTotalCusto = displayCargas.reduce((acc: number, c: any) => acc + Number(c.custoTotal || 0), 0);
-  const displayTotalLucro = displayCargas.reduce((acc: number, c: any) => acc + Number(c.lucro || 0), 0);
+  const displayTotalCusto = displayCargas.reduce((acc: number, c: any) => acc + computeCargaCustoTotal(c), 0);
+  const displayTotalLucro = displayCargas.reduce((acc: number, c: any) => acc + computeCargaLucro(c), 0);
   const displayQtdCargas = displayCargas.length;
 
   // Mutations
@@ -308,6 +343,7 @@ export default function Cargas() {
     const dataStr = typeof carga.data === 'string' ? carga.data : (carga.data instanceof Date ? carga.data.toISOString().split('T')[0] : '');
     setFormData({
       data: dataStr,
+      tipo: carga.tipo || 'SAO_LEO',
       rota: rotaEhPadrao ? carga.rota : 'OUTROS',
       rotaCustom: rotaEhPadrao ? '' : (carga.rota || ''),
       motorista: carga.motorista || '',
@@ -369,6 +405,7 @@ export default function Cargas() {
     setEditingId(null);
     setFormData({
       data: '',
+      tipo: 'SAO_LEO',
       rota: '',
       rotaCustom: '',
       motorista: '',
@@ -676,7 +713,7 @@ export default function Cargas() {
                     <label className="block text-sm font-medium text-slate-300 mb-1">Tipo</label>
                     <select
                       value={formData.tipo || 'SAO_LEO'}
-                      onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, tipo: e.target.value as 'SAO_LEO' | 'ESTEIO' })}
                       className="w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2 h-10"
                       required
                     >
@@ -891,11 +928,19 @@ export default function Cargas() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-300">Chapa (Total):</span>
-                      <span className="text-slate-300 font-semibold">R$ {formatBRL((formData.chapa1 && formData.chapa1.trim() !== '' ? 180 : 0) + (formData.chapa2 && formData.chapa2.trim() !== '' ? 180 : 0))}</span>
+                      <span className="text-slate-300 font-semibold">R$ {formatBRL(valorChapa)}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-300">Motorista:</span>
                       <span className="text-slate-300 font-semibold">R$ {formatBRL(Number(formData.custoOutros || 0))}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Manutenção:</span>
+                      <span className="text-slate-300 font-semibold">R$ {formatBRL(valorManutencao)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Pedágio:</span>
+                      <span className="text-slate-300 font-semibold">R$ {formatBRL(valorPedagio)}</span>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-slate-600">
                       <span className="text-slate-300">Custo Total:</span>
@@ -1032,7 +1077,7 @@ export default function Cargas() {
                           <TrendingUp className="w-3 h-3 text-emerald-300" />
                           {(() => {
                             const frete = Number(carga.valorFrete || 0);
-                            const custo = Number(carga.custoTotal || 0);
+                            const custo = computeCargaCustoTotal(carga);
                             const lucro = frete - custo;
                             const percentual = frete > 0 ? (lucro / frete) * 100 : 0;
                             return `${percentual.toFixed(0)}%`;
