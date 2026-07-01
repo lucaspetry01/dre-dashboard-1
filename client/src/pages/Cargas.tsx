@@ -489,10 +489,10 @@ export default function Cargas() {
         )}
       </div>
 
-      {/* Layout: Pastas 15% esquerda, Imagem 85% direita */}
-      <div className="grid grid-cols-10 gap-3 mb-3 h-40">
-        {/* Coluna Esquerda: Pastas (15% = 1.5 colunas de 10) */}
-        <div className="col-span-2 flex flex-col gap-1.5">
+      {/* Layout: Pastas 30% esquerda, Imagem 70% direita */}
+      <div className="grid grid-cols-10 gap-6 mb-6 h-80">
+        {/* Coluna Esquerda: Pastas (30% = 3 colunas de 10) */}
+        <div className="col-span-3 flex flex-col gap-3">
           {PASTAS.map((pasta) => (
             <Button
               key={pasta}
@@ -509,15 +509,15 @@ export default function Cargas() {
           ))}
         </div>
 
-        {/* Coluna Direita: Imagem (85% = 8 colunas de 10) */}
-        <div className="col-span-8 flex items-center justify-center">
+        {/* Coluna Direita: Imagem (70% = 7 colunas de 10) */}
+        <div className="col-span-7 flex items-center justify-center">
           {selectedPasta ? (
             <Card className="w-full bg-slate-800 border-slate-700">
               <CardContent className="p-6">
                 <img
                   src={PLACA_IMAGES[selectedPasta]}
                   alt={`Placa ${selectedPasta}`}
-                  className="w-full h-32 object-cover rounded-lg"
+                  className="w-full h-64 object-cover rounded-lg"
                 />
               </CardContent>
             </Card>
